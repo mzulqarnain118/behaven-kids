@@ -6,40 +6,40 @@ import "./App.css";
 function App() {
   const [goFullScreen, setGoFullScreen] = useState(false);
   const [parentID, setParentID] = useState<string>();
-  const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] = useState<string>();
+  const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] =
+    useState<string>();
 
-
-  useEffect(() => {
-    let e = document.getElementById("my_fullscreen");
-    e?.requestFullscreen();
-  }, [goFullScreen]);
+  // useEffect(() => {
+  //   let e = document.getElementById("my_fullscreen");
+  //   e?.requestFullscreen();
+  // }, [goFullScreen]);
 
   const CheckIfParentExist = async (
+    event: React.FormEvent<HTMLFormElement>
   ) => {
+    event.preventDefault();
     try {
       // if (date === undefined) {
       //   return null; // or whatever value you want to return for empty dates
       // }
-
+      const fetchPromises = async ()  => {
       const url = `https://localhost:7021/SignIn/GetParentInfo?parentID=${parentID}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
+      console.log(url);
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch data: ParentID = ${parentID}. Response status: ${response.status}`
-          );
-        }
+      const response = await fetch(url);
 
-        const data = await response.json();
-        console.log("data = " + data);
-        // return data;
-      } catch (error) {
-        console.error(
-          `Failed to fetch schedule for date: ${parentID}. Error: ${error}`
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch data: ParentID = ${parentID}. Response status: ${response.status}`
         );
-        return null; // or whatever value you want to return for failed fetch calls
       }
+
+      const data = await response.json();
+      return data;
+    }
+      const results = await fetchPromises();
+      console.log("Results:", results);
+      // return data;
     } catch (error) {
       console.error("There is an error:", error);
     }
@@ -59,21 +59,29 @@ function App() {
         </button>
         <div className="CommentDropDown_Grid">
           <form onSubmit={CheckIfParentExist}>
-          <TextField
-            label="Your Personal PIN"
-            id="outlined-start-adornment"
-            sx={{ m: 1, width: "100%" }}
-            onChange={(event) => setParentID(event.target.value)}
-          />
+            <TextField
+              label="Your Personal PIN"
+              id="outlined-start-adornment"
+              sx={{ m: 1, width: "100%" }}
+              onChange={(event) => setParentID(event.target.value)}
+              inputProps={{ maxLength: 4 }}
+              error={Boolean(true)}
+              helperText={"Please enter your four digit ID correctly."}
+            />
 
-          <TextField
-            className="textAreaFullWidth"
-            label="Last 4 Digit Phone Number"
-            id="outlined-start-adornment"
-            sx={{ m: 1, width: "100%" }}
-            onChange={(event) => setParentLastFourDigitPhoneNumber(event.target.value)}
-          />
-          <button type="submit" className="btn btn-primary">
+            <TextField
+              className="textAreaFullWidth"
+              label="Last 4 Digit Phone Number"
+              id="outlined-start-adornment"
+              sx={{ m: 1, width: "100%" }}
+              onChange={(event) =>
+                setParentLastFourDigitPhoneNumber(event.target.value)
+              }
+              inputProps={{ maxLength: 4 }}
+              error={Boolean(true)}
+              helperText={"Please enter your last four digit phone number."}
+            />
+            <button type="submit" className="btn btn-primary">
               Submit
             </button>
           </form>
