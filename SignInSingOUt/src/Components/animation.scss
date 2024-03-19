@@ -1,0 +1,154 @@
+.success-checkmark {
+    width: 240px; // Triple the width
+    height: 290px; // Triple the height
+    margin: 0 auto;
+    margin-left: 100px;
+
+    .check-icon {
+        width: 240px; // Triple the width
+        height: 240px; // Triple the height
+        position: relative;
+        border-radius: 50%;
+        box-sizing: content-box;
+        border: 12px solid #4CAF50; // Triple the border width
+
+        &::before {
+            top: 9px; // Triple the top value
+            left: -6px; // Triple the left value
+            width: 90px; // Triple the width
+            transform-origin: 100% 50%;
+            border-radius: 300px 0 0 300px; // Triple the border radius
+        }
+
+        &::after {
+            top: 0;
+            left: 90px; // Triple the left value
+            width: 180px; // Triple the width
+            transform-origin: 0 50%;
+            border-radius: 0 300px 300px 0; // Triple the border radius
+            animation: rotate-circle 4.25s ease-in;
+        }
+
+        &::before, &::after {
+            content: '';
+            height: 300px; // Triple the height
+            position: absolute;
+            background: #FFFFFF;
+            transform: rotate(-45deg);
+        }
+
+        .icon-line {
+            height: 15px; // Triple the height
+            background-color: #4CAF50;
+            display: block;
+            border-radius: 6px; // Triple the border radius
+            position: absolute;
+            z-index: 10;
+
+            &.line-tip {
+                top: 138px; // Triple the top value
+                left: 42px; // Triple the left value
+                width: 75px; // Triple the width
+                transform: rotate(45deg);
+                animation: icon-line-tip 0.75s;
+            }
+
+            &.line-long {
+                top: 114px; // Triple the top value
+                right: 24px; // Triple the right value
+                width: 141px; // Triple the width
+                transform: rotate(-45deg);
+                animation: icon-line-long 0.75s;
+            }
+        }
+
+        .icon-circle {
+            top: -12px; // Triple the top value
+            left: -12px; // Triple the left value
+            z-index: 10;
+            width: 240px; // Triple the width
+            height: 240px; // Triple the height
+            border-radius: 50%;
+            position: absolute;
+            box-sizing: content-box;
+            border: 12px solid rgba(76, 175, 80, .5); // Triple the border width
+        }
+
+        .icon-fix {
+            top: 24px; // Triple the top value
+            width: 15px; // Triple the width
+            left: 78px; // Triple the left value
+            z-index: 1;
+            height: 255px; // Triple the height
+            position: absolute;
+            transform: rotate(-45deg);
+            background-color: #FFFFFF;
+        }
+    }
+}
+
+@keyframes rotate-circle {
+    0% {
+        transform: rotate(-45deg);
+    }
+    5% {
+        transform: rotate(-45deg);
+    }
+    12% {
+        transform: rotate(-405deg);
+    }
+    100% {
+        transform: rotate(-405deg);
+    }
+}
+
+@keyframes icon-line-tip {
+    0% {
+        width: 0;
+        left: 3px; // Triple the left value
+        top: 57px; // Triple the top value
+    }
+    54% {
+        width: 0;
+        left: 3px; // Triple the left value
+        top: 57px; // Triple the top value
+    }
+    70% {
+        width: 150px; // Triple the width
+        left: -24px; // Triple the left value
+        top: 111px; // Triple the top value
+    }
+    84% {
+        width: 51px; // Triple the width
+        left: 63px; // Triple the left value
+        top: 144px; // Triple the top value
+    }
+    100% {
+        width: 75px; // Triple the width
+        left: 42px; // Triple the left value
+        top: 135px; // Triple the top value
+    }
+}
+
+@keyframes icon-line-long {
+    0% {
+        width: 0;
+        right: 138px; // Triple the right value
+        top: 162px; // Triple the top value
+    }
+    65% {
+        width: 0;
+        right: 138px; // Triple the right value
+        top: 162px; // Triple the top value
+    }
+    84% {
+        width: 165px; // Triple the width
+        right: 0px;
+        top: 105px; // Triple the top value
+    }
+    100% {
+        width: 141px; // Triple the width
+        right: 24px; // Triple the right value
+        top: 114px; // Triple the top value
+    }
+}

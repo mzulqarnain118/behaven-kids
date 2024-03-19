@@ -1,44 +1,47 @@
-import React from 'react';
-import { Popup } from 'reactjs-popup';
-import './PopupCongrats.css';
-import 'reactjs-popup/dist/index.css';
-
-interface ModalContentProps {
-  close: () => void; // Define the type for the close function
-}
-
-const ModalContent: React.FC<ModalContentProps> = ({ close }) => {
-  const handleClose = () => {
-    console.log('modal closed');
-    close();
-  };
-
-  return (
-    <div className="modal2">
-      <div className="header2">Modal Title</div>
-      <div className="content2" style={{color: "black"}}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque, a nostrum.
-        Dolorem, repellat quidem ut, minima sint vel eveniet quibusdam voluptates
-        delectus doloremque, explicabo tempore dicta adipisci fugit amet dignissimos?
-        <br />
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur sit
-        commodi beatae optio voluptatum sed eius cumque, delectus saepe repudiandae
-        explicabo nemo nam libero ad, doloribus, voluptas rem alias. Vitae?
-      </div>
-      <div className="actions2">
-        <button className="button2" onClick={handleClose}>
-          Close Modal
-        </button>
-      </div>
-    </div>
-  );
-};
+import React, { useState } from "react";
+import "./animation.scss";
+import Button from "react-bootstrap/Button";
+import BootstrapModal from "react-bootstrap/Modal";
 
 const CongratulationsPopup: React.FC = () => {
+  if (!open) return null;
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
-    <Popup trigger={<button className="button">Open Modal</button>} modal nested>
-      <ModalContent close={() => {}} />
-    </Popup>
+    <>
+      <>
+      <Button variant="primary" onClick={handleShow}>
+        Launch demo modal
+      </Button>
+
+      <BootstrapModal show={show} onHide={handleClose}>
+        <BootstrapModal.Header closeButton>
+          <BootstrapModal.Title>Welcome</BootstrapModal.Title>
+        </BootstrapModal.Header>
+        <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
+          <div className="success-checkmark" >
+            <div className="check-icon">
+              <span className="icon-line line-tip"></span>
+              <span className="icon-line line-long"></span>
+              <div className="icon-circle"></div>
+              <div className="icon-fix"></div>
+            </div>
+          </div>
+        </BootstrapModal.Body>
+        <BootstrapModal.Footer>
+          <Button variant="primary" onClick={handleClose}>
+            Close
+          </Button>
+        </BootstrapModal.Footer>
+      </BootstrapModal>
+    </>
+    
+    </>
+    
   );
 };
 
