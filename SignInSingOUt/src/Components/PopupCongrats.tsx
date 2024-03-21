@@ -3,13 +3,18 @@ import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 
-const CongratulationsPopup: React.FC = () => {
+interface CongratulationsPopup {
+  showModel: boolean;
+  setShowModel: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel}) => {
   if (!open) return null;
 
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => setShowModel(false);
+  const handleShow = () => setShowModel(true);
 
   return (
     <>
@@ -18,7 +23,7 @@ const CongratulationsPopup: React.FC = () => {
         Launch demo modal
       </Button>
 
-      <BootstrapModal show={show} onHide={handleClose}>
+      <BootstrapModal show={showModel} onHide={handleClose}>
         <BootstrapModal.Header closeButton>
           <BootstrapModal.Title>Welcome</BootstrapModal.Title>
         </BootstrapModal.Header>
