@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";

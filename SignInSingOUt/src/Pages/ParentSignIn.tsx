@@ -131,10 +131,49 @@ const ParentSignIn: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (parentLastFourDigitPhoneNumber.length >= 4) {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("Token not found in localStorage");
+          }
+  
+          const url = `https://localhost:7021/SignIn/GetParentInfo?parentID=${parentID}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
+          console.log(url);
+  
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch data: ParentID = ${parentID}. Response status: ${response.status}`
+            );
+          }
+  
+          const data = await response.json();
+          console.log("Results:", data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+  
+    fetchData();
+  }, [parentLastFourDigitPhoneNumber]);
 
+  const InsertPhoneNumber = async (value: string) => {
+    setParentLastFourDigitPhoneNumber(prevValue => prevValue + value);
+  };
 
-  const handleSignOut = () => {
-    localStorage.removeItem("token");
+  const DeletePhoneNumber = () => {
+    setParentLastFourDigitPhoneNumber(prevValue => prevValue.slice(0, -1));
   };
 
   return (
@@ -172,11 +211,28 @@ const ParentSignIn: React.FC = () => {
               inputProps={{ maxLength: 4, inputMode: "numeric" }}
               error={Boolean(isParentLastFourDigitPhoneNumberErrorError)}
               helperText={parentLastFourDigitPhoneNumberError}
+              value={parentLastFourDigitPhoneNumber}
             />
             <button type="submit" className="btn btn-primary">
               Submit
             </button>
+
+            
           </form>
+          <div className="PhoneNumber_Grid">
+          <button className="grid-item" onClick={() => InsertPhoneNumber('1')}>1</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('2')}>2</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('3')}>3</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('4')}>4</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('5')}>5</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('6')}>6</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('7')}>7</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('8')}>8</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('9')}>9</button>
+          <button className="grid-item" onClick={() => InsertPhoneNumber('0')}>0</button>
+          <button className="grid-item" onClick={() => DeletePhoneNumber()}>{'\u232B'}</button>
+          </div>
+          
           <CongratulationsPopup showModel={show} setShowModel={setShow}/>
 
           <div>
@@ -184,7 +240,6 @@ const ParentSignIn: React.FC = () => {
           </div>
         </div>
       </div>
-      <button onClick={handleSignOut}>Sign Out</button>
     </>
   );
 }

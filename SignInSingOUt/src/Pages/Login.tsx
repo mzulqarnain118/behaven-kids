@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://localhost:7021/UserAuthentication/SignIn?userName=${username}&password=${password}`,
+        `https://192.168.0.9:9999/UserAuthentication/SignIn?userName=${username}&password=${password}`,
         {
           method: "POST",
           headers: {
