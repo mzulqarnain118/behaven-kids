@@ -1,8 +1,7 @@
 #root {
   width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+
 }
 
 .ContentComponentBody {
@@ -28,7 +27,7 @@
 
 .grid-item {
   border-radius: 70%;
-  background-color: goldenrod;
+  background-color: #FDB813;
   margin-right: 15px;
   margin-bottom: 15px;
   height: 100px;

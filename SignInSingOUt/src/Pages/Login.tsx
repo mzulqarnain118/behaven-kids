@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { backEndCodeURLLocation } from "../config";
+import personLogInImage from "../assets/personLogIn.svg";
+import lockPassword from "../assets/lockPassword.svg";
+import behavenKidsFlyingFee from "../assets/behavenKidsFlyingBee.png";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-
   useEffect(() => {
     // Check if the user is already authenticated (e.g., token exists)
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       // Set the state to redirect to dashboard
       navigate("/PhoneNumber", { replace: true });
@@ -21,8 +24,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        // `https://192.168.0.9:9999/UserAuthentication/SignIn?userName=${username}&password=${password}`,
-        `https://localhost:7021/UserAuthentication/SignIn?userName=${username}&password=${password}`,
+        `${backEndCodeURLLocation}UserAuthentication/SignIn?userName=${username}&password=${password}`,
         {
           method: "POST",
           headers: {
@@ -38,9 +40,8 @@ const LoginPage: React.FC = () => {
       const { token } = await response.json();
 
       localStorage.setItem("token", token);
-      
-      navigate("/ParentSignIn", { replace: true });
 
+      navigate("/PhoneNumber", { replace: true });
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -48,26 +49,81 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+      {/* <img
+        src={behavenKidsFlyingFee}
+        style={{
+          height: "400px",
+          width: "400px",
+          position: "absolute",
+      top: "40%",
+      left: "38%",
+      transform: "translate(-50%, -50%)",
+      zIndex: 0,
+        }}
+      /> */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <form onSubmit={handleLogin}>
+          <div className="card" style={{ width: "500px", textAlign: "center" }}>
+            <div className="card-body">
+              <h2 style={{ fontWeight: "700", marginBottom: "30px" }}>Login</h2>
+              <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                  <span className="input-group-text" id="basic-addon1">
+                    <img
+                      src={personLogInImage}
+                      style={{ height: "46px", width: "46px" }}
+                    />
+                  </span>
+                </div>
+                <input
+                  style={{ height: "60px", width: "200px", fontSize: "25px" }}
+                  type="text"
+                  className="form-control"
+                  placeholder="Username"
+                  aria-label="Username"
+                  aria-describedby="basic-addon1"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                ></input>
+              </div>
+              <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                  <span className="input-group-text" id="basic-addon1">
+                    <img
+                      src={lockPassword}
+                      style={{ height: "46px", width: "46px" }}
+                    />
+                  </span>
+                </div>
+                <input
+                  style={{ height: "60px", width: "200px", fontSize: "25px" }}
+                  type="password"
+                  className="form-control"
+                  placeholder="Password"
+                  aria-label="Password"
+                  aria-describedby="basic-addon1"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                ></input>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                style={{ marginTop: "30px", width: "100%" }}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </>
   );
 };

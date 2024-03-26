@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { backEndCodeURLLocation } from '../config';
+import BehavenLogo from '../assets/BehavenLogo.jpg';
 
 const ParentSignIn: React.FC = () => {
   const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] =
     useState<string>("");
 
   const navigate = useNavigate();
-  const [show, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
-  const [lastFourDigits, setLastFourDigits] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,8 +29,7 @@ const ParentSignIn: React.FC = () => {
           if (!token) {
             throw new Error("Token not found in localStorage");
           }
-
-          const url = `https://localhost:7021/SignIn/CheckParentPhoneNumber?parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
+          const url = `${backEndCodeURLLocation}SignIn/CheckParentPhoneNumber?parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
           console.log(url);
 
           const response = await fetch(url, {
@@ -42,15 +41,21 @@ const ParentSignIn: React.FC = () => {
           });
 
           if (!response.ok) {
+            
             throw new Error(
               `Failed to fetch data. Response status: ${response.status}`
             );
+
           }
 
           const data = await response.json();
           console.log("Results:", data);
-          setShow(true);
+          navigate("/ParentsPin", { replace: true, state: { parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber }  });
+          // setShow(true);
         } catch (error) {
+          setParentLastFourDigitPhoneNumber("");
+console.log("here =" + parentLastFourDigitPhoneNumber); 
+          setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
           console.error("Error fetching data:", error);
         }
       }
@@ -63,7 +68,6 @@ const ParentSignIn: React.FC = () => {
     setParentLastFourDigitPhoneNumber((prevValue) => prevValue + value);
 
     if (dotsClicked < 4) {
-      setLastFourDigits((prevValue) => prevValue + value);
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
   };
@@ -78,8 +82,12 @@ const ParentSignIn: React.FC = () => {
 
   return (
     <>
+    
       <div className="ContentComponentBody" id="my_fullscreen">
+      
         <div className="CommentDropDown_Grid">
+        <img src={BehavenLogo} alt="My Image" style={{height: "75px"}} />
+        <br/>
           <div>
             <h4>Enter Last 4 digt of Phone Number</h4>
             <div>

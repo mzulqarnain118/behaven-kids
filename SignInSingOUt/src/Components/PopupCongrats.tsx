@@ -2,30 +2,30 @@ import React from "react";
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
+import { useNavigate  } from "react-router-dom";
 
 interface CongratulationsPopup {
   showModel: boolean;
   setShowModel: React.Dispatch<React.SetStateAction<any>>;
+  parentFirstName: string;
 }
 
-const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel}) => {
+const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel, parentFirstName}) => {
   if (!open) return null;
+  const navigate = useNavigate();
 
-  // const [show, setShow] = useState(false);
-
-  const handleClose = () => setShowModel(false);
-  const handleShow = () => setShowModel(true);
+  const handleClose = () => {
+    navigate("/", { replace: true });
+    setShowModel(false)};
 
   return (
     <>
-      <>
-      <Button variant="primary" onClick={handleShow}>
-        Launch demo modal
-      </Button>
+    <div>
 
-      <BootstrapModal show={showModel} onHide={handleClose}>
+    
+      <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
         <BootstrapModal.Header closeButton>
-          <BootstrapModal.Title>Welcome</BootstrapModal.Title>
+          <BootstrapModal.Title style={{fontSize: "30px"}}>Welcome {parentFirstName}</BootstrapModal.Title>
         </BootstrapModal.Header>
         <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
           <div className="success-checkmark" >
@@ -43,7 +43,7 @@ const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setSho
           </Button>
         </BootstrapModal.Footer>
       </BootstrapModal>
-    </>
+      </div>
     
     </>
     
