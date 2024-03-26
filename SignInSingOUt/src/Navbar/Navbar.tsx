@@ -11,6 +11,52 @@ import { useState, useEffect } from "react";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [showAddNewParent, setShowAddNewParent] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+
+  const handleGoFullScreen = () => {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+      setShowNavbar(false);
+    }
+  };
+
+  useEffect(() => {
+    const exitFullScreenHandler = () => {
+      setShowNavbar(true); // Show the navbar when exiting fullscreen
+    };
+
+    const handleFullScreenChange = () => {
+      if (!document.fullscreenElement) {
+        exitFullScreenHandler();
+      }
+    };
+
+    const handleGoFullScreen = () => {
+      const element = document.documentElement;
+
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        document.addEventListener('keydown', escapeKeyHandler);
+      }
+    };
+
+    const escapeKeyHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' || event.key === 'Esc') {
+        exitFullScreenHandler();
+      }
+    };
+
+    // Call handleGoFullScreen when needed
+    handleGoFullScreen();
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      document.removeEventListener('keydown', escapeKeyHandler);
+    };
+  }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
@@ -29,6 +75,8 @@ const Navbar: React.FC = () => {
   }, [localStorage.getItem('token')]);
 
   return (
+    <>
+    {showNavbar && (
     <nav
       className="navbar navbar-expand-lg"
       style={{ backgroundColor: "white" }}
@@ -74,12 +122,22 @@ const Navbar: React.FC = () => {
               
             </li>
             <li className="nav-item">
+            <button
+          onClick={handleGoFullScreen}
+          style={{ color: "blue", backgroundColor: "yellow" }}
+        >
+          Go Full Screen
+        </button>
+            </li>
+            <li className="nav-item">
               <button onClick={handleSignOut}>Sign Out</button>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    )}
+    </>
   );
 };
 

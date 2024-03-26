@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
     const token = localStorage.getItem('token');
     if (token) {
       // Set the state to redirect to dashboard
-      navigate("/ParentSignIn", { replace: true });
+      navigate("/PhoneNumber", { replace: true });
     }
   }, []);
 
@@ -21,7 +21,8 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://192.168.0.9:9999/UserAuthentication/SignIn?userName=${username}&password=${password}`,
+        // `https://192.168.0.9:9999/UserAuthentication/SignIn?userName=${username}&password=${password}`,
+        `https://localhost:7021/UserAuthentication/SignIn?userName=${username}&password=${password}`,
         {
           method: "POST",
           headers: {
