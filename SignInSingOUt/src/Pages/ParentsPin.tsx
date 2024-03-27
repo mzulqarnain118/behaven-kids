@@ -1,26 +1,24 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../App.css";
-import CongratulationsPopup from "../Components/PopupCongrats";
-import ChooseChildrenPopup from "../Components/ChooseChildrenPopup";
-import { backEndCodeURLLocation } from '../config';
-import BehavenLogo from '../assets/BehavenLogo.jpg';
+import { backEndCodeURLLocation } from "../config";
+import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 
 const ParentSignIn: React.FC = () => {
-    const location = useLocation();
-    const parentLastFourDigitPhoneNumber = location.state?.parentLastFourDigitPhoneNumber;
-    console.log(parentLastFourDigitPhoneNumber);
-  const [parentFourDigitPin, setParentFourDigitPin] =
-    useState<string>("");
+  const location = useLocation();
+  const parentLastFourDigitPhoneNumber =
+    location.state?.parentLastFourDigitPhoneNumber;
+  console.log(parentLastFourDigitPhoneNumber);
+  const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
 
-    const [parentName, setParentName] =
-    useState<string>("");
+  const [parentName, setParentName] = useState<string>("");
 
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,9 +26,8 @@ const ParentSignIn: React.FC = () => {
       navigate("/", { replace: true });
     }
 
-    if (parentLastFourDigitPhoneNumber === undefined)
-    {
-        navigate("/", { replace: true });
+    if (parentLastFourDigitPhoneNumber === undefined) {
+      navigate("/", { replace: true });
     }
   });
 
@@ -42,9 +39,8 @@ const ParentSignIn: React.FC = () => {
           if (!token) {
             throw new Error("Token not found in localStorage");
           }
-          
+
           const url = `${backEndCodeURLLocation}SignIn/GetParentInfo?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
-          console.log(url);
 
           const response = await fetch(url, {
             method: "GET",
@@ -55,22 +51,28 @@ const ParentSignIn: React.FC = () => {
           });
 
           if (!response.ok) {
-            
             throw new Error(
               `Failed to fetch data. Response status: ${response.status}`
             );
-
           }
 
           const data = await response.json();
+
           
-          console.log("Results:", data.parentFirstName);
+
           setParentName(data.parentFirstName);
+          setShowErrorMessage(false);
+          console.log("parentFourDigitPin = " + parentFourDigitPin);
+          navigate("/ChooseWhichChildren", { replace: true, state: { parentFourDigitPin: parentFourDigitPin }  });
           setShow(true);
-        //   navigate("/", { replace: true });
-          
+          //   navigate("/", { replace: true });
         } catch (error) {
           setParentFourDigitPin("");
+          setShowErrorMessage(true);
+          const timer = setTimeout(() => {
+            setShowErrorMessage(false);
+          }, 3000);
+          () => clearTimeout(timer);
           setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
           console.error("Error fetching data:", error);
         }
@@ -100,8 +102,8 @@ const ParentSignIn: React.FC = () => {
     <>
       <div className="ContentComponentBody" id="my_fullscreen">
         <div className="CommentDropDown_Grid">
-        <img src={BehavenLogo} alt="My Image" style={{height: "75px"}} />
-        <br/>
+          <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
+          <br />
           <div>
             <h4>Enter Last 4 digt Pin</h4>
             <div>
@@ -113,7 +115,8 @@ const ParentSignIn: React.FC = () => {
               ))}
             </div>
           </div>
-        <br/><br/>
+          <br />
+          <br />
           <div className="PhoneNumber_Grid">
             <button
               className="grid-item"
@@ -175,14 +178,23 @@ const ParentSignIn: React.FC = () => {
             >
               0
             </button>
-            <button className="grid-item" style={{backgroundColor: "white", color: "goldenrod", border: "1px solid black"}} onClick={() => DeletePhoneNumber()}>
+            <button
+              className="grid-item"
+              style={{
+                backgroundColor: "white",
+                color: "goldenrod",
+                border: "1px solid black",
+              }}
+              onClick={() => DeletePhoneNumber()}
+            >
               {"\u232B"}
             </button>
           </div>
         </div>
         {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
-        <ChooseChildrenPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/>
-        <ErrorMessage message={"error"}/>
+        {showErrorMessage && (
+          <ErrorMessage message={"Couldn't Find Pin Number"} />
+        )}
       </div>
     </>
   );

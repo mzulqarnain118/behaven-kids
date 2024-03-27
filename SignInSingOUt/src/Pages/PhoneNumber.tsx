@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { backEndCodeURLLocation } from '../config';
 import BehavenLogo from '../assets/BehavenLogo.jpg';
+import ErrorMessage from "../Components/ErrorMessage";
 
 const ParentSignIn: React.FC = () => {
   const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] =
@@ -11,6 +12,7 @@ const ParentSignIn: React.FC = () => {
 
   const navigate = useNavigate();
   const [dotsClicked, setDotsClicked] = useState<number>(0);
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,12 +51,17 @@ const ParentSignIn: React.FC = () => {
           }
 
           const data = await response.json();
-          console.log("Results:", data);
+          // console.log("Results:", data);
+          setShowErrorMessage(false);
           navigate("/ParentsPin", { replace: true, state: { parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber }  });
           // setShow(true);
         } catch (error) {
           setParentLastFourDigitPhoneNumber("");
-console.log("here =" + parentLastFourDigitPhoneNumber); 
+          setShowErrorMessage(true);
+          const timer = setTimeout(() => {
+            setShowErrorMessage(false);
+          }, 3000); 
+          () => clearTimeout(timer); 
           setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
           console.error("Error fetching data:", error);
         }
@@ -167,6 +174,10 @@ console.log("here =" + parentLastFourDigitPhoneNumber);
           </div>
         </div>
       </div>
+      {showErrorMessage && 
+      <ErrorMessage message={"Couldn't Find Phone Number"} />
+      }
+      
     </>
   );
 };
