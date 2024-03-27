@@ -31,6 +31,10 @@ const Navbar: React.FC = () => {
     setShowAddNewParent(!!token);
   }, [window.location.href]);
 
+  const GoToAddNewParent = () => {
+    navigate("/AddParentInfo", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -111,7 +115,7 @@ const Navbar: React.FC = () => {
                   {showAddNewParent ? (
                     <button
                       className="btn btn-outline-dark"
-                      onClick={handleGoFullScreen}
+                      onClick={GoToAddNewParent}
                     >
                       Add New Parent
                     </button>

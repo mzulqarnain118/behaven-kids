@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useLocation  } from "react-router-dom";
 import "../App.css";
 import CongratulationsPopup from "../Components/PopupCongrats";
+import ChooseChildrenPopup from "../Components/ChooseChildrenPopup";
 import { backEndCodeURLLocation } from '../config';
 import BehavenLogo from '../assets/BehavenLogo.jpg';
 import ErrorMessage from "../Components/ErrorMessage";
@@ -42,7 +43,6 @@ const ParentSignIn: React.FC = () => {
             throw new Error("Token not found in localStorage");
           }
           
-        //   const url = `${jsonApiUrl}/SignIn/CheckParentPinNumber?parentPinNumber=${parentFourDigitPin}`;
           const url = `${backEndCodeURLLocation}SignIn/GetParentInfo?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
           console.log(url);
 
@@ -180,7 +180,8 @@ const ParentSignIn: React.FC = () => {
             </button>
           </div>
         </div>
-        <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/>
+        {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
+        <ChooseChildrenPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/>
         <ErrorMessage message={"error"}/>
       </div>
     </>

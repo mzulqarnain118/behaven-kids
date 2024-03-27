@@ -49,18 +49,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
-      {/* <img
-        src={behavenKidsFlyingFee}
-        style={{
-          height: "400px",
-          width: "400px",
-          position: "absolute",
-      top: "40%",
-      left: "38%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 0,
-        }}
-      /> */}
       <div
         style={{
           display: "flex",
