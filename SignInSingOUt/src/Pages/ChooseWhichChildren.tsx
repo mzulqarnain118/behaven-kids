@@ -16,7 +16,29 @@ interface ChildInfo {
   ChildLastName: string;
   isChecked: boolean;
   signInTimeData: string;
-  signOutTimeData?: string;
+  signOutTimeData: string;
+}
+
+interface SignInSignOutTime {
+  signInTime: string; // Adjust type if needed
+  signOutTime: string; // Adjust type if needed
+}
+
+async function fetchClientSignInSignOutTime(clientID: number): Promise<SignInSignOutTime[] | null> {
+  
+  const url = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`;
+  console.log("url = " + url);
+  const response = await fetch(`${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  const data = await response.json();
+  return data.map((item: any) => ({
+    signInTime: item.signInTime,
+    signOutTime: item.signOutTime
+  }));
 }
 
 const ChooseWhichChildren: React.FC = () => {
@@ -25,7 +47,10 @@ const ChooseWhichChildren: React.FC = () => {
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clientClockInClockOutData, setClientClockInClockOutData] = useState<SignInSignOutTime[] | null>(null);
   const navigate = useNavigate();
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,6 +60,7 @@ const ChooseWhichChildren: React.FC = () => {
         }
 
         const urlForDigitPin = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}`;
+        console.log(urlForDigitPin);
         const responseForDigitPin = await fetch(urlForDigitPin, {
           method: "GET",
           headers: {
@@ -45,6 +71,9 @@ const ChooseWhichChildren: React.FC = () => {
         if (!responseForDigitPin.ok) {
           throw new Error("Network response was not ok");
         }
+
+       
+
         const dataForDigitPin = await responseForDigitPin.json();
 
         const childrenDataPromises = dataForDigitPin.map(
@@ -59,6 +88,19 @@ const ChooseWhichChildren: React.FC = () => {
               token
             );
 
+            async function fetchData() {
+              try {
+                const result = await fetchClientSignInSignOutTime(item.clientInfo.clientID);
+                console.log("results = " + JSON.stringify(result, null, 2));
+                setClientClockInClockOutData( result);
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            }
+        
+            fetchData();
+
+            console.log("data = " + clientClockInClockOutData);
 
             try {
               if (signInTimeResponse !== null)
@@ -68,8 +110,24 @@ const ChooseWhichChildren: React.FC = () => {
                 if (signOutTimeResponse !== null)
                 {
                   try {
+                    console.log("Sign In = " + signInTimeData);
+                    
                     const signOutTimeData = await signOutTimeResponse.json();
-                  
+                    console.log("Sign Out = " + signOutTimeData);
+
+                    if (signInTimeData !== null && signOutTimeData != null)
+                    {
+                      console.log("hello 1");
+                      return {
+                        childId: item.clientInfo.clientID,
+                        ChildFirstName: item.clientInfo.firstName,
+                        ChildLastName: item.clientInfo.lastName,
+                        isChecked: false,
+                        signInTimeData: null,
+                        signOutTimeData: null
+                      };
+                    }
+                    console.log("hello 2");
                     return {
                       childId: item.clientInfo.clientID,
                       ChildFirstName: item.clientInfo.firstName,
@@ -80,6 +138,7 @@ const ChooseWhichChildren: React.FC = () => {
                     };
                   } catch (error)
                   {
+                    console.log("hello 3");
                     return {
                       childId: item.clientInfo.clientID,
                       ChildFirstName: item.clientInfo.firstName,
@@ -91,7 +150,7 @@ const ChooseWhichChildren: React.FC = () => {
                   }
                   
                 }
-
+                console.log("hello 4");
                 return {
                   childId: item.clientInfo.clientID,
                   ChildFirstName: item.clientInfo.firstName,
@@ -104,12 +163,14 @@ const ChooseWhichChildren: React.FC = () => {
               
             } catch(error)
             {
+              console.log("hello 5");
               return {
                 childId: item.clientInfo.clientID,
                 ChildFirstName: item.clientInfo.firstName,
                 ChildLastName: item.clientInfo.lastName,
                 isChecked: false,
                 signInTimeData: null,
+                signOutTimeData: null
               };
             }
 
@@ -189,7 +250,7 @@ const ChooseWhichChildren: React.FC = () => {
         }
         
       }
-      navigate("/", { replace: true });
+      // navigate("/", { replace: true });
     } catch (error) {
       console.error("Error submitting sign-ins:", error);
     } finally {
@@ -311,13 +372,18 @@ const ChooseWhichChildren: React.FC = () => {
               </span>
             </div>
             <div style={{ alignItems: "flex-end", marginTop: "8px" }}>
-              {info.signInTimeData != null && info.signOutTimeData === null ? (
+              {info.signInTimeData !== null ? (
                 <span style={{color: "green", fontSize: "20px"}}>&#x1F550;  ({info.signInTimeData})</span>
               ) : null}
+              {info.signOutTimeData !== null ? (
+                <span style={{color: "red", fontSize: "20px"}}>&#x1F550; ({info.signOutTimeData})</span>
+              ) : null}
+
             </div>
           </div>
         </div>
       ))}
+      
       <button
         className="btn btn-primary"
         onClick={handleSubmit}
