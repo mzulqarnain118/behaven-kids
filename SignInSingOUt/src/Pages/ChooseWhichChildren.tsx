@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import "./CSS/ChooseWhichChildren.css";
@@ -14,7 +14,9 @@ interface ChildInfo {
   childId: number;
   ChildFirstName: string;
   ChildLastName: string;
-  isChecked: boolean; // Add isChecked property
+  isChecked: boolean;
+  signInTimeData: string;
+  signOutTimeData?: string;
 }
 
 const ChooseWhichChildren: React.FC = () => {
@@ -23,7 +25,7 @@ const ChooseWhichChildren: React.FC = () => {
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,29 +34,90 @@ const ChooseWhichChildren: React.FC = () => {
           throw new Error("Token not found in localStorage");
         }
 
-        const url = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}`;
-        const response = await fetch(url, {
+        const urlForDigitPin = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}`;
+        const responseForDigitPin = await fetch(urlForDigitPin, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
+        if (!responseForDigitPin.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const dataForDigitPin = await responseForDigitPin.json();
 
-        const childrenData: ChildInfo[] = data.map(
-          (item: { clientInfo: ClientInfo }) => ({
-            childId: item.clientInfo.clientID,
-            ChildFirstName: item.clientInfo.firstName,
-            ChildLastName: item.clientInfo.lastName,
-            isChecked: false, // Initialize isChecked to false for each child
-          })
+        const childrenDataPromises = dataForDigitPin.map(
+          async (item: { clientInfo: ClientInfo }) => {
+            const signInTimeResponse = await fetchSignInTime(
+              item.clientInfo.clientID,
+              token
+            );
+
+            const signOutTimeResponse = await fetchSignOutTime(
+              item.clientInfo.clientID,
+              token
+            );
+
+
+            try {
+              if (signInTimeResponse !== null)
+              {
+                const signInTimeData = await signInTimeResponse.json();
+
+                if (signOutTimeResponse !== null)
+                {
+                  try {
+                    const signOutTimeData = await signOutTimeResponse.json();
+                  
+                    return {
+                      childId: item.clientInfo.clientID,
+                      ChildFirstName: item.clientInfo.firstName,
+                      ChildLastName: item.clientInfo.lastName,
+                      isChecked: false,
+                      signInTimeData: signInTimeData,
+                      signOutTimeData: signOutTimeData
+                    };
+                  } catch (error)
+                  {
+                    return {
+                      childId: item.clientInfo.clientID,
+                      ChildFirstName: item.clientInfo.firstName,
+                      ChildLastName: item.clientInfo.lastName,
+                      isChecked: false,
+                      signInTimeData: signInTimeData,
+                      signOutTimeData: null
+                    };
+                  }
+                  
+                }
+
+                return {
+                  childId: item.clientInfo.clientID,
+                  ChildFirstName: item.clientInfo.firstName,
+                  ChildLastName: item.clientInfo.lastName,
+                  isChecked: false,
+                  signInTimeData: signInTimeData,
+                  signOutTimeData: null
+                };
+              }
+              
+            } catch(error)
+            {
+              return {
+                childId: item.clientInfo.clientID,
+                ChildFirstName: item.clientInfo.firstName,
+                ChildLastName: item.clientInfo.lastName,
+                isChecked: false,
+                signInTimeData: null,
+              };
+            }
+
+          }
         );
 
-        setChildrenInfo(childrenData);
+        const resolvedChildrenData = await Promise.all(childrenDataPromises);
+        setChildrenInfo(resolvedChildrenData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -62,6 +125,38 @@ const ChooseWhichChildren: React.FC = () => {
 
     fetchData();
   }, [parentFourDigitPin]);
+
+  const fetchSignInTime = async (clientID: number, token: string | null) => {
+    try {
+      const url = `${backEndCodeURLLocation}SignIn/GetClientSignInTime?clientID=${clientID}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const fetchSignOutTime = async (clientID: number, token: string | null) => {
+    try {
+      const url = `${backEndCodeURLLocation}SignIn/GetClientSignOutTime?clientID=${clientID}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response;
+    } catch (error) {
+      return null;
+    }
+  };
 
   const handleDivClick = (childId: number) => {
     setChildrenInfo((prevState) => {
@@ -82,9 +177,19 @@ const ChooseWhichChildren: React.FC = () => {
         throw new Error("Token not found in localStorage");
       }
       for (const child of childrenInfo.filter((child) => child.isChecked)) {
-        await signInClient(child.childId, token);
-        console.log("All sign-ins submitted successfully");
+        if (child.signInTimeData === null || child.signInTimeData === undefined)
+        {
+          await signInClient(child.childId, token);
+          console.log("All sign-ins submitted successfully");
+        }
+        else
+        {
+          await signOutClient(child.childId, token);
+          console.log("All sign-outs submitted successfully");
+        }
+        
       }
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Error submitting sign-ins:", error);
     } finally {
@@ -97,6 +202,33 @@ const ChooseWhichChildren: React.FC = () => {
       console.log("ClientID = " + clientID);
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignIn?clientID=${clientID}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            // Add any additional headers if required
+          },
+          body: JSON.stringify({ clientID }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error(
+          `Failed to post data for client ID ${clientID}:`,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error(`Error posting data for client ID ${clientID}:`, error);
+    }
+  };
+
+  const signOutClient = async (clientID: number, token: string | null) => {
+    try {
+      console.log("ClientID = " + clientID);
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignOut?clientID=${clientID}`,
         {
           method: "POST",
           headers: {
@@ -146,12 +278,20 @@ const ChooseWhichChildren: React.FC = () => {
           key={info.childId}
           onClick={() => handleDivClick(info.childId)}
         >
-          <div className="card-body">
+          <div
+            className="card-body"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              border: "solid",
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
+                fontSize: "20px"
               }}
             >
               <input
@@ -166,11 +306,14 @@ const ChooseWhichChildren: React.FC = () => {
                   {info.ChildLastName.charAt(0)}
                 </span>
               </div>
-              {info.ChildFirstName} {info.ChildLastName}
+              <span>
+                {info.ChildFirstName} {info.ChildLastName}
+              </span>
             </div>
-
-            <div style={{ textAlign: "right" }}>
-              <span>Signed In Time: </span>
+            <div style={{ alignItems: "flex-end", marginTop: "8px" }}>
+              {info.signInTimeData != null && info.signOutTimeData === null ? (
+                <span style={{color: "green", fontSize: "20px"}}>&#x1F550;  ({info.signInTimeData})</span>
+              ) : null}
             </div>
           </div>
         </div>

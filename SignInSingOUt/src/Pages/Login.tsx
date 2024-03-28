@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import personLogInImage from "../assets/personLogIn.svg";
 import lockPassword from "../assets/lockPassword.svg";
-import behavenKidsFlyingFee from "../assets/behavenKidsFlyingBee.png";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");

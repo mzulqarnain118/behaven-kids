@@ -1,5 +1,4 @@
-// import "./navbar.css";
-import { Link, useLocation } from "react-router-dom";
+
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -114,7 +113,8 @@ const Navbar: React.FC = () => {
                 <li className="nav-item" style={{marginRight: "25px"}}>
                   {showAddNewParent ? (
                     <button
-                      className="btn btn-outline-dark"
+                    style={{width: "150px", height: "50px"}}
+                      className="btn btn-light"
                       onClick={GoToAddNewParent}
                     >
                       Add New Parent
@@ -123,7 +123,8 @@ const Navbar: React.FC = () => {
                 </li>
                 <li className="nav-item" style={{marginRight: "25px"}}>
                   <button
-                    className="btn btn-outline-dark"
+                   style={{width: "150px", height: "50px"}}
+                    className="btn btn-info"
                     onClick={handleGoFullScreen}
                   >
                     Go Full Screen
@@ -131,7 +132,8 @@ const Navbar: React.FC = () => {
                 </li>
                 <li className="nav-item" style={{marginRight: "25px"}}>
                   <button
-                    className="btn btn-outline-primary"
+                    style={{width: "150px", height: "50px"}}
+                    className="btn btn-danger"
                     onClick={handleSignOut}
                   >
                     Sign Out

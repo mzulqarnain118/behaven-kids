@@ -50,8 +50,6 @@ const ParentSignIn: React.FC = () => {
 
           }
 
-          const data = await response.json();
-          // console.log("Results:", data);
           setShowErrorMessage(false);
           navigate("/ParentsPin", { replace: true, state: { parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber }  });
           // setShow(true);

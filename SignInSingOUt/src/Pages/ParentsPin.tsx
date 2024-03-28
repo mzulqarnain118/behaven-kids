@@ -13,10 +13,10 @@ const ParentSignIn: React.FC = () => {
   console.log(parentLastFourDigitPhoneNumber);
   const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
 
-  const [parentName, setParentName] = useState<string>("");
+  const [, setParentName] = useState<string>("");
 
   const navigate = useNavigate();
-  const [show, setShow] = useState(false);
+  const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
