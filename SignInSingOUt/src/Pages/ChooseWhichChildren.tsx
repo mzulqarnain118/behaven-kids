@@ -20,25 +20,9 @@ interface ChildInfo {
 }
 
 interface SignInSignOutTime {
+  clientID: number;
   signInTime: string; // Adjust type if needed
-  signOutTime: string; // Adjust type if needed
-}
-
-async function fetchClientSignInSignOutTime(clientID: number): Promise<SignInSignOutTime[] | null> {
-  
-  const url = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`;
-  console.log("url = " + url);
-  const response = await fetch(`${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-
-  const data = await response.json();
-  return data.map((item: any) => ({
-    signInTime: item.signInTime,
-    signOutTime: item.signOutTime
-  }));
+  signOutTime?: string; // Adjust type if needed
 }
 
 const ChooseWhichChildren: React.FC = () => {
@@ -47,9 +31,40 @@ const ChooseWhichChildren: React.FC = () => {
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [clientClockInClockOutData, setClientClockInClockOutData] = useState<SignInSignOutTime[] | null>(null);
+  const [clientClockInClockOutData, setClientClockInClockOutData] = useState<
+    SignInSignOutTime[]>([]);
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   // This block of code will run whenever clientClockInClockOutData changes
+  //   if (clientClockInClockOutData) {
+  //     clientClockInClockOutData.forEach((item) => {
+  //       console.log("clientID: ", item.clientID);
+  //       console.log("In: ", item.signInTime);
+  //       console.log("Out: ", item.signOutTime);
+  //     });
+  //   }
+  // }, [clientClockInClockOutData]);
+
+  async function fetchClientSignInSignOutTime(
+    clientID: number
+  ): Promise<SignInSignOutTime[] | null> {
+    const url = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`;
+    console.log("url = " + url);
+    const response = await fetch(
+      `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const data = await response.json();
+    return data.map((item: any) => ({
+      signInTime: item.signInTime,
+      signOutTime: item.signOutTime,
+    }));
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,8 +87,6 @@ const ChooseWhichChildren: React.FC = () => {
           throw new Error("Network response was not ok");
         }
 
-       
-
         const dataForDigitPin = await responseForDigitPin.json();
 
         const childrenDataPromises = dataForDigitPin.map(
@@ -87,36 +100,60 @@ const ChooseWhichChildren: React.FC = () => {
               item.clientInfo.clientID,
               token
             );
-
-            async function fetchData() {
-              try {
-                const result = await fetchClientSignInSignOutTime(item.clientInfo.clientID);
-                console.log("results = " + JSON.stringify(result, null, 2));
-                setClientClockInClockOutData( result);
-              } catch (error) {
-                console.error('Error fetching data:', error);
+            /////////////////////
+            try {
+              const urlForSignInAndSignOut = `${backEndCodeURLLocation}SignIn/GetClientSignInSignOutTime?clientID=${item.clientInfo.clientID}`;
+              console.log(urlForSignInAndSignOut);
+              const responseForGettingSignInSignOutData = await fetch(urlForSignInAndSignOut, {
+                  method: "GET",
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                  },
+              });
+              if (!responseForGettingSignInSignOutData.ok) {
+                  throw new Error("Network response was not ok");
               }
-            }
-        
-            fetchData();
+          
+              const dataForDigitPin: SignInSignOutTime[] = await responseForGettingSignInSignOutData.json();
+          
+              // Iterate over dataForDigitPin array using for loop
+              for (const item of dataForDigitPin) {
+                  setClientClockInClockOutData(prevState => [...prevState, item]);
+              }
+          } catch (error) {
+              console.log("hello");
+          }
 
-            console.log("data = " + clientClockInClockOutData);
+            /////////////////////////////////////////////////////
+            // async function fetchData() {
+            //   try {
+            //     const result = await fetchClientSignInSignOutTime(
+
+            //     );
+            //     console.log("results = " + JSON.stringify(result, null, 2));
+            //     setClientClockInClockOutData(result);
+            //   } catch (error) {
+            //     console.error("Error fetching data:", error);
+            //   }
+            // }
+
+            // fetchData();
+
+            // console.log("data = " + clientClockInClockOutData);
 
             try {
-              if (signInTimeResponse !== null)
-              {
+              if (signInTimeResponse !== null) {
                 const signInTimeData = await signInTimeResponse.json();
 
-                if (signOutTimeResponse !== null)
-                {
+                if (signOutTimeResponse !== null) {
                   try {
                     console.log("Sign In = " + signInTimeData);
-                    
+
                     const signOutTimeData = await signOutTimeResponse.json();
                     console.log("Sign Out = " + signOutTimeData);
 
-                    if (signInTimeData !== null && signOutTimeData != null)
-                    {
+                    if (signInTimeData !== null && signOutTimeData != null) {
                       console.log("hello 1");
                       return {
                         childId: item.clientInfo.clientID,
@@ -124,7 +161,7 @@ const ChooseWhichChildren: React.FC = () => {
                         ChildLastName: item.clientInfo.lastName,
                         isChecked: false,
                         signInTimeData: null,
-                        signOutTimeData: null
+                        signOutTimeData: null,
                       };
                     }
                     console.log("hello 2");
@@ -134,10 +171,9 @@ const ChooseWhichChildren: React.FC = () => {
                       ChildLastName: item.clientInfo.lastName,
                       isChecked: false,
                       signInTimeData: signInTimeData,
-                      signOutTimeData: signOutTimeData
+                      signOutTimeData: signOutTimeData,
                     };
-                  } catch (error)
-                  {
+                  } catch (error) {
                     console.log("hello 3");
                     return {
                       childId: item.clientInfo.clientID,
@@ -145,10 +181,9 @@ const ChooseWhichChildren: React.FC = () => {
                       ChildLastName: item.clientInfo.lastName,
                       isChecked: false,
                       signInTimeData: signInTimeData,
-                      signOutTimeData: null
+                      signOutTimeData: null,
                     };
                   }
-                  
                 }
                 console.log("hello 4");
                 return {
@@ -157,12 +192,10 @@ const ChooseWhichChildren: React.FC = () => {
                   ChildLastName: item.clientInfo.lastName,
                   isChecked: false,
                   signInTimeData: signInTimeData,
-                  signOutTimeData: null
+                  signOutTimeData: null,
                 };
               }
-              
-            } catch(error)
-            {
+            } catch (error) {
               console.log("hello 5");
               return {
                 childId: item.clientInfo.clientID,
@@ -170,10 +203,9 @@ const ChooseWhichChildren: React.FC = () => {
                 ChildLastName: item.clientInfo.lastName,
                 isChecked: false,
                 signInTimeData: null,
-                signOutTimeData: null
+                signOutTimeData: null,
               };
             }
-
           }
         );
 
@@ -238,17 +270,16 @@ const ChooseWhichChildren: React.FC = () => {
         throw new Error("Token not found in localStorage");
       }
       for (const child of childrenInfo.filter((child) => child.isChecked)) {
-        if (child.signInTimeData === null || child.signInTimeData === undefined)
-        {
+        if (
+          child.signInTimeData === null ||
+          child.signInTimeData === undefined
+        ) {
           await signInClient(child.childId, token);
           console.log("All sign-ins submitted successfully");
-        }
-        else
-        {
+        } else {
           await signOutClient(child.childId, token);
           console.log("All sign-outs submitted successfully");
         }
-        
       }
       // navigate("/", { replace: true });
     } catch (error) {
@@ -352,7 +383,7 @@ const ChooseWhichChildren: React.FC = () => {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                fontSize: "20px"
+                fontSize: "20px",
               }}
             >
               <input
@@ -371,19 +402,38 @@ const ChooseWhichChildren: React.FC = () => {
                 {info.ChildFirstName} {info.ChildLastName}
               </span>
             </div>
-            <div style={{ alignItems: "flex-end", marginTop: "8px" }}>
-              {info.signInTimeData !== null ? (
-                <span style={{color: "green", fontSize: "20px"}}>&#x1F550;  ({info.signInTimeData})</span>
-              ) : null}
-              {info.signOutTimeData !== null ? (
-                <span style={{color: "red", fontSize: "20px"}}>&#x1F550; ({info.signOutTimeData})</span>
-              ) : null}
 
+            <div style={{ alignItems: "flex-end", marginTop: "8px" }}>
+             
+              {clientClockInClockOutData ? (
+                clientClockInClockOutData
+                  .filter(
+                    (clockInOutInfo) => clockInOutInfo.clientID === info.childId
+                  )
+                  .map((clockInOutInfo, index) => (
+                    <div key={index}>
+
+                      {clockInOutInfo.signInTime !== null && (
+                        <span style={{ color: "green", fontSize: "20px" }}>
+                          &#x1F550; ({clockInOutInfo.signInTime})
+                        </span>
+                      )}
+                      {clockInOutInfo.signOutTime !== null && (
+                        <span style={{ color: "red", fontSize: "20px" }}>
+                          &#x1F551; ({clockInOutInfo.signOutTime})
+                        </span>
+                      )}
+                      <br />
+                    </div>
+                  ))
+              ) : (
+                <span>No clock in/out data available</span>
+              )}
             </div>
           </div>
         </div>
       ))}
-      
+
       <button
         className="btn btn-primary"
         onClick={handleSubmit}
