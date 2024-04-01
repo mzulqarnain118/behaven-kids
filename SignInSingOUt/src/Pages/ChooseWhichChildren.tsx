@@ -32,39 +32,15 @@ const ChooseWhichChildren: React.FC = () => {
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientClockInClockOutData, setClientClockInClockOutData] = useState<
-    SignInSignOutTime[]>([]);
+    SignInSignOutTime[]
+  >([]);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   // This block of code will run whenever clientClockInClockOutData changes
-  //   if (clientClockInClockOutData) {
-  //     clientClockInClockOutData.forEach((item) => {
-  //       console.log("clientID: ", item.clientID);
-  //       console.log("In: ", item.signInTime);
-  //       console.log("Out: ", item.signOutTime);
-  //     });
-  //   }
-  // }, [clientClockInClockOutData]);
-
-  async function fetchClientSignInSignOutTime(
-    clientID: number
-  ): Promise<SignInSignOutTime[] | null> {
-    const url = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`;
-    console.log("url = " + url);
-    const response = await fetch(
-      `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${clientID}`
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch data");
-    }
-
-    const data = await response.json();
-    return data.map((item: any) => ({
-      signInTime: item.signInTime,
-      signOutTime: item.signOutTime,
-    }));
-  }
+  const [pointerEventsSignIn, setPointerEventsSignIn] = useState<
+    "auto" | "none"
+  >("auto");
+  const [pointerEventsSignOut, setPointerEventsSignOut] = useState<
+    "auto" | "none"
+  >("auto");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,43 +80,33 @@ const ChooseWhichChildren: React.FC = () => {
             try {
               const urlForSignInAndSignOut = `${backEndCodeURLLocation}SignIn/GetClientSignInSignOutTime?clientID=${item.clientInfo.clientID}`;
               console.log(urlForSignInAndSignOut);
-              const responseForGettingSignInSignOutData = await fetch(urlForSignInAndSignOut, {
+              const responseForGettingSignInSignOutData = await fetch(
+                urlForSignInAndSignOut,
+                {
                   method: "GET",
                   headers: {
-                      Authorization: `Bearer ${token}`,
-                      "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                   },
-              });
+                }
+              );
               if (!responseForGettingSignInSignOutData.ok) {
-                  throw new Error("Network response was not ok");
+                throw new Error("Network response was not ok");
               }
-          
-              const dataForDigitPin: SignInSignOutTime[] = await responseForGettingSignInSignOutData.json();
-          
+
+              const dataForDigitPin: SignInSignOutTime[] =
+                await responseForGettingSignInSignOutData.json();
+
               // Iterate over dataForDigitPin array using for loop
               for (const item of dataForDigitPin) {
-                  setClientClockInClockOutData(prevState => [...prevState, item]);
+                setClientClockInClockOutData((prevState) => [
+                  ...prevState,
+                  item,
+                ]);
               }
-          } catch (error) {
+            } catch (error) {
               console.log("hello");
-          }
-
-            /////////////////////////////////////////////////////
-            // async function fetchData() {
-            //   try {
-            //     const result = await fetchClientSignInSignOutTime(
-
-            //     );
-            //     console.log("results = " + JSON.stringify(result, null, 2));
-            //     setClientClockInClockOutData(result);
-            //   } catch (error) {
-            //     console.error("Error fetching data:", error);
-            //   }
-            // }
-
-            // fetchData();
-
-            // console.log("data = " + clientClockInClockOutData);
+            }
 
             try {
               if (signInTimeResponse !== null) {
@@ -250,16 +216,65 @@ const ChooseWhichChildren: React.FC = () => {
       return null;
     }
   };
+  // useEffect(() => {
+  //   for (const item of childrenInfo) {
+  //     console.log(item);
+  //   }
+  // }, [childrenInfo]);
 
-  const handleDivClick = (childId: number) => {
+  const handleDivClick = (
+    childId: number,
+    isSignIn: string,
+    isSignOut: string,
+    isChecked: boolean
+  ) => {
+    const updatedChildrenInfo = [...childrenInfo]; // Copy the original array to avoid mutating it
+
+    for (let i = 0; i < updatedChildrenInfo.length; i++) {
+      const item = updatedChildrenInfo[i];
+      if (item.childId === childId) {
+        // Update the isChecked property of the specific child
+        updatedChildrenInfo[i] = { ...item, isChecked: !item.isChecked };
+        break; // Once the item is updated, exit the loop
+      }
+    }
+
+    // Use the state updater function to ensure that you're working with the latest state
+    console.log(updatedChildrenInfo);
+
     setChildrenInfo((prevState) => {
       return prevState.map((child) => {
         if (child.childId === childId) {
-          return { ...child, isChecked: !child.isChecked }; // Toggle isChecked for the clicked child
+          return { ...child, isChecked: !child.isChecked };
         }
         return child;
       });
     });
+
+    // for (const item of childrenInfo) {
+    //   console.log(item);
+    // }
+    const isCheckedPresent = updatedChildrenInfo.some(
+      (child) => child.isChecked === true
+    );
+    
+    if (isCheckedPresent === true)
+    {
+      if (isSignIn !== null) {
+        console.log("isSignIn = " + isSignIn);
+        setPointerEventsSignIn((prev) => (prev = "auto"));
+        setPointerEventsSignOut((prev) => (prev = "none"));
+      } else if (isSignIn === null) {
+        console.log("Not signed in");
+        setPointerEventsSignIn((prev) => (prev = "none"));
+        setPointerEventsSignOut((prev) => (prev = "auto"));
+      }
+    }
+    else {
+      setPointerEventsSignIn((prev) => (prev = "auto"));
+        setPointerEventsSignOut((prev) => (prev = "auto"));
+    }
+    
   };
 
   const handleSubmit = async () => {
@@ -362,13 +377,26 @@ const ChooseWhichChildren: React.FC = () => {
         <div
           className="card"
           style={{
-            width: "500px",
+            width: "600px",
             textAlign: "left",
             marginBottom: "20px",
             cursor: "pointer",
+            // pointerEvents: info.signInTimeData !== "" ? pointerEventsSignIn : info.signOutTimeData !== "" ? pointerEventsSignOut : "auto",
+            pointerEvents:
+              info.signInTimeData !== null
+                ? pointerEventsSignIn
+                : pointerEventsSignOut,
+            opacity: "1",
           }}
           key={info.childId}
-          onClick={() => handleDivClick(info.childId)}
+          onClick={() =>
+            handleDivClick(
+              info.childId,
+              info.signInTimeData,
+              info.signOutTimeData,
+              info.isChecked
+            )
+          }
         >
           <div
             className="card-body"
@@ -404,7 +432,6 @@ const ChooseWhichChildren: React.FC = () => {
             </div>
 
             <div style={{ alignItems: "flex-end", marginTop: "8px" }}>
-             
               {clientClockInClockOutData ? (
                 clientClockInClockOutData
                   .filter(
@@ -412,15 +439,14 @@ const ChooseWhichChildren: React.FC = () => {
                   )
                   .map((clockInOutInfo, index) => (
                     <div key={index}>
-
                       {clockInOutInfo.signInTime !== null && (
                         <span style={{ color: "green", fontSize: "20px" }}>
                           &#x1F550; ({clockInOutInfo.signInTime})
                         </span>
                       )}
-                      {clockInOutInfo.signOutTime !== null && (
+                      {clockInOutInfo.signOutTime !== "" && (
                         <span style={{ color: "red", fontSize: "20px" }}>
-                          &#x1F551; ({clockInOutInfo.signOutTime})
+                          -({clockInOutInfo.signOutTime})
                         </span>
                       )}
                       <br />

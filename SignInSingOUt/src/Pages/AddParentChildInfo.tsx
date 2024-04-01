@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./CSS/AddParentChildInfo.css";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 interface ParentInfo {
   firstName: string;
@@ -22,6 +24,8 @@ const AddParentInfo: React.FC = () => {
     lastDigitPhoneNumber: "",
     children: [],
   });
+
+  const [phone, setPhone] = useState("");
 
   const addNewChild = () => {
     setParentInfo((prevInfo) => ({
@@ -103,8 +107,17 @@ const AddParentInfo: React.FC = () => {
                 <label htmlFor="parentPhoneNumber">
                   Last 4 Digit Phone Number
                 </label>
-                <input
-                  type="input"
+                <PhoneInput
+                  defaultCountry="us"
+                  value={phone}
+                  onChange={(phone) => setPhone(phone)}
+                  inputStyle={{
+                    width: "100%",
+                  }}
+                />
+                {/*<input
+                  type="tel"  
+                  pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
                   className="form-control"
                   id="parentPhoneNumber"
                   placeholder="Last 4 Digit Phone Number"
@@ -116,8 +129,9 @@ const AddParentInfo: React.FC = () => {
                     })
                   }
                   required
-                />
+                /> */}
               </div>
+
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPin">4 Digit Pin</label>
                 <input
@@ -160,9 +174,7 @@ const AddParentInfo: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor={`childLastName${index}`}>
-                      Last Name:
-                    </label>
+                    <label htmlFor={`childLastName${index}`}>Last Name:</label>
                     <input
                       type="input"
                       className="form-control"
@@ -183,6 +195,29 @@ const AddParentInfo: React.FC = () => {
             <button type="button" onClick={addNewChild}>
               Add Child
             </button>
+
+            <div className="list-group">
+  <label className="list-group-item">
+    <input className="form-check-input me-1" type="checkbox" value=""/>
+    First checkbox
+  </label>
+  <label className="list-group-item">
+    <input className="form-check-input me-1" type="checkbox" value=""/>
+    Second checkbox
+  </label>
+  <label className="list-group-item">
+    <input className="form-check-input me-1" type="checkbox" value=""/>
+    Third checkbox
+  </label>
+  <label className="list-group-item">
+    <input className="form-check-input me-1" type="checkbox" value=""/>
+    Fourth checkbox
+  </label>
+  <label className="list-group-item">
+    <input className="form-check-input me-1" type="checkbox" value=""/>
+    Fifth checkbox
+  </label>
+</div>
 
             <button type="submit" className="btn btn-primary">
               Submit
