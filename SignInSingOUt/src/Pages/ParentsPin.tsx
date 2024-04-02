@@ -105,8 +105,8 @@ const ParentSignIn: React.FC = () => {
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
           <div>
-            <h4>Enter Last 4 digt Pin</h4>
-            <div>
+            <h3>Enter Last 4 digt Pin</h3>
+            <div style={{marginTop: "15px"}}>
               {[...Array(4)].map((_, index) => (
                 <span
                   key={index}

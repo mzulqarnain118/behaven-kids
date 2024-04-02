@@ -41,6 +41,13 @@ const ChooseWhichChildren: React.FC = () => {
   const [pointerEventsSignOut, setPointerEventsSignOut] = useState<
     "auto" | "none"
   >("auto");
+ 
+  const [boxShadowEventsSignIn, setBoxShadowEventsSignIn] = useState<
+  "0 4px 8px rgba(0, 0, 0, 0.4)" | "0 4px 8px rgba(0, 128, 0, 0.4)"
+>("0 4px 8px rgba(0, 0, 0, 0.4)");
+const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
+  "0 4px 8px rgba(0, 0, 0, 0.4)" | "0 4px 8px rgba(255, 0, 0, 0.4)"
+>("0 4px 8px rgba(0, 0, 0, 0.4)");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,9 +246,6 @@ const ChooseWhichChildren: React.FC = () => {
       }
     }
 
-    // Use the state updater function to ensure that you're working with the latest state
-    console.log(updatedChildrenInfo);
-
     setChildrenInfo((prevState) => {
       return prevState.map((child) => {
         if (child.childId === childId) {
@@ -261,11 +265,10 @@ const ChooseWhichChildren: React.FC = () => {
     if (isCheckedPresent === true)
     {
       if (isSignIn !== null) {
-        console.log("isSignIn = " + isSignIn);
         setPointerEventsSignIn((prev) => (prev = "auto"));
         setPointerEventsSignOut((prev) => (prev = "none"));
+
       } else if (isSignIn === null) {
-        console.log("Not signed in");
         setPointerEventsSignIn((prev) => (prev = "none"));
         setPointerEventsSignOut((prev) => (prev = "auto"));
       }
@@ -273,6 +276,24 @@ const ChooseWhichChildren: React.FC = () => {
     else {
       setPointerEventsSignIn((prev) => (prev = "auto"));
         setPointerEventsSignOut((prev) => (prev = "auto"));
+    }
+
+    for (let i = 0; i < updatedChildrenInfo.length; i++) {
+      const item = updatedChildrenInfo[i];
+      console.log("item.childId = " + item.childId);
+      console.log("item.isChecked = " + item.isChecked);
+      console.log("isSignOut = " + isSignOut);
+      if (item.childId === childId && item.isChecked === true) {
+        if (isSignOut === null)
+        {
+          setBoxShadowEventsSignOut((prev) => (prev = "0 4px 8px rgba(255, 0, 0, 0.4)"))
+          break;
+        }
+        
+      }
+      else {
+        setBoxShadowEventsSignOut((prev) => (prev = "0 4px 8px rgba(0, 0, 0, 0.4)"))
+      }
     }
     
   };
@@ -371,8 +392,10 @@ const ChooseWhichChildren: React.FC = () => {
       <img
         src={BehavenLogo}
         alt="Behaven Logo"
-        style={{ height: "75px", marginBottom: "50px" }}
+        style={{ height: "75px", marginBottom: "25px" }}
       />
+            <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+            <br/>
       {childrenInfo.map((info) => (
         <div
           className="card"
@@ -403,7 +426,9 @@ const ChooseWhichChildren: React.FC = () => {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              border: "solid",
+              boxShadow: info.signInTimeData === null
+              ? boxShadowEventsSignIn
+              : boxShadowEventsSignOut,
             }}
           >
             <div

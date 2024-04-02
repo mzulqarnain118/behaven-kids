@@ -89,13 +89,14 @@ const ParentSignIn: React.FC = () => {
     <>
     
       <div className="ContentComponentBody" id="my_fullscreen">
-      
+
         <div className="CommentDropDown_Grid">
         <img src={BehavenLogo} alt="My Image" style={{height: "75px"}} />
         <br/>
+      
           <div>
-            <h4>Enter Last 4 digt of Phone Number</h4>
-            <div>
+            <h3>Enter Last 4 digt of Phone Number</h3>
+            <div style={{marginTop: "15px"}}>
               {[...Array(4)].map((_, index) => (
                 <span
                   key={index}
