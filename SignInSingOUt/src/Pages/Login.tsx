@@ -54,6 +54,11 @@ const LoginPage: React.FC = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          margin: "0 auto",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
         }}
       >
         <form onSubmit={handleLogin}>
@@ -78,6 +83,7 @@ const LoginPage: React.FC = () => {
                   aria-describedby="basic-addon1"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  required
                 ></input>
               </div>
               <div className="input-group mb-3">
@@ -98,6 +104,7 @@ const LoginPage: React.FC = () => {
                   aria-describedby="basic-addon1"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 ></input>
               </div>
               <button

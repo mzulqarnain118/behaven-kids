@@ -98,6 +98,8 @@ const ParentSignIn: React.FC = () => {
     }
   };
 
+  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, ];
+
   return (
     <>
       <div className="ContentComponentBody" id="my_fullscreen">
@@ -118,66 +120,16 @@ const ParentSignIn: React.FC = () => {
           <br />
           <br />
           <div className="PhoneNumber_Grid">
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("1")}
-            >
-              1
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("2")}
-            >
-              2
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("3")}
-            >
-              3
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("4")}
-            >
-              4
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("5")}
-            >
-              5
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("6")}
-            >
-              6
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("7")}
-            >
-              7
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("8")}
-            >
-              8
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("9")}
-            >
-              9
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("0")}
-            >
-              0
-            </button>
+          {numbers.map((number) => (
+              <button
+                key={number}
+                className="grid-item"
+                onClick={() => InsertPhoneNumber(number.toString())}
+              >
+                {number}
+              </button>
+            ))}
+           
             <button
               className="grid-item"
               style={{

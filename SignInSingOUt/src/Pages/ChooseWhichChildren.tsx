@@ -31,6 +31,7 @@ const ChooseWhichChildren: React.FC = () => {
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didUserCheckAClient, setDidUserCheckAClient] = useState(true);
   const [clientClockInClockOutData, setClientClockInClockOutData] = useState<
     SignInSignOutTime[]
   >([]);
@@ -42,12 +43,8 @@ const ChooseWhichChildren: React.FC = () => {
     "auto" | "none"
   >("auto");
  
-  const [boxShadowEventsSignIn, setBoxShadowEventsSignIn] = useState<
-  "0 4px 8px rgba(0, 0, 0, 0.4)" | "0 4px 8px rgba(0, 128, 0, 0.4)"
->("0 4px 8px rgba(0, 0, 0, 0.4)");
-const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
-  "0 4px 8px rgba(0, 0, 0, 0.4)" | "0 4px 8px rgba(255, 0, 0, 0.4)"
->("0 4px 8px rgba(0, 0, 0, 0.4)");
+  const [boxShadowEventsSignIn, setBoxShadowEventsSignIn] = useState("0 4px 8px rgba(0, 0, 0, 0.4)");
+const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState("0 4px 8px rgba(0, 0, 0, 0.4)");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +109,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
                 ]);
               }
             } catch (error) {
-              console.log("hello");
+              // console.log("hello");
             }
 
             try {
@@ -121,13 +118,13 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
 
                 if (signOutTimeResponse !== null) {
                   try {
-                    console.log("Sign In = " + signInTimeData);
+                    // console.log("Sign In = " + signInTimeData);
 
                     const signOutTimeData = await signOutTimeResponse.json();
-                    console.log("Sign Out = " + signOutTimeData);
+                    // console.log("Sign Out = " + signOutTimeData);
 
                     if (signInTimeData !== null && signOutTimeData != null) {
-                      console.log("hello 1");
+                      // console.log("hello 1");
                       return {
                         childId: item.clientInfo.clientID,
                         ChildFirstName: item.clientInfo.firstName,
@@ -137,7 +134,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
                         signOutTimeData: null,
                       };
                     }
-                    console.log("hello 2");
+                    // console.log("hello 2");
                     return {
                       childId: item.clientInfo.clientID,
                       ChildFirstName: item.clientInfo.firstName,
@@ -147,7 +144,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
                       signOutTimeData: signOutTimeData,
                     };
                   } catch (error) {
-                    console.log("hello 3");
+                    // console.log("hello 3");
                     return {
                       childId: item.clientInfo.clientID,
                       ChildFirstName: item.clientInfo.firstName,
@@ -158,7 +155,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
                     };
                   }
                 }
-                console.log("hello 4");
+                // console.log("hello 4");
                 return {
                   childId: item.clientInfo.clientID,
                   ChildFirstName: item.clientInfo.firstName,
@@ -169,7 +166,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
                 };
               }
             } catch (error) {
-              console.log("hello 5");
+              // console.log("hello 5");
               return {
                 childId: item.clientInfo.clientID,
                 ChildFirstName: item.clientInfo.firstName,
@@ -232,8 +229,8 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
   const handleDivClick = (
     childId: number,
     isSignIn: string,
-    isSignOut: string,
-    isChecked: boolean
+    // isSignOut: string,
+    // isChecked: boolean
   ) => {
     const updatedChildrenInfo = [...childrenInfo]; // Copy the original array to avoid mutating it
 
@@ -264,35 +261,43 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
     
     if (isCheckedPresent === true)
     {
+      setDidUserCheckAClient(false);
       if (isSignIn !== null) {
-        setPointerEventsSignIn((prev) => (prev = "auto"));
-        setPointerEventsSignOut((prev) => (prev = "none"));
+        setPointerEventsSignIn(() => ("auto"));
+        setPointerEventsSignOut(() => ("none"));
 
       } else if (isSignIn === null) {
-        setPointerEventsSignIn((prev) => (prev = "none"));
-        setPointerEventsSignOut((prev) => (prev = "auto"));
+        setPointerEventsSignIn(() => ("none"));
+        setPointerEventsSignOut(() => ("auto"));
       }
     }
     else {
-      setPointerEventsSignIn((prev) => (prev = "auto"));
-        setPointerEventsSignOut((prev) => (prev = "auto"));
+      setDidUserCheckAClient(true);
+      setPointerEventsSignIn(() => ("auto"));
+        setPointerEventsSignOut(() => ("auto"));
     }
 
     for (let i = 0; i < updatedChildrenInfo.length; i++) {
-      const item = updatedChildrenInfo[i];
-      console.log("item.childId = " + item.childId);
-      console.log("item.isChecked = " + item.isChecked);
-      console.log("isSignOut = " + isSignOut);
-      if (item.childId === childId && item.isChecked === true) {
-        if (isSignOut === null)
-        {
-          setBoxShadowEventsSignOut((prev) => (prev = "0 4px 8px rgba(255, 0, 0, 0.4)"))
-          break;
+    
+      if (isCheckedPresent === true)
+      {
+        if (isSignIn !== null) {
+          setBoxShadowEventsSignIn(() => ("0 4px 8px rgba(255, 0, 0, 0.4)"))
+          console.log("hello");
+          
+  
+        } else if (isSignIn === null) {
+          console.log("hello 2");
+          setBoxShadowEventsSignOut(() => ("0 4px 8px rgba(0, 128, 0, 0.4)"))
+          
         }
-        
+        break;
       }
-      else {
-        setBoxShadowEventsSignOut((prev) => (prev = "0 4px 8px rgba(0, 0, 0, 0.4)"))
+      else
+      {
+        console.log("hello 3")
+        setBoxShadowEventsSignIn(() => ( "0 4px 8px rgba(0, 0, 0, 0.4)"))
+        setBoxShadowEventsSignOut(() => ("0 4px 8px rgba(0, 0, 0, 0.4)"))
       }
     }
     
@@ -317,7 +322,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
           console.log("All sign-outs submitted successfully");
         }
       }
-      // navigate("/", { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Error submitting sign-ins:", error);
     } finally {
@@ -413,11 +418,15 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
           }}
           key={info.childId}
           onClick={() =>
+            // handleDivClick(
+            //   info.childId,
+            //   info.signInTimeData,
+            //   info.signOutTimeData,
+            //   info.isChecked
+            // )
             handleDivClick(
               info.childId,
               info.signInTimeData,
-              info.signOutTimeData,
-              info.isChecked
             )
           }
         >
@@ -426,7 +435,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
             style={{
               display: "flex",
               justifyContent: "space-between",
-              boxShadow: info.signInTimeData === null
+              boxShadow: info.signInTimeData !== null
               ? boxShadowEventsSignIn
               : boxShadowEventsSignOut,
             }}
@@ -488,7 +497,7 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState<
       <button
         className="btn btn-primary"
         onClick={handleSubmit}
-        disabled={isSubmitting}
+        disabled={didUserCheckAClient}
       >
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>

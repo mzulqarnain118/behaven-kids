@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
-import { backEndCodeURLLocation } from '../config';
-import BehavenLogo from '../assets/BehavenLogo.jpg';
+import { backEndCodeURLLocation } from "../config";
+import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 
 const ParentSignIn: React.FC = () => {
@@ -20,8 +20,6 @@ const ParentSignIn: React.FC = () => {
       navigate("/", { replace: true });
     }
   });
-
- 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,23 +41,26 @@ const ParentSignIn: React.FC = () => {
           });
 
           if (!response.ok) {
-            
             throw new Error(
               `Failed to fetch data. Response status: ${response.status}`
             );
-
           }
 
           setShowErrorMessage(false);
-          navigate("/ParentsPin", { replace: true, state: { parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber }  });
+          navigate("/ParentsPin", {
+            replace: true,
+            state: {
+              parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+            },
+          });
           // setShow(true);
         } catch (error) {
           setParentLastFourDigitPhoneNumber("");
           setShowErrorMessage(true);
           const timer = setTimeout(() => {
             setShowErrorMessage(false);
-          }, 3000); 
-          () => clearTimeout(timer); 
+          }, 3000);
+          () => clearTimeout(timer);
           setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
           console.error("Error fetching data:", error);
         }
@@ -84,19 +85,17 @@ const ParentSignIn: React.FC = () => {
       setDotsClicked((prevDotsClicked) => prevDotsClicked - 1);
     }
   };
-
+  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, ];
   return (
     <>
-    
       <div className="ContentComponentBody" id="my_fullscreen">
-
         <div className="CommentDropDown_Grid">
-        <img src={BehavenLogo} alt="My Image" style={{height: "75px"}} />
-        <br/>
-      
+          <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
+          <br />
+
           <div>
             <h3>Enter Last 4 digt of Phone Number</h3>
-            <div style={{marginTop: "15px"}}>
+            <div style={{ marginTop: "15px" }}>
               {[...Array(4)].map((_, index) => (
                 <span
                   key={index}
@@ -105,78 +104,36 @@ const ParentSignIn: React.FC = () => {
               ))}
             </div>
           </div>
-        <br/><br/>
+          <br />
+          <br />
           <div className="PhoneNumber_Grid">
+            {numbers.map((number) => (
+              <button
+                key={number}
+                className="grid-item"
+                onClick={() => InsertPhoneNumber(number.toString())}
+              >
+                {number}
+              </button>
+            ))}
+
             <button
               className="grid-item"
-              onClick={() => InsertPhoneNumber("1")}
+              style={{
+                backgroundColor: "white",
+                color: "goldenrod",
+                border: "1px solid black",
+              }}
+              onClick={() => DeletePhoneNumber()}
             >
-              1
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("2")}
-            >
-              2
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("3")}
-            >
-              3
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("4")}
-            >
-              4
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("5")}
-            >
-              5
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("6")}
-            >
-              6
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("7")}
-            >
-              7
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("8")}
-            >
-              8
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("9")}
-            >
-              9
-            </button>
-            <button
-              className="grid-item"
-              onClick={() => InsertPhoneNumber("0")}
-            >
-              0
-            </button>
-            <button className="grid-item" style={{backgroundColor: "white", color: "goldenrod", border: "1px solid black"}} onClick={() => DeletePhoneNumber()}>
               {"\u232B"}
             </button>
           </div>
         </div>
       </div>
-      {showErrorMessage && 
-      <ErrorMessage message={"Couldn't Find Phone Number"} />
-      }
-      
+      {showErrorMessage && (
+        <ErrorMessage message={"Couldn't Find Phone Number"} />
+      )}
     </>
   );
 };
