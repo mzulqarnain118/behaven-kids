@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
+import { backEndCodeURLLocation } from "../config";
 
 interface ParentInfo {
   firstName: string;
   lastName: string;
   pin: string;
-  lastDigitPhoneNumber: string;
+  PhoneNumber: string;
   children: ChildInfo[];
 }
 
 interface ChildInfo {
+  clientID: number;
   firstName: string;
   lastName: string;
+  locationID: string;
 }
 
 const AddParentInfo: React.FC = () => {
@@ -21,18 +24,64 @@ const AddParentInfo: React.FC = () => {
     firstName: "",
     lastName: "",
     pin: "",
-    lastDigitPhoneNumber: "",
+    PhoneNumber: "",
     children: [],
   });
 
+  const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+
   const [phone, setPhone] = useState("");
 
-  const addNewChild = () => {
-    setParentInfo((prevInfo) => ({
-      ...prevInfo,
-      children: [...prevInfo.children, { firstName: "", lastName: "" }],
-    }));
-  };
+  useEffect(() => {
+    console.log(childInfo);
+  }, [childInfo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("Token not found in localStorage");
+          }
+
+          const url = `${backEndCodeURLLocation}SignIn/GetClientInformation`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch data. Response status: ${response.status}`
+            );
+          }
+
+          const data = await response.json();
+
+          
+          setChildInfo(data);
+
+          //   navigate("/", { replace: true });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      
+    };
+
+    fetchData();
+  }, []);
+
+  // const addNewChild = () => {
+  //   setParentInfo((prevInfo) => ({
+  //     ...prevInfo,
+  //     children: [...prevInfo.children, { firstName: "", lastName: "" }],
+  //   }));
+  // };
 
   const handleChildChange = (index: number, key: string, value: string) => {
     setParentInfo((prevInfo) => ({
@@ -192,32 +241,27 @@ const AddParentInfo: React.FC = () => {
               </div>
             ))}
 
-            <button type="button" onClick={addNewChild}>
+            {/* <button type="button" onClick={addNewChild}>
               Add Child
-            </button>
+            </button> */}
 
-            <div className="list-group">
-  <label className="list-group-item">
-    <input className="form-check-input me-1" type="checkbox" value=""/>
-    First checkbox
-  </label>
-  <label className="list-group-item">
-    <input className="form-check-input me-1" type="checkbox" value=""/>
-    Second checkbox
-  </label>
-  <label className="list-group-item">
-    <input className="form-check-input me-1" type="checkbox" value=""/>
-    Third checkbox
-  </label>
-  <label className="list-group-item">
-    <input className="form-check-input me-1" type="checkbox" value=""/>
-    Fourth checkbox
-  </label>
-  <label className="list-group-item">
-    <input className="form-check-input me-1" type="checkbox" value=""/>
-    Fifth checkbox
-  </label>
-</div>
+{childInfo !== null ? (
+  childInfo.map((info, index) => (
+    <label key={index} className="list-group-item">
+      <input
+        className="form-check-input me-1"
+        type="checkbox"
+        value=""
+      />
+      <p>Client ID: {info.clientID}</p>
+      <p>First Name: {info.firstName}</p>
+      <p>Last Name: {info.lastName}</p>
+      <p>Location ID: {info.locationID}</p>
+    </label>
+  ))
+) : (
+  <p>No child information available</p>
+)}
 
             <button type="submit" className="btn btn-primary">
               Submit
