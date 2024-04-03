@@ -3,6 +3,7 @@ import "./CSS/AddParentChildInfo.css";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
+import "./CSS/AddParentChildInfo.css";
 
 interface ParentInfo {
   firstName: string;
@@ -13,6 +14,7 @@ interface ParentInfo {
 }
 
 interface ChildInfo {
+  isChecked: boolean;
   clientID: number;
   firstName: string;
   lastName: string;
@@ -30,7 +32,7 @@ const AddParentInfo: React.FC = () => {
 
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
 
-  const [phone, setPhone] = useState("");
+  const [phone, ] = useState("");
 
   useEffect(() => {
     console.log(childInfo);
@@ -38,39 +40,36 @@ const AddParentInfo: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) {
-            throw new Error("Token not found in localStorage");
-          }
-
-          const url = `${backEndCodeURLLocation}SignIn/GetClientInformation`;
-
-          const response = await fetch(url, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch data. Response status: ${response.status}`
-            );
-          }
-
-          const data = await response.json();
-
-          
-          setChildInfo(data);
-
-          //   navigate("/", { replace: true });
-        } catch (error) {
-          console.error("Error fetching data:", error);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in localStorage");
         }
-      
+
+        const url = `${backEndCodeURLLocation}SignIn/GetClientInformation`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch data. Response status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+
+        setChildInfo(data);
+
+        //   navigate("/", { replace: true });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
@@ -92,10 +91,35 @@ const AddParentInfo: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Parent Info:", parentInfo);
-    // Here you can send the parentInfo to your backend or do whatever you need with it
+    const token = localStorage.getItem("token");
+    try {
+      console.log(`${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber}&fourDigitPin=${parentInfo.pin}`);
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&fourDigitPin=${parentInfo.pin}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            // Add any additional headers if required
+          },
+          body: JSON.stringify({ parentInfo }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error(
+          `Failed to post data for client ID ${parentInfo}:`,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error(`Error posting data for client ID ${parentInfo}:`, error);
+    }
+
   };
 
   return (
@@ -122,7 +146,8 @@ const AddParentInfo: React.FC = () => {
                 <label htmlFor="parentFirstName">First Name</label>
                 <input
                   type="input"
-                  className="form-control parentInputField"
+                  style={{height: "50px", fontSize: "25px"}}
+                  className="form-control"
                   id="parentFirstName"
                   placeholder="First Name"
                   value={parentInfo.firstName}
@@ -132,6 +157,7 @@ const AddParentInfo: React.FC = () => {
                       firstName: e.target.value,
                     })
                   }
+                  // style={{height: "50px", fontSize: "20px"}}
                   required
                 />
               </div>
@@ -159,10 +185,29 @@ const AddParentInfo: React.FC = () => {
                 <PhoneInput
                   defaultCountry="us"
                   value={phone}
-                  onChange={(phone) => setPhone(phone)}
+                  onChange={(e) =>
+                    setParentInfo({
+                      ...parentInfo,
+                      PhoneNumber: e,
+                    })
+                  }
+                  style={
+                    {
+                      // style with css variables or with ".react-international-phone-flag-emoji" class
+                      '--react-international-phone-flag-width': '40px',
+                      '--react-international-phone-flag-height': '40px',
+                      '--react-international-phone-height': '50px',
+                      '--react-international-phone-width': '50px',
+                    } as React.CSSProperties
+                  }
                   inputStyle={{
                     width: "100%",
+                    height: "50px",
+                    fontSize: "25px",
+                    
                   }}
+                  
+                  
                 />
                 {/*<input
                   type="tel"  
@@ -184,7 +229,7 @@ const AddParentInfo: React.FC = () => {
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPin">4 Digit Pin</label>
                 <input
-                  type="input"
+                  type="number"
                   className="form-control"
                   id="parentPin"
                   placeholder="4 Digit Pin"
@@ -244,25 +289,36 @@ const AddParentInfo: React.FC = () => {
             {/* <button type="button" onClick={addNewChild}>
               Add Child
             </button> */}
-
-{childInfo !== null ? (
-  childInfo.map((info, index) => (
-    <label key={index} className="list-group-item">
-      <input
-        className="form-check-input me-1"
-        type="checkbox"
-        value=""
-      />
-      <p>Client ID: {info.clientID}</p>
-      <p>First Name: {info.firstName}</p>
-      <p>Last Name: {info.lastName}</p>
-      <p>Location ID: {info.locationID}</p>
-    </label>
-  ))
-) : (
-  <p>No child information available</p>
-)}
-
+            <div>
+              {childInfo !== null ? (
+                <div className="list-group">
+                  <div className="list-group-item list-group-item-dark d-flex">
+                    <span className="flex-grow-1">Client ID</span>
+                    <span className="flex-grow-1">First Name</span>
+                    <span className="flex-grow-1">Last Name</span>
+                    <span className="flex-grow-1">Location ID</span>
+                  </div>
+                  <div style={{ height: "200px", overflowY: "auto" }}>
+                    {childInfo.map((info, index) => (
+                      <label key={index} className="list-group-item d-flex">
+                        <input
+                          className="form-check-input me-1"
+                          type="checkbox"
+                          value=""
+                        />
+                        <p className="flex-grow-1"> {info.clientID}</p>
+                        <p className="flex-grow-1"> {info.firstName}</p>
+                        <p className="flex-grow-1"> {info.lastName}</p>
+                        <p className="flex-grow-1"> {info.locationID}</p>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p>No child information available</p>
+              )}
+            </div>
+            <br />
             <button type="submit" className="btn btn-primary">
               Submit
             </button>
