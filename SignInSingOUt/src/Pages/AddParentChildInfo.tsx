@@ -82,14 +82,14 @@ const AddParentInfo: React.FC = () => {
   //   }));
   // };
 
-  const handleChildChange = (index: number, key: string, value: string) => {
-    setParentInfo((prevInfo) => ({
-      ...prevInfo,
-      children: prevInfo.children.map((child, i) =>
-        i === index ? { ...child, [key]: value } : child
-      ),
-    }));
-  };
+  // const handleChildChange = (index: number, key: string, value: string) => {
+  //   setParentInfo((prevInfo) => ({
+  //     ...prevInfo,
+  //     children: prevInfo.children.map((child, i) =>
+  //       i === index ? { ...child, [key]: value } : child
+  //     ),
+  //   }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
