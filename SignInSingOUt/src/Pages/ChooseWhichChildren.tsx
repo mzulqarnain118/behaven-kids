@@ -495,7 +495,8 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState("0 4px 8px 
       ))}
 
       <button
-        className="btn btn-primary"
+        className="btn btn-primary btn-lg"
+        style={{width: "150px", height: "75px"}}
         onClick={handleSubmit}
         disabled={didUserCheckAClient}
       >

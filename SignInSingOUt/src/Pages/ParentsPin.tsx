@@ -40,7 +40,7 @@ const ParentSignIn: React.FC = () => {
             throw new Error("Token not found in localStorage");
           }
 
-          const url = `${backEndCodeURLLocation}SignIn/GetParentInfo?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
+          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
 
           const response = await fetch(url, {
             method: "GET",

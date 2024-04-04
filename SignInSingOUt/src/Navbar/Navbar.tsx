@@ -34,6 +34,10 @@ const Navbar: React.FC = () => {
     navigate("/AddParentInfo", { replace: true });
   };
 
+  const GoToConnectParentWithChild = () => {
+    navigate("/ConnectParentAndChildTogeter", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -110,7 +114,7 @@ const Navbar: React.FC = () => {
               id="navbarSupportedContent"
             >
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li className="nav-item" style={{marginRight: "25px"}}>
+              <li className="nav-item" style={{marginRight: "25px"}}>
                   {showAddNewParent ? (
                     <button
                     style={{width: "150px", height: "50px"}}
@@ -118,6 +122,18 @@ const Navbar: React.FC = () => {
                       onClick={GoToAddNewParent}
                     >
                       Add New Parent
+                    </button>
+                  ) : null}
+                </li>
+               
+                <li className="nav-item" style={{marginRight: "25px"}}>
+                  {showAddNewParent ? (
+                    <button
+                    style={{width: "150px", height: "50px"}}
+                      className="btn btn-light"
+                      onClick={GoToConnectParentWithChild}
+                    >
+                      Connect
                     </button>
                   ) : null}
                 </li>

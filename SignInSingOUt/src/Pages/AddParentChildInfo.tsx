@@ -132,7 +132,7 @@ const AddParentInfo: React.FC = () => {
       <div
         className="card"
         style={{
-          width: "1250px",
+          width: "750px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -166,6 +166,7 @@ const AddParentInfo: React.FC = () => {
                 <input
                   type="input"
                   className="form-control"
+                  style={{height: "50px", fontSize: "25px"}}
                   id="parentLastName"
                   placeholder="Last Name"
                   value={parentInfo.lastName}
@@ -209,42 +210,38 @@ const AddParentInfo: React.FC = () => {
                   
                   
                 />
-                {/*<input
-                  type="tel"  
-                  pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                  className="form-control"
-                  id="parentPhoneNumber"
-                  placeholder="Last 4 Digit Phone Number"
-                  value={parentInfo.lastDigitPhoneNumber}
-                  onChange={(e) =>
-                    setParentInfo({
-                      ...parentInfo,
-                      lastDigitPhoneNumber: e.target.value,
-                    })
-                  }
-                  required
-                /> */}
               </div>
 
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPin">4 Digit Pin</label>
                 <input
                   type="number"
+                  maxLength={4} 
+                  style={{height: "50px", fontSize: "25px"}}
                   className="form-control"
                   id="parentPin"
                   placeholder="4 Digit Pin"
                   value={parentInfo.pin}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    let pin = e.target.value;
+                    // Ensure only numbers are entered and limit to 4 digits
+                    pin = pin.replace(/\D/g, '').slice(0, 4);
                     setParentInfo({
                       ...parentInfo,
-                      pin: e.target.value,
+                      pin
                     })
+                  }
+                    
                   }
                   required
                 />
               </div>
+              <br />
+            <button type="submit" className="btn btn-primary btn-lg" >
+              Submit
+            </button>
             </div>
-
+{/* 
             {parentInfo.children.map((child, index) => (
               <div key={index}>
                 <h4>Child {index + 1}</h4>
@@ -284,12 +281,12 @@ const AddParentInfo: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
 
             {/* <button type="button" onClick={addNewChild}>
               Add Child
             </button> */}
-            <div>
+            {/* <div>
               {childInfo !== null ? (
                 <div className="list-group">
                   <div className="list-group-item list-group-item-dark d-flex">
@@ -317,11 +314,8 @@ const AddParentInfo: React.FC = () => {
               ) : (
                 <p>No child information available</p>
               )}
-            </div>
-            <br />
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
+            </div> */}
+            
           </form>
         </div>
       </div>

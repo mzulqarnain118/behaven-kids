@@ -1,6 +1,6 @@
 .parentInfoGridContainer {
     display: grid;
-    grid-template-columns: 350px 350px;
+    grid-template-columns: 550px;
     padding: 20px;
     gap: 30px;
   }
