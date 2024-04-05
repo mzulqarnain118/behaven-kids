@@ -3,7 +3,6 @@ import "./CSS/AddParentChildInfo.css";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
-import { Prev } from "react-bootstrap/esm/PageItem";
 
 interface ParentInfo {
   parentID: number;
@@ -117,18 +116,18 @@ const AddParentInfo: React.FC = () => {
 
     const updatedChildrenInfo = [...childInfo];
     const clientIDs = updatedChildrenInfo
-  .filter(child => child.isChecked) // Filter checked children
-  .map(child => child.clientID); // Extract clientIDs from checked children
-console.log(clientIDs);
+      .filter((child) => child.isChecked) // Filter checked children
+      .map((child) => child.clientID); // Extract clientIDs from checked children
+    console.log(clientIDs);
     console.log(clientIDs);
 
-    for (let i = 0; i < updatedChildrenInfo.length; i++) {
-      const item = updatedChildrenInfo[i];
-      if (item.isChecked === true) {
+    // for (let i = 0; i < updatedChildrenInfo.length; i++) {
+      // const item = updatedChildrenInfo[i];
+      // if (item.isChecked === true) {
         const token = localStorage.getItem("token");
         try {
           const response = await fetch(
-            `${backEndCodeURLLocation}SignIn/ConnectChildWithParent?clientID=${item.clientID}&parentID=${selectedParent}`,
+            `${backEndCodeURLLocation}SignIn/ConnectChildWithParent?parentID=${selectedParent}`,
             {
               method: "POST",
               headers: {
@@ -136,7 +135,7 @@ console.log(clientIDs);
                 "Content-Type": "application/json",
                 // Add any additional headers if required
               },
-              body: JSON.stringify( clientIDs ),
+              body: JSON.stringify(clientIDs),
             }
           );
           if (!response.ok) {
@@ -151,18 +150,16 @@ console.log(clientIDs);
             error
           );
         }
-      }
-    }
+      // }
+    // }
   };
-
 
   const handleParentChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedParentID = e.target.value;
     setSelectedParent(selectedParentID);
-     
-    
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -192,7 +189,7 @@ console.log(clientIDs);
       for (let i = 0; i < updatedChildrenInfo.length; i++) {
         updatedChildrenInfo[i].isChecked = false;
       }
-      
+
       setChildInfo([]);
       for (let i = 0; i < data.length; i++) {
         let getClientID = data[i];
@@ -209,7 +206,7 @@ console.log(clientIDs);
         }
       }
       // setChildInfo(data);
-      setChildInfo(prev => prev = updatedChildrenInfo);
+      setChildInfo(() => (updatedChildrenInfo));
 
       //   navigate("/", { replace: true });
     } catch (error) {
@@ -226,13 +223,6 @@ console.log(clientIDs);
       };
       return updatedChildInfo;
     });
-  };
-
-  const handleDropdownChange = (selectedParent: number) => {
-    // Do something with the selectedParent, such as updating state or making an API call
-    console.log("hello");
-
-    console.log("Selected Parent:", selectedParent);
   };
 
   return (
