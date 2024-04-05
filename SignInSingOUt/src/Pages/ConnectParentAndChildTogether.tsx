@@ -116,7 +116,11 @@ const AddParentInfo: React.FC = () => {
     e.preventDefault();
 
     const updatedChildrenInfo = [...childInfo];
-    console.log(updatedChildrenInfo);
+    const clientIDs = updatedChildrenInfo
+  .filter(child => child.isChecked) // Filter checked children
+  .map(child => child.clientID); // Extract clientIDs from checked children
+console.log(clientIDs);
+    console.log(clientIDs);
 
     for (let i = 0; i < updatedChildrenInfo.length; i++) {
       const item = updatedChildrenInfo[i];
@@ -132,7 +136,7 @@ const AddParentInfo: React.FC = () => {
                 "Content-Type": "application/json",
                 // Add any additional headers if required
               },
-              // body: JSON.stringify({ parentInfo }),
+              body: JSON.stringify( clientIDs ),
             }
           );
           if (!response.ok) {
@@ -150,6 +154,8 @@ const AddParentInfo: React.FC = () => {
       }
     }
   };
+
+
   const handleParentChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -182,12 +188,18 @@ const AddParentInfo: React.FC = () => {
       const data = await response.json();
 
       const updatedChildrenInfo = [...childInfo];
+
+      for (let i = 0; i < updatedChildrenInfo.length; i++) {
+        updatedChildrenInfo[i].isChecked = false;
+      }
+      
       setChildInfo([]);
       for (let i = 0; i < data.length; i++) {
         let getClientID = data[i];
         for (let j = 0; j < updatedChildrenInfo.length; j++) {
           const item = updatedChildrenInfo[j];
           if (getClientID === item.clientID) {
+            console.log("here = " + i);
             item.isChecked = true;
             break; // Break the inner loop since we found a match
           }
@@ -196,7 +208,6 @@ const AddParentInfo: React.FC = () => {
           // }
         }
       }
-
       // setChildInfo(data);
       setChildInfo(prev => prev = updatedChildrenInfo);
 
