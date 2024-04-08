@@ -6,6 +6,7 @@ import ParentsPin from './Pages/ParentsPin'
 import AddParentInfo from './Pages/AddParentChildInfo'
 import ChooseWhichChildren from './Pages/ChooseWhichChildren'
 import ConnectParentAndChildTogeter from './Pages/ConnectParentAndChildTogether'
+import EditChildTime from './Pages/EditChildTime'
 import Login from './Pages/Login'
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
       <Route path='/AddParentInfo' element={<AddParentInfo/>}></Route>
       <Route path='/ChooseWhichChildren' element={<ChooseWhichChildren/>}></Route>
       <Route path='/ConnectParentAndChildTogeter' element={<ConnectParentAndChildTogeter/>}></Route>
+      <Route path='/EditChildTime' element={<EditChildTime/>}></Route>
       </Routes>
     </>
   )

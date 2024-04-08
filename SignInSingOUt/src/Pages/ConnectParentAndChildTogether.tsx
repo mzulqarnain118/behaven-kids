@@ -21,7 +21,6 @@ interface ChildInfo {
 const AddParentInfo: React.FC = () => {
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
-  const [selectedParent, setSelectedParent] = useState<string>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortField, setSortField] = useState<string>("");
@@ -138,8 +137,8 @@ console.log(url);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // e.preventDefault();
+  const handleSubmit = async () => {
+
 
     const selectedChildren = childInfo.filter((child) => child.isChecked);
     const clientIDs = selectedChildren.map((child) => child.clientID);
@@ -168,41 +167,41 @@ console.log(url);
     }
   };
 
-  const handleParentChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedParentID = e.target.value;
-    setSelectedParent(selectedParentID);
+  // const handleParentChange = async (
+  //   e: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const selectedParentID = e.target.value;
+  //   setSelectedParent(selectedParentID);
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token not found in localStorage");
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) throw new Error("Token not found in localStorage");
 
-      const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParentID}`;
+  //     const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParentID}`;
 
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+  //     const response = await fetch(url, {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (!response.ok)
-        throw new Error(
-          `Failed to fetch data. Response status: ${response.status}`
-        );
+  //     if (!response.ok)
+  //       throw new Error(
+  //         `Failed to fetch data. Response status: ${response.status}`
+  //       );
 
-      const data = await response.json();
-      const updatedChildInfo = childInfo.map((child) => ({
-        ...child,
-        isChecked: data.includes(child.clientID),
-      }));
-      setChildInfo(updatedChildInfo);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  //     const data = await response.json();
+  //     const updatedChildInfo = childInfo.map((child) => ({
+  //       ...child,
+  //       isChecked: data.includes(child.clientID),
+  //     }));
+  //     setChildInfo(updatedChildInfo);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   const handleCheckboxChange = (index: number) => {
     setChildInfo((prevState) => {

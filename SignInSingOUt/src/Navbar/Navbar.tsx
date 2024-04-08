@@ -38,6 +38,10 @@ const Navbar: React.FC = () => {
     navigate("/ConnectParentAndChildTogeter", { replace: true });
   };
 
+  const GoToParentSignInSignOut = () => {
+    navigate("/PhoneNumber", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -134,6 +138,17 @@ const Navbar: React.FC = () => {
                       onClick={GoToConnectParentWithChild}
                     >
                       Connect
+                    </button>
+                  ) : null}
+                </li>
+                <li className="nav-item" style={{marginRight: "25px"}}>
+                  {showAddNewParent ? (
+                    <button
+                    style={{width: "175px", height: "50px"}}
+                      className="btn btn-light"
+                      onClick={GoToParentSignInSignOut}
+                    >
+                      Parent Sign In/Out
                     </button>
                   ) : null}
                 </li>

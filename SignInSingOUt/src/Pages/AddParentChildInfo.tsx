@@ -10,6 +10,7 @@ interface ParentInfo {
   lastName: string;
   pin: string;
   PhoneNumber: string;
+  EmailAdress: string;
   children: ChildInfo[];
 }
 
@@ -27,6 +28,7 @@ const AddParentInfo: React.FC = () => {
     lastName: "",
     pin: "",
     PhoneNumber: "",
+    EmailAdress: "",
     children: [],
   });
 
@@ -75,22 +77,6 @@ const AddParentInfo: React.FC = () => {
     fetchData();
   }, []);
 
-  // const addNewChild = () => {
-  //   setParentInfo((prevInfo) => ({
-  //     ...prevInfo,
-  //     children: [...prevInfo.children, { firstName: "", lastName: "" }],
-  //   }));
-  // };
-
-  // const handleChildChange = (index: number, key: string, value: string) => {
-  //   setParentInfo((prevInfo) => ({
-  //     ...prevInfo,
-  //     children: prevInfo.children.map((child, i) =>
-  //       i === index ? { ...child, [key]: value } : child
-  //     ),
-  //   }));
-  // };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Parent Info:", parentInfo);
@@ -98,7 +84,7 @@ const AddParentInfo: React.FC = () => {
     try {
       console.log(`${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber}&fourDigitPin=${parentInfo.pin}`);
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&fourDigitPin=${parentInfo.pin}`,
+        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&fourDigitPin=${parentInfo.pin}&parentEmailAddress=${parentInfo.EmailAdress}`,
         {
           method: "POST",
           headers: {
@@ -179,6 +165,51 @@ const AddParentInfo: React.FC = () => {
                   required
                 />
               </div>
+              
+
+              <div className="form-group parentGridContaineritem">
+                <label htmlFor="parentPin">Email Address</label>
+                <input
+                  type="email"
+                  style={{height: "50px", fontSize: "25px"}}
+                  className="form-control"
+                  id="parentPin"
+                  placeholder="Email Address"
+                  value={parentInfo.EmailAdress}
+                  onChange={(e) =>
+                    setParentInfo({
+                      ...parentInfo,
+                      EmailAdress: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group parentGridContaineritem">
+                <label htmlFor="parentPin">4 Digit Pin</label>
+                <input
+                  type="number"
+                  maxLength={4} 
+                  style={{height: "50px", fontSize: "25px"}}
+                  className="form-control"
+                  id="parentPin"
+                  placeholder="4 Digit Pin"
+                  value={parentInfo.pin}
+                  onChange={(e) => {
+                    let pin = e.target.value;
+                    // Ensure only numbers are entered and limit to 4 digits
+                    pin = pin.replace(/\D/g, '').slice(0, 4);
+                    setParentInfo({
+                      ...parentInfo,
+                      pin
+                    })
+                  }
+                    
+                  }
+                  required
+                />
+              </div>
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPhoneNumber">
                   Last 4 Digit Phone Number
@@ -211,110 +242,11 @@ const AddParentInfo: React.FC = () => {
                   
                 />
               </div>
-
-              <div className="form-group parentGridContaineritem">
-                <label htmlFor="parentPin">4 Digit Pin</label>
-                <input
-                  type="number"
-                  maxLength={4} 
-                  style={{height: "50px", fontSize: "25px"}}
-                  className="form-control"
-                  id="parentPin"
-                  placeholder="4 Digit Pin"
-                  value={parentInfo.pin}
-                  onChange={(e) => {
-                    let pin = e.target.value;
-                    // Ensure only numbers are entered and limit to 4 digits
-                    pin = pin.replace(/\D/g, '').slice(0, 4);
-                    setParentInfo({
-                      ...parentInfo,
-                      pin
-                    })
-                  }
-                    
-                  }
-                  required
-                />
-              </div>
               <br />
             <button type="submit" className="btn btn-primary btn-lg" >
               Submit
             </button>
             </div>
-{/* 
-            {parentInfo.children.map((child, index) => (
-              <div key={index}>
-                <h4>Child {index + 1}</h4>
-                <div className="parentInfoGridContainer">
-                  <div className="form-group parentGridContaineritem">
-                    <label htmlFor={`childFirstName${index}`}>
-                      First Name:
-                    </label>
-                    <input
-                      type="input"
-                      className="form-control"
-                      id={`childFirstName${index}`}
-                      name={`childFirstName${index}`}
-                      value={child.firstName}
-                      onChange={(e) =>
-                        handleChildChange(index, "firstName", e.target.value)
-                      }
-                      placeholder="First Name"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor={`childLastName${index}`}>Last Name:</label>
-                    <input
-                      type="input"
-                      className="form-control"
-                      id={`childLastName${index}`}
-                      name={`childLastName${index}`}
-                      value={child.lastName}
-                      onChange={(e) =>
-                        handleChildChange(index, "lastName", e.target.value)
-                      }
-                      placeholder="Last Name"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-            ))} */}
-
-            {/* <button type="button" onClick={addNewChild}>
-              Add Child
-            </button> */}
-            {/* <div>
-              {childInfo !== null ? (
-                <div className="list-group">
-                  <div className="list-group-item list-group-item-dark d-flex">
-                    <span className="flex-grow-1">Client ID</span>
-                    <span className="flex-grow-1">First Name</span>
-                    <span className="flex-grow-1">Last Name</span>
-                    <span className="flex-grow-1">Location ID</span>
-                  </div>
-                  <div style={{ height: "200px", overflowY: "auto" }}>
-                    {childInfo.map((info, index) => (
-                      <label key={index} className="list-group-item d-flex">
-                        <input
-                          className="form-check-input me-1"
-                          type="checkbox"
-                          value=""
-                        />
-                        <p className="flex-grow-1"> {info.clientID}</p>
-                        <p className="flex-grow-1"> {info.firstName}</p>
-                        <p className="flex-grow-1"> {info.lastName}</p>
-                        <p className="flex-grow-1"> {info.locationID}</p>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p>No child information available</p>
-              )}
-            </div> */}
             
           </form>
         </div>
