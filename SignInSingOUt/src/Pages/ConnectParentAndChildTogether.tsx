@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
-import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
-import "./CSS/AddParentChildInfo.css";
+import Select from "react-select";
 
 interface ParentInfo {
   parentID: number;
@@ -20,65 +19,95 @@ interface ChildInfo {
 }
 
 const AddParentInfo: React.FC = () => {
-  //   const [parentInfo, setParentInfo] = useState<ParentInfo>({
-  //     parentID: 0,
-  //     firstName: "",
-  //     lastName: "",
-  //     children: [],
-  //   });
-
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
   const [selectedParent, setSelectedParent] = useState<string>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortField, setSortField] = useState<string>("");
+
+  const options = parentInfo.map((parent) => ({
+    value: parent.parentID,
+    label: `${parent.parentFirstName} ${parent.parentLastName}`,
+  }));
+  const [selectedParent2, setSelectedParent2] = useState<{
+    value: number;
+    label: string;
+  } | null>(null);
 
   useEffect(() => {
-    // console.log(childInfo);
-  }, [childInfo]);
-
-  useEffect(() => {
-    const fetchParentData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Token not found in localStorage");
-        }
-
-        const url = `${backEndCodeURLLocation}SignIn/GetParentInfo`;
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch data. Response status: ${response.status}`
-          );
-        }
-
-        const data = await response.json();
-
-        // console.log(data);
-        setParentInfo(data);
-
-        //   navigate("/", { replace: true });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchParentData();
+    fetchChildData();
   }, []);
+
+  useEffect(() => {
+    handleParentChange2();
+
+  }, [selectedParent2]);
+
+  const handleParentChange2 = async () => {
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found in localStorage");
+
+      const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParent2?.value}`;
+console.log(url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok)
+        throw new Error(
+          `Failed to fetch data. Response status: ${response.status}`
+        );
+
+      const data = await response.json();
+      const updatedChildInfo = childInfo.map((child) => ({
+        ...child,
+        isChecked: data.includes(child.clientID),
+      }));
+      setChildInfo(updatedChildInfo);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchParentData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found in localStorage");
+
+      const url = `${backEndCodeURLLocation}SignIn/GetParentInfo`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok)
+        throw new Error(
+          `Failed to fetch data. Response status: ${response.status}`
+        );
+
+      const data = await response.json();
+      setParentInfo(data);
+    } catch (error) {
+      console.error("Error fetching parent data:", error);
+    }
+  };
 
   const fetchChildData = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found in localStorage");
-      }
+      if (!token) throw new Error("Token not found in localStorage");
 
       const url = `${backEndCodeURLLocation}SignIn/GetClientInformation`;
 
@@ -90,68 +119,53 @@ const AddParentInfo: React.FC = () => {
         },
       });
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(
           `Failed to fetch data. Response status: ${response.status}`
         );
-      }
 
-      const data = await response.json();
+      const data: ChildInfo[] = await response.json();
 
-      setChildInfo(data);
+      // Sort the data by clientFirstName before setting it into the state variable
+      const sortedData = data.sort((a, b) => {
+        // Adjust the sorting logic according to your requirements
+        return a.clientFirstName.localeCompare(b.clientFirstName);
+      });
 
-      //   navigate("/", { replace: true });
+      setChildInfo(sortedData);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching child data:", error);
     }
   };
 
-  useEffect(() => {
-    fetchChildData();
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(selectedParent);
-    e.preventDefault();
+    // e.preventDefault();
 
-    const updatedChildrenInfo = [...childInfo];
-    const clientIDs = updatedChildrenInfo
-      .filter((child) => child.isChecked) // Filter checked children
-      .map((child) => child.clientID); // Extract clientIDs from checked children
-    console.log(clientIDs);
-    console.log(clientIDs);
+    const selectedChildren = childInfo.filter((child) => child.isChecked);
+    const clientIDs = selectedChildren.map((child) => child.clientID);
 
-    // for (let i = 0; i < updatedChildrenInfo.length; i++) {
-      // const item = updatedChildrenInfo[i];
-      // if (item.isChecked === true) {
-        const token = localStorage.getItem("token");
-        try {
-          const response = await fetch(
-            `${backEndCodeURLLocation}SignIn/ConnectChildWithParent?parentID=${selectedParent}`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-                // Add any additional headers if required
-              },
-              body: JSON.stringify(clientIDs),
-            }
-          );
-          if (!response.ok) {
-            console.error(
-              `Failed to post data for client ID ${parentInfo}:`,
-              response.statusText
-            );
-          }
-        } catch (error) {
-          console.error(
-            `Error posting data for client ID ${parentInfo}:`,
-            error
-          );
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/ConnectChildWithParent?parentID=${selectedParent2?.value}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(clientIDs),
         }
-      // }
-    // }
+      );
+      if (!response.ok) {
+        console.error(
+          `Failed to post data for client ID ${parentInfo}:`,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error(`Error posting data for client ID ${parentInfo}:`, error);
+    }
   };
 
   const handleParentChange = async (
@@ -162,9 +176,7 @@ const AddParentInfo: React.FC = () => {
 
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found in localStorage");
-      }
+      if (!token) throw new Error("Token not found in localStorage");
 
       const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParentID}`;
 
@@ -176,39 +188,17 @@ const AddParentInfo: React.FC = () => {
         },
       });
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(
           `Failed to fetch data. Response status: ${response.status}`
         );
-      }
 
       const data = await response.json();
-
-      const updatedChildrenInfo = [...childInfo];
-
-      for (let i = 0; i < updatedChildrenInfo.length; i++) {
-        updatedChildrenInfo[i].isChecked = false;
-      }
-
-      setChildInfo([]);
-      for (let i = 0; i < data.length; i++) {
-        let getClientID = data[i];
-        for (let j = 0; j < updatedChildrenInfo.length; j++) {
-          const item = updatedChildrenInfo[j];
-          if (getClientID === item.clientID) {
-            console.log("here = " + i);
-            item.isChecked = true;
-            break; // Break the inner loop since we found a match
-          }
-          // else {
-          //   item.isChecked = false;
-          // }
-        }
-      }
-      // setChildInfo(data);
-      setChildInfo(() => (updatedChildrenInfo));
-
-      //   navigate("/", { replace: true });
+      const updatedChildInfo = childInfo.map((child) => ({
+        ...child,
+        isChecked: data.includes(child.clientID),
+      }));
+      setChildInfo(updatedChildInfo);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -225,13 +215,37 @@ const AddParentInfo: React.FC = () => {
     });
   };
 
+  // Function to filter childInfo based on search query
+  const filteredChildInfo = childInfo.filter((child) =>
+    `${child.clientFirstName} ${child.clientLastName}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
+  // Function to filter childInfo based on search query
+
+  // Function to sort childInfo based on sortField and sortOrder
+  const sortedChildInfo = [...filteredChildInfo].sort((a, b) => {
+    const fieldValueA = a[sortField as keyof ChildInfo];
+    const fieldValueB = b[sortField as keyof ChildInfo];
+
+    if (fieldValueA > fieldValueB) return sortOrder === "asc" ? -1 : 1;
+    if (fieldValueA < fieldValueB) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: "center" }}>
       <div
         className="card"
         style={{
@@ -247,46 +261,80 @@ const AddParentInfo: React.FC = () => {
             <div className="parentInfoGridContainer">
               <div>
                 <label>Select Parent:</label>
-                <select value={selectedParent} onChange={handleParentChange}>
-                  <option value="">Select Parent</option>
-                  {parentInfo.map((parent) => (
-                    <option key={parent.parentID} value={parent.parentID}>
-                      {parent.parentFirstName} {parent.parentLastName}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <Select options={options} onChange={setSelectedParent2} />
+                </div>
               </div>
               <div>
-                {childInfo !== null ? (
-                  <div className="list-group">
-                    <div className="list-group-item list-group-item-dark d-flex">
-                      <span className="flex-grow-1">Client ID</span>
-                      <span className="flex-grow-1">First Name</span>
-                      <span className="flex-grow-1">Last Name</span>
-                      <span className="flex-grow-1">Location ID</span>
-                    </div>
-                    <div style={{ height: "200px", overflowY: "auto" }}>
-                      {childInfo.map((info, index) => (
-                        <label key={index} className="list-group-item d-flex">
-                          <input
-                            className="form-check-input me-1"
-                            type="checkbox"
-                            value=""
-                            checked={info.isChecked}
-                            onChange={() => handleCheckboxChange(index)}
-                          />
-                          <p className="flex-grow-1"> {info.clientID}</p>
-                          <p className="flex-grow-1"> {info.clientFirstName}</p>
-                          <p className="flex-grow-1"> {info.clientLastName}</p>
-                          <p className="flex-grow-1"> {info.locationID}</p>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <p>No child information available</p>
-                )}
+                <label>Search Children By Name:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
+              <div>
+      {filteredChildInfo.length > 0 ? (
+        <div className="list-group">
+          <div className="list-group-item list-group-item-dark d-flex">
+            <span className="flex-grow-1"></span>
+            <span className="flex-grow-1">
+              First Name
+              <button
+                className="btn btn-link"
+                onClick={() => handleSort("clientFirstName")}
+              >
+                &#8645;
+              </button>
+            </span>
+
+            <span className="flex-grow-1">
+              Last Name
+              <button
+                className="btn btn-link"
+                onClick={() => handleSort("clientLastName")}
+              >
+                &#8645;
+              </button>
+            </span>
+            <span className="flex-grow-1">
+              Location ID
+              <button
+                className="btn btn-link"
+                onClick={() => handleSort("locationID")}
+              >
+                &#8645;
+              </button>
+            </span>
+          </div>
+          <div style={{ height: "200px", overflowY: "auto" }}>
+            {sortedChildInfo.map((info, index) => (
+              <div key={index} className="list-group-item d-flex">
+                <input
+                  className="form-check-input me-1"
+                  type="checkbox"
+                  value=""
+                  checked={info.isChecked}
+                  onChange={() => handleCheckboxChange(index)}
+                />
+                <div className="flex-grow-1" style={{marginLeft: "20px", width: "100%" }}>
+                  {info.clientFirstName}
+                </div>
+                <div className="flex-grow-1" style={{marginLeft: "10px", width: "100%" }}>
+                  {info.clientLastName}
+                </div>
+                <div className="flex-grow-1" style={{ width: "100%" }}>
+                  {info.locationID}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p>No child information available</p>
+      )}
+    </div>
               <button type="submit" className="btn btn-primary btn-lg">
                 Submit
               </button>
