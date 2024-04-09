@@ -41,17 +41,15 @@ const AddParentInfo: React.FC = () => {
 
   useEffect(() => {
     handleParentChange2();
-
   }, [selectedParent2]);
 
   const handleParentChange2 = async () => {
-
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found in localStorage");
 
       const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParent2?.value}`;
-console.log(url);
+      console.log(url);
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -138,8 +136,6 @@ console.log(url);
   };
 
   const handleSubmit = async () => {
-
-
     const selectedChildren = childInfo.filter((child) => child.isChecked);
     const clientIDs = selectedChildren.map((child) => child.clientID);
 
@@ -166,42 +162,6 @@ console.log(url);
       console.error(`Error posting data for client ID ${parentInfo}:`, error);
     }
   };
-
-  // const handleParentChange = async (
-  //   e: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedParentID = e.target.value;
-  //   setSelectedParent(selectedParentID);
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) throw new Error("Token not found in localStorage");
-
-  //     const url = `${backEndCodeURLLocation}SignIn/GetAlreadyConnectedParentWithChild?parentID=${selectedParentID}`;
-
-  //     const response = await fetch(url, {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!response.ok)
-  //       throw new Error(
-  //         `Failed to fetch data. Response status: ${response.status}`
-  //       );
-
-  //     const data = await response.json();
-  //     const updatedChildInfo = childInfo.map((child) => ({
-  //       ...child,
-  //       isChecked: data.includes(child.clientID),
-  //     }));
-  //     setChildInfo(updatedChildInfo);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
 
   const handleCheckboxChange = (index: number) => {
     setChildInfo((prevState) => {
@@ -242,7 +202,6 @@ console.log(url);
     return 0;
   });
 
-
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <div
@@ -274,66 +233,75 @@ console.log(url);
                 />
               </div>
               <div>
-      {filteredChildInfo.length > 0 ? (
-        <div className="list-group">
-          <div className="list-group-item list-group-item-dark d-flex">
-            <span className="flex-grow-1"></span>
-            <span className="flex-grow-1">
-              First Name
-              <button
-                className="btn btn-link"
-                onClick={() => handleSort("clientFirstName")}
-              >
-                &#8645;
-              </button>
-            </span>
+                {filteredChildInfo.length > 0 ? (
+                  <div className="list-group">
+                    <div className="list-group-item list-group-item-dark d-flex">
+                      <span className="flex-grow-1"></span>
+                      <span className="flex-grow-1">
+                        First Name
+                        <button
+                          className="btn btn-link"
+                          onClick={() => handleSort("clientFirstName")}
+                        >
+                          &#8645;
+                        </button>
+                      </span>
 
-            <span className="flex-grow-1">
-              Last Name
-              <button
-                className="btn btn-link"
-                onClick={() => handleSort("clientLastName")}
-              >
-                &#8645;
-              </button>
-            </span>
-            <span className="flex-grow-1">
-              Location ID
-              <button
-                className="btn btn-link"
-                onClick={() => handleSort("locationID")}
-              >
-                &#8645;
-              </button>
-            </span>
-          </div>
-          <div style={{ height: "200px", overflowY: "auto" }}>
-            {sortedChildInfo.map((info, index) => (
-              <div key={index} className="list-group-item d-flex">
-                <input
-                  className="form-check-input me-1"
-                  type="checkbox"
-                  value=""
-                  checked={info.isChecked}
-                  onChange={() => handleCheckboxChange(index)}
-                />
-                <div className="flex-grow-1" style={{marginLeft: "20px", width: "100%" }}>
-                  {info.clientFirstName}
-                </div>
-                <div className="flex-grow-1" style={{marginLeft: "10px", width: "100%" }}>
-                  {info.clientLastName}
-                </div>
-                <div className="flex-grow-1" style={{ width: "100%" }}>
-                  {info.locationID}
-                </div>
+                      <span className="flex-grow-1">
+                        Last Name
+                        <button
+                          className="btn btn-link"
+                          onClick={() => handleSort("clientLastName")}
+                        >
+                          &#8645;
+                        </button>
+                      </span>
+                      <span className="flex-grow-1">
+                        Location ID
+                        <button
+                          className="btn btn-link"
+                          onClick={() => handleSort("locationID")}
+                        >
+                          &#8645;
+                        </button>
+                      </span>
+                    </div>
+                    <div style={{ height: "200px", overflowY: "auto" }}>
+                      {sortedChildInfo.map((info, index) => (
+                        <div key={index} className="list-group-item d-flex">
+                          <input
+                            className="form-check-input me-1"
+                            type="checkbox"
+                            value=""
+                            checked={info.isChecked}
+                            onChange={() => handleCheckboxChange(index)}
+                          />
+                          <div
+                            className="flex-grow-1"
+                            style={{ marginLeft: "20px", width: "100%" }}
+                          >
+                            {info.clientFirstName}
+                          </div>
+                          <div
+                            className="flex-grow-1"
+                            style={{ marginLeft: "10px", width: "100%" }}
+                          >
+                            {info.clientLastName}
+                          </div>
+                          <div
+                            className="flex-grow-1"
+                            style={{ width: "100%" }}
+                          >
+                            {info.locationID}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p>No child information available</p>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <p>No child information available</p>
-      )}
-    </div>
               <button type="submit" className="btn btn-primary btn-lg">
                 Submit
               </button>

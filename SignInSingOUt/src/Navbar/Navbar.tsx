@@ -42,6 +42,10 @@ const Navbar: React.FC = () => {
     navigate("/PhoneNumber", { replace: true });
   };
 
+  const EditClientSignInSignOutTime = () => {
+    navigate("/EditChildTime", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -126,6 +130,18 @@ const Navbar: React.FC = () => {
                       onClick={GoToAddNewParent}
                     >
                       Add New Parent
+                    </button>
+                  ) : null}
+                </li>
+
+                <li className="nav-item" style={{marginRight: "25px"}}>
+                  {showAddNewParent ? (
+                    <button
+                    style={{width: "200px", height: "50px"}}
+                      className="btn btn-light"
+                      onClick={EditClientSignInSignOutTime}
+                    >
+                      Edit Sign in/out Time
                     </button>
                   ) : null}
                 </li>
