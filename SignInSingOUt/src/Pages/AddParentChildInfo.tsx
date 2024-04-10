@@ -78,19 +78,17 @@ const AddParentInfo: React.FC = () => {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    // e.preventDefault();
     console.log("Parent Info:", parentInfo);
     const token = localStorage.getItem("token");
     try {
-      console.log(`${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber}&fourDigitPin=${parentInfo.pin}`);
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&fourDigitPin=${parentInfo.pin}&parentEmailAddress=${parentInfo.EmailAdress}`,
+        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            // Add any additional headers if required
           },
           body: JSON.stringify({ parentInfo }),
         }
@@ -186,7 +184,7 @@ const AddParentInfo: React.FC = () => {
                 />
               </div>
 
-              <div className="form-group parentGridContaineritem">
+              {/* <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPin">4 Digit Pin</label>
                 <input
                   type="number"
@@ -208,8 +206,9 @@ const AddParentInfo: React.FC = () => {
                     
                   }
                   required
+                  disabled={true}
                 />
-              </div>
+              </div> */}
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPhoneNumber">
                   Last 4 Digit Phone Number

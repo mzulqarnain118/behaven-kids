@@ -6,7 +6,7 @@ import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 
-const ParentSignIn: React.FC = () => {
+const ValidateTemporaryPin: React.FC = () => {
   const location = useLocation();
   const parentLastFourDigitPhoneNumber =
     location.state?.parentLastFourDigitPhoneNumber;
@@ -20,20 +20,20 @@ const ParentSignIn: React.FC = () => {
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/", { replace: true });
-    }
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     navigate("/", { replace: true });
+  //   }
 
-    if (parentLastFourDigitPhoneNumber === undefined) {
-      navigate("/", { replace: true });
-    }
-  });
+  //   if (parentLastFourDigitPhoneNumber === undefined) {
+  //     navigate("/", { replace: true });
+  //   }
+  // });
 
   useEffect(() => {
     const fetchData = async () => {
-      if (parentFourDigitPin.length >= 4) {
+      if (parentFourDigitPin.length >= 5) {
         try {
           const token = localStorage.getItem("token");
           if (!token) {
@@ -85,8 +85,8 @@ const ParentSignIn: React.FC = () => {
 
   const InsertPhoneNumber = async (value: string) => {
     setParentFourDigitPin((prevValue) => prevValue + value);
-
-    if (dotsClicked < 4) {
+console.log("testing " + parentFourDigitPin);
+    if (dotsClicked < 5) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
   };
@@ -112,9 +112,9 @@ const ParentSignIn: React.FC = () => {
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
           <div>
-            <h3>Enter Last 4 digt Pin</h3>
+            <h3>Enter Your 5 Digit Security Pin To Reset Pin</h3>
             <div style={{ marginTop: "15px" }}>
-              {[...Array(4)].map((_, index) => (
+              {[...Array(5)].map((_, index) => (
                 <span
                   key={index}
                   className={`dot ${index < dotsClicked ? "dot-clicked" : ""}`}
@@ -147,26 +147,14 @@ const ParentSignIn: React.FC = () => {
               {"\u232B"}
             </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-outline-dark"
-            style={{
-              backgroundColor: "white",
-              color: "goldenrod",
-              fontSize: "20px",
-            }}
-            onClick={GoToForgotPinPage}
-          >
-            Forgot Pin?
-          </button>
         </div>
         {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
         {showErrorMessage && (
-          <ErrorMessage message={"Couldn't Find Pin Number"} />
+          <ErrorMessage message={"Incorrect 5 Digit Pin"} />
         )}
       </div>
     </>
   );
 };
 
-export default ParentSignIn;
+export default ValidateTemporaryPin;

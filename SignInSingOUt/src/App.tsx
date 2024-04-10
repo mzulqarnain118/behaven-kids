@@ -8,6 +8,9 @@ import ChooseWhichChildren from './Pages/ChooseWhichChildren'
 import ConnectParentAndChildTogeter from './Pages/ConnectParentAndChildTogether'
 import EditChildTime from './Pages/EditChildTime'
 import Login from './Pages/Login'
+import ValidateEmailAddress from './Pages/ValidateEmailAddress'
+import ValidateTemporaryPin from './Pages/ValidateTemporaryPin'
+import ResetPin from './Pages/ResetPin'
 
 const App: React.FC = () => {
   return (
@@ -21,6 +24,9 @@ const App: React.FC = () => {
       <Route path='/ChooseWhichChildren' element={<ChooseWhichChildren/>}></Route>
       <Route path='/ConnectParentAndChildTogeter' element={<ConnectParentAndChildTogeter/>}></Route>
       <Route path='/EditChildTime' element={<EditChildTime/>}></Route>
+      <Route path='/ValidateEmailAddress' element={<ValidateEmailAddress/>}></Route>
+      <Route path='/ValidateTemporaryPin' element={<ValidateTemporaryPin/>}></Route>
+      <Route path='/ResetPin' element={<ResetPin/>}></Route>
       </Routes>
     </>
   )

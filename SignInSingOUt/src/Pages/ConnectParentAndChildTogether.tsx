@@ -40,10 +40,12 @@ const AddParentInfo: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    handleParentChange2();
+    if (selectedParent2) {
+    handleParentChange();
+    }
   }, [selectedParent2]);
 
-  const handleParentChange2 = async () => {
+  const handleParentChange = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found in localStorage");
@@ -164,6 +166,7 @@ const AddParentInfo: React.FC = () => {
   };
 
   const handleCheckboxChange = (index: number) => {
+    console.log("here");
     setChildInfo((prevState) => {
       const updatedChildInfo = [...prevState];
       updatedChildInfo[index] = {
@@ -182,6 +185,7 @@ const AddParentInfo: React.FC = () => {
   );
 
   const handleSort = (field: string) => {
+    
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
@@ -268,7 +272,7 @@ const AddParentInfo: React.FC = () => {
                     </div>
                     <div style={{ height: "200px", overflowY: "auto" }}>
                       {sortedChildInfo.map((info, index) => (
-                        <div key={index} className="list-group-item d-flex">
+                        <div key={info.clientID} className="list-group-item d-flex">
                           <input
                             className="form-check-input me-1"
                             type="checkbox"
