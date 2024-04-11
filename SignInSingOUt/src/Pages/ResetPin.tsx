@@ -10,9 +10,10 @@ const ResetPin: React.FC = () => {
   const location = useLocation();
   const parentLastFourDigitPhoneNumber =
     location.state?.parentLastFourDigitPhoneNumber;
-  console.log(parentLastFourDigitPhoneNumber);
+
   const [parentPersonalPin, setParentPersonalPin] = useState<string>("");
   const [reParentPersonalPin, setReParentPersonalPin] = useState<string>("");
+  const [parentID, ] = useState<string>(location.state?.parentID);
   const [canUserResetPin, setCanUserResetPin] = useState<boolean>(false);
 
   const [, setParentName] = useState<string>("");
@@ -33,13 +34,12 @@ const ResetPin: React.FC = () => {
   //     navigate("/", { replace: true });
   //   }
   // });
-
+console.log("parentID = " + parentID);
   useEffect(() => {
     const fetchData = async () => {
       if (reParentPersonalPin.length >= 4) {
-        if (parentPersonalPin === reParentPersonalPin) {
-          console.log("same");
-        } else {
+
+        if (parentPersonalPin !== reParentPersonalPin) {
           console.log("Not same");
           setCanUserResetPin(false);
           setParentPersonalPin("");
@@ -54,18 +54,15 @@ const ResetPin: React.FC = () => {
             () => clearTimeout(timer);
 
           return;
-        }
+        } 
 
         try {
           const token = localStorage.getItem("token");
           if (!token) {
             throw new Error("Token not found in localStorage");
           }
-
-          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentPersonalPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
-
-          const response = await fetch(url, {
-            method: "GET",
+          const response = await fetch(`${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${parentID}&parentNewPinNumber=${reParentPersonalPin}`, {
+            method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
@@ -76,19 +73,13 @@ const ResetPin: React.FC = () => {
             throw new Error(
               `Failed to fetch data. Response status: ${response.status}`
             );
+            
           }
 
-          const data = await response.json();
 
-          setParentName(data.parentFirstName);
-          setShowErrorMessage(false);
-          console.log("parentFourDigitPin = " + parentPersonalPin);
-          navigate("/ChooseWhichChildren", {
+          navigate("/PhoneNumber", {
             replace: true,
-            state: { parentFourDigitPin: parentPersonalPin },
           });
-          setShow(true);
-          //   navigate("/", { replace: true });
         } catch (error) {
           setParentPersonalPin("");
           setShowErrorMessage(true);

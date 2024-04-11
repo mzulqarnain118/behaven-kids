@@ -100,7 +100,10 @@ const ParentSignIn: React.FC = () => {
   };
 
   const GoToForgotPinPage = () => {
-    navigate("/ResetPin", { replace: true });
+    navigate("/ValidateEmailAddress", { replace: true,
+      state: {
+        parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+      }, });
   };
 
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];

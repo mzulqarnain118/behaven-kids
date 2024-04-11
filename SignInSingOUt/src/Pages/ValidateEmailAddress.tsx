@@ -8,16 +8,20 @@ import ErrorMessage from "../Components/ErrorMessage";
 
 const ValidateEmailAddress: React.FC = () => {
   const location = useLocation();
-  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [showErrorMessage, ] = useState<boolean>(false);
   const [parentsEmailAddress, setParentsEmailAddress] = useState<string>("");
+  const [parentLastFourDigitPhoneNumber, ] = useState<string>(location.state?.parentLastFourDigitPhoneNumber);
 
-  const parentLastFourDigitPhoneNumber =
-  location.state?.parentLastFourDigitPhoneNumber;
   const navigate = useNavigate();
-  const handleSubmit = async () => {
 
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const token = localStorage.getItem("token");
     try {
+      console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber);
+      console.log("parentsEmailAddress = " + parentsEmailAddress);
+
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/SendAnEmail?parentPhoneNumber=${parentLastFourDigitPhoneNumber}&parentEmailAddress=${parentsEmailAddress}`,
         {
@@ -33,8 +37,11 @@ const ValidateEmailAddress: React.FC = () => {
           `Error:`,
           response.statusText
         );
+        return;
       }
-      navigate("/", { replace: true });
+      navigate("/ValidateTemporaryPin", { replace: true, state: {
+        parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+      }, });
     } catch (error) {
       console.error(`Error:`, error);
     }
@@ -45,8 +52,8 @@ const ValidateEmailAddress: React.FC = () => {
       <div className="CommentDropDown_Grid">
         <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
         <br />
-        <form>
-        <p style={{ fontSize: "20px" }} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+        <p style={{ fontSize: "20px" }} >
           Please enter your account email to retrive your Pin
         </p>
 

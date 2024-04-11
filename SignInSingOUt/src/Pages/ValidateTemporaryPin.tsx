@@ -8,9 +8,6 @@ import ErrorMessage from "../Components/ErrorMessage";
 
 const ValidateTemporaryPin: React.FC = () => {
   const location = useLocation();
-  const parentLastFourDigitPhoneNumber =
-    location.state?.parentLastFourDigitPhoneNumber;
-  console.log(parentLastFourDigitPhoneNumber);
   const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
 
   const [, setParentName] = useState<string>("");
@@ -40,7 +37,7 @@ const ValidateTemporaryPin: React.FC = () => {
             throw new Error("Token not found in localStorage");
           }
 
-          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
+          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentsTemporaryPinExist?temporaryPin=${parentFourDigitPin}`;
 
           const response = await fetch(url, {
             method: "GET",
@@ -56,16 +53,14 @@ const ValidateTemporaryPin: React.FC = () => {
             );
           }
 
-          const data = await response.json();
+          const getParentID = await response.json();
 
-          setParentName(data.parentFirstName);
-          setShowErrorMessage(false);
-          console.log("parentFourDigitPin = " + parentFourDigitPin);
-          navigate("/ChooseWhichChildren", {
-            replace: true,
-            state: { parentFourDigitPin: parentFourDigitPin },
-          });
-          setShow(true);
+          // setShowErrorMessage(false);
+           navigate("/ResetPin", {
+             replace: true,
+            state: { parentID: getParentID },
+           });
+          // setShow(true);
           //   navigate("/", { replace: true });
         } catch (error) {
           setParentFourDigitPin("");
