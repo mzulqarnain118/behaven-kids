@@ -77,7 +77,7 @@ const AddParentInfo: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async () => {
     // e.preventDefault();
     console.log("Parent Info:", parentInfo);
     const token = localStorage.getItem("token");
@@ -141,7 +141,6 @@ const AddParentInfo: React.FC = () => {
                       firstName: e.target.value,
                     })
                   }
-                  // style={{height: "50px", fontSize: "20px"}}
                   required
                 />
               </div>
@@ -183,32 +182,6 @@ const AddParentInfo: React.FC = () => {
                   required
                 />
               </div>
-
-              {/* <div className="form-group parentGridContaineritem">
-                <label htmlFor="parentPin">4 Digit Pin</label>
-                <input
-                  type="number"
-                  maxLength={4} 
-                  style={{height: "50px", fontSize: "25px"}}
-                  className="form-control"
-                  id="parentPin"
-                  placeholder="4 Digit Pin"
-                  value={parentInfo.pin}
-                  onChange={(e) => {
-                    let pin = e.target.value;
-                    // Ensure only numbers are entered and limit to 4 digits
-                    pin = pin.replace(/\D/g, '').slice(0, 4);
-                    setParentInfo({
-                      ...parentInfo,
-                      pin
-                    })
-                  }
-                    
-                  }
-                  required
-                  disabled={true}
-                />
-              </div> */}
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPhoneNumber">
                   Last 4 Digit Phone Number

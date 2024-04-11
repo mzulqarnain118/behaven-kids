@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 
 const ValidateTemporaryPin: React.FC = () => {
-  const location = useLocation();
   const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
 
-  const [, setParentName] = useState<string>("");
-
   const navigate = useNavigate();
-  const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
 
@@ -92,10 +88,6 @@ console.log("testing " + parentFourDigitPin);
     if (dotsClicked > 0) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked - 1);
     }
-  };
-
-  const GoToForgotPinPage = () => {
-    navigate("/ResetPin", { replace: true });
   };
 
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];

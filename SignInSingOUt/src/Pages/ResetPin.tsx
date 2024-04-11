@@ -8,18 +8,13 @@ import ErrorMessage from "../Components/ErrorMessage";
 
 const ResetPin: React.FC = () => {
   const location = useLocation();
-  const parentLastFourDigitPhoneNumber =
-    location.state?.parentLastFourDigitPhoneNumber;
 
   const [parentPersonalPin, setParentPersonalPin] = useState<string>("");
   const [reParentPersonalPin, setReParentPersonalPin] = useState<string>("");
   const [parentID, ] = useState<string>(location.state?.parentID);
   const [canUserResetPin, setCanUserResetPin] = useState<boolean>(false);
 
-  const [, setParentName] = useState<string>("");
-
   const navigate = useNavigate();
-  const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [reDotsClicked, setReDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
@@ -102,7 +97,7 @@ console.log("parentID = " + parentID);
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
     if (dotsClicked >= 3) {
-      setCanUserResetPin((prevDotsClicked) => (prevDotsClicked = true));
+      setCanUserResetPin(() => (true));
     }
   };
 
@@ -119,10 +114,6 @@ console.log("parentID = " + parentID);
     if (dotsClicked > 0) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked - 1);
     }
-  };
-
-  const GoToForgotPinPage = () => {
-    navigate("/ResetPin", { replace: true });
   };
 
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
