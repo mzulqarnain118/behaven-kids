@@ -11,13 +11,15 @@ const ResetPin: React.FC = () => {
 
   const [parentPersonalPin, setParentPersonalPin] = useState<string>("");
   const [reParentPersonalPin, setReParentPersonalPin] = useState<string>("");
-  const [parentID, ] = useState<string>(location.state?.parentID);
+  const [parentID] = useState<string>(location.state?.parentID);
   const [canUserResetPin, setCanUserResetPin] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [reDotsClicked, setReDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [isEnterPinVisible, setIsEnterPinVisible] = useState(true);
+  const [isReEnterPinVisible, setIsReEnterPinVisible] = useState(false);
 
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
@@ -29,48 +31,50 @@ const ResetPin: React.FC = () => {
   //     navigate("/", { replace: true });
   //   }
   // });
-console.log("parentID = " + parentID);
+  console.log("parentID = " + parentID);
   useEffect(() => {
     const fetchData = async () => {
       if (reParentPersonalPin.length >= 4) {
-
         if (parentPersonalPin !== reParentPersonalPin) {
           console.log("Not same");
           setCanUserResetPin(false);
+          setIsEnterPinVisible(() => true);
+          setIsReEnterPinVisible(() => false);
           setParentPersonalPin("");
           setReParentPersonalPin("");
           setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
           setReDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
-            setParentPersonalPin("");
-            setShowErrorMessage(true);
-            const timer = setTimeout(() => {
-              setShowErrorMessage(false);
-            }, 3000);
-            () => clearTimeout(timer);
+          setParentPersonalPin("");
+          setShowErrorMessage(true);
+          const timer = setTimeout(() => {
+            setShowErrorMessage(false);
+          }, 3000);
+          () => clearTimeout(timer);
 
           return;
-        } 
+        }
 
         try {
           const token = localStorage.getItem("token");
           if (!token) {
             throw new Error("Token not found in localStorage");
           }
-          const response = await fetch(`${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${parentID}&parentNewPinNumber=${reParentPersonalPin}`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+          const response = await fetch(
+            `${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${parentID}&parentNewPinNumber=${reParentPersonalPin}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
           if (!response.ok) {
             throw new Error(
               `Failed to fetch data. Response status: ${response.status}`
             );
-            
           }
-
 
           navigate("/PhoneNumber", {
             replace: true,
@@ -78,11 +82,14 @@ console.log("parentID = " + parentID);
         } catch (error) {
           setParentPersonalPin("");
           setShowErrorMessage(true);
+          setIsEnterPinVisible(() => true);
+          setIsReEnterPinVisible(() => false);
           const timer = setTimeout(() => {
             setShowErrorMessage(false);
           }, 3000);
           () => clearTimeout(timer);
           setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
+
           console.error("Error fetching data:", error);
         }
       }
@@ -97,7 +104,9 @@ console.log("parentID = " + parentID);
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
     if (dotsClicked >= 3) {
-      setCanUserResetPin(() => (true));
+      setCanUserResetPin(() => true);
+      setIsEnterPinVisible(() => false);
+      setIsReEnterPinVisible(() => true);
     }
   };
 
@@ -124,29 +133,38 @@ console.log("parentID = " + parentID);
         <div className="CommentDropDown_Grid">
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
+
           <div>
-            <h4>Enter Your Personal 4 Digit Pin</h4>
-            <div style={{ marginTop: "15px" }}>
-              {[...Array(4)].map((_, index) => (
-                <span
-                  key={index}
-                  className={`resetPinDot ${
-                    index < dotsClicked ? "resetDot-clicked" : ""
-                  }`}
-                ></span>
-              ))}
+            {isEnterPinVisible && (
+              <div>
+                <h4>Enter Your Personal 4 Digit Pin</h4>
+                <div style={{ marginTop: "15px" }}>
+                  {[...Array(4)].map((_, index) => (
+                    <span
+                      key={index}
+                      className={`resetPinDot ${
+                        index < dotsClicked ? "resetDot-clicked" : ""
+                      }`}
+                    ></span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {isReEnterPinVisible && (
+            <div>
+              <h4>Re-Enter Your Personal 4 Digit Pin</h4>
+              <div style={{ marginTop: "15px" }}>
+                {[...Array(4)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`resetPinDot ${
+                      index < reDotsClicked ? "resetDot-clicked" : ""
+                    }`}
+                  ></span>
+                ))}
+              </div>
             </div>
-            <h4>Re-Enter Your Personal 4 Digit Pin</h4>
-            <div style={{ marginTop: "15px" }}>
-              {[...Array(4)].map((_, index) => (
-                <span
-                  key={index}
-                  className={`resetPinDot ${
-                    index < reDotsClicked ? "resetDot-clicked" : ""
-                  }`}
-                ></span>
-              ))}
-            </div>
+            )}
           </div>
           <br />
           <br />

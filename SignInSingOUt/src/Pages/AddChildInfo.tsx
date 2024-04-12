@@ -4,11 +4,28 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+
+interface ChildInfo {
+  clientID: number;
+  firstName: string;
+  lastName: string;
+  locationID: string;
+}
 
 const AddChildInfo: React.FC = () => {
   const [clientFirstName, setClientFirstName] = useState<string>("");
   const [clientLastName, setClientLastName] = useState<string>("");
   const [clientLocation, setClientLocation] = useState<string>("");
+  const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+
+  const options = childInfo.map((parent) => ({
+    value: parent.clientID,
+    label: `${parent.firstName} ${parent.lastName}`,
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +35,7 @@ const AddChildInfo: React.FC = () => {
           throw new Error("Token not found in localStorage");
         }
 
-        const url = `${backEndCodeURLLocation}SignIn/GetClientInformation`;
+        const url = `${backEndCodeURLLocation}SignIn/GetAllClientInfoWhereTheClientIsNotAlreadyActive`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -36,7 +53,7 @@ const AddChildInfo: React.FC = () => {
 
         const data = await response.json();
 
-        //   navigate("/", { replace: true });
+        setChildInfo(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -44,20 +61,28 @@ const AddChildInfo: React.FC = () => {
 
     fetchData();
   }, []);
-
-
+  // `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail?clientFirstName=${clientFirstName}&clientLastName=${clientLastName}&locationID=${clientLocation}`,
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail?clientFirstName=${clientFirstName}&clientLastName=${clientLastName}&locationID=${clientLocation}`,
+        `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            location: selectedLocation,
+            childInfo: selectedOptions.map(option => ({
+              clientID: option.value,
+              firstName: option.label.split(' ')[0], // Assuming first name is before the space
+              lastName: option.label.split(' ')[1], // Assuming last name is after the space
+              locationID: selectedLocation // Assuming locationID is the same as selectedLocation
+            }))
+          })
         }
       );
 
@@ -70,6 +95,16 @@ const AddChildInfo: React.FC = () => {
     } catch (error) {
       console.error(`Error posting data for client ID:`, error);
     }
+  };
+  const animatedComponents = makeAnimated();
+
+  const handleSelectChange = (selectedOptions: any) => {
+    setSelectedOptions(selectedOptions); // Update state with selected options
+    console.log(selectedOptions);
+  };
+
+  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedLocation(event.target.value);
   };
 
   return (
@@ -89,35 +124,27 @@ const AddChildInfo: React.FC = () => {
         }}
       >
         <div className="card-body">
-          <h2>Add Current Chient Information</h2>
+          <h2>Add Current Client Information</h2>
+
           <form onSubmit={handleSubmit}>
             <div className="parentInfoGridContainer">
               <div className="form-group parentGridContaineritem">
-                <label htmlFor="parentFirstName">First Name</label>
-                <input
-                  type="input"
-                  style={{ height: "50px", fontSize: "25px" }}
-                  className="form-control"
-                  id="parentFirstName"
-                  placeholder="First Name"
-                  value={clientFirstName}
-                  onChange={(e) => setClientFirstName(e.target.value)}
-                  required
+                <Select
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  isMulti
+                  options={options}
+                  onChange={handleSelectChange}
+                  value={selectedOptions}
                 />
+                <input type="radio" id="omaha" name="age" value="Omaha" onChange={handleLocationChange} />
+                <label htmlFor="omaha"> Omaha</label>
+                <br />
+                <input type="radio" id="lincoln" name="age" value="Lincoln" onChange={handleLocationChange} />
+                <label htmlFor="lincoln"> Lincoln</label>
+                <br />
               </div>
-              <div className="form-group parentGridContaineritem">
-                <label htmlFor="parentLastName">Last Name</label>
-                <input
-                  type="input"
-                  className="form-control"
-                  style={{ height: "50px", fontSize: "25px" }}
-                  id="parentLastName"
-                  placeholder="Last Name"
-                  value={clientLastName}
-                  onChange={(e) => setClientLastName(e.target.value)}
-                  required
-                />
-              </div>
+
               <button type="submit" className="btn btn-primary btn-lg">
                 Submit
               </button>
