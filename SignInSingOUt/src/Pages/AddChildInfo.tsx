@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
-import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
@@ -15,9 +14,6 @@ interface ChildInfo {
 }
 
 const AddChildInfo: React.FC = () => {
-  const [clientFirstName, setClientFirstName] = useState<string>("");
-  const [clientLastName, setClientLastName] = useState<string>("");
-  const [clientLocation, setClientLocation] = useState<string>("");
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
@@ -62,8 +58,8 @@ const AddChildInfo: React.FC = () => {
     fetchData();
   }, []);
   // `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail?clientFirstName=${clientFirstName}&clientLastName=${clientLastName}&locationID=${clientLocation}`,
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // e.preventDefault();
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
@@ -124,25 +120,49 @@ const AddChildInfo: React.FC = () => {
         }}
       >
         <div className="card-body">
-          <h2>Add Current Client Information</h2>
+          {/* <h2>Add Current Client Information</h2> */}
 
           <form onSubmit={handleSubmit}>
             <div className="parentInfoGridContainer">
               <div className="form-group parentGridContaineritem">
+              <h5>Make a client current: </h5>
                 <Select
+                required
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   isMulti
                   options={options}
                   onChange={handleSelectChange}
                   value={selectedOptions}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                  }}
                 />
-                <input type="radio" id="omaha" name="age" value="Omaha" onChange={handleLocationChange} />
-                <label htmlFor="omaha"> Omaha</label>
+                <div style={{fontSize: "20px"}}>
+                  <br/>
+                <h5>Choose client Location: </h5>
+                <input type="radio" id="omaha" name="age" value="Omaha" onChange={handleLocationChange} required/>
+                <label htmlFor="omaha" style={{marginLeft: "6px"}}>Omaha</label>
                 <br />
                 <input type="radio" id="lincoln" name="age" value="Lincoln" onChange={handleLocationChange} />
-                <label htmlFor="lincoln"> Lincoln</label>
+                <label htmlFor="lincoln" style={{marginLeft: "6px"}}> Lincoln</label>
                 <br />
+                </div>
+                
               </div>
 
               <button type="submit" className="btn btn-primary btn-lg">

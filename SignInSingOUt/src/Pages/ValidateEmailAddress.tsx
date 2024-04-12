@@ -12,6 +12,7 @@ const ValidateEmailAddress: React.FC = () => {
   const location = useLocation();
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [parentsEmailAddress, setParentsEmailAddress] = useState<string>("");
+  const [hideParentsEmailAddress, setHideParentsEmailAddress] = useState<string>("");
   const [parentLastFourDigitPhoneNumber] = useState<string>(
     location.state?.parentLastFourDigitPhoneNumber
   );
@@ -25,6 +26,44 @@ const ValidateEmailAddress: React.FC = () => {
     if (hasAtSymbol === true) setDidUserPutAnEmailAddress(false);
     else setDidUserPutAnEmailAddress(true);
   }, [parentsEmailAddress]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in localStorage");
+        }
+
+        const url = `${backEndCodeURLLocation}SignIn/GetParentEmailAddressOnFile?phoneNumber=${parentLastFourDigitPhoneNumber}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch data. Response status: ${response.status}`
+          );
+        }
+
+        
+        const parentEmailAddress = await response.text();
+        const hiddenEmailAddress = parentEmailAddress.replace(/^(..).*?(?=@)/, (_, firstChar) => `${firstChar}${'.'.repeat(parentEmailAddress.indexOf('@'))}`);
+        setParentsEmailAddress(parentEmailAddress);
+        setHideParentsEmailAddress(hiddenEmailAddress);
+        console.log(hiddenEmailAddress);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,6 +102,48 @@ const ValidateEmailAddress: React.FC = () => {
     }
   };
 
+  const ReceptionistGetsTemporaryPin = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      console.log(
+        "parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
+      );
+      console.log("parentsEmailAddress = " + parentsEmailAddress);
+
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/SendTemporaryEmailVerificationSoReceptionistCanReadIt?parentPhoneNumber=${parentLastFourDigitPhoneNumber}&parentEmailAddress=${parentsEmailAddress}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        console.error(`Error:`, response.statusText);
+        setShowErrorMessage(true);
+        return;
+      }
+      navigate("/ValidateTemporaryPin", {
+        replace: true,
+        state: {
+          parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+        },
+      });
+    } catch (error) {
+      console.error(`Error:`, error);
+    }
+
+
+    navigate("/ValidateTemporaryPin", {
+      replace: true,
+      state: {
+        parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+      },
+    });
+  };
+
   return (
     <div className="ContentComponentBody" id="my_fullscreen">
       <div className="CommentDropDown_Grid">
@@ -89,6 +170,7 @@ const ValidateEmailAddress: React.FC = () => {
                 </span>
               </div>
               <input
+              disabled = {true}
                 type="email"
                 style={{
                   height: "65px",
@@ -101,9 +183,11 @@ const ValidateEmailAddress: React.FC = () => {
                 placeholder="Your Email"
                 aria-describedby="inputGroupPrepend2"
                 onChange={(e) => setParentsEmailAddress(e.target.value)}
+                value={hideParentsEmailAddress}
                 required
               />
             </div>
+            
           </div>
           <br />
           <button
@@ -114,6 +198,19 @@ const ValidateEmailAddress: React.FC = () => {
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
+
+        <button
+            type="button"
+            className="btn btn-outline-dark"
+            style={{
+              backgroundColor: "white",
+              color: "goldenrod",
+              fontSize: "20px",
+            }}
+            onClick={ReceptionistGetsTemporaryPin}
+          >
+            Verify in a different way?
+          </button>
       </div>
 
       {showErrorMessage && (

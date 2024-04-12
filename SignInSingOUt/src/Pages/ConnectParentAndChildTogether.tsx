@@ -224,7 +224,7 @@ const AddParentInfo: React.FC = () => {
               <div>
                 <label>Select Parent:</label>
                 <div>
-                  <Select options={options} onChange={setSelectedParent2} />
+                  <Select options={options} onChange={setSelectedParent2} isClearable={true} required/>
                 </div>
               </div>
               <div>
@@ -234,6 +234,7 @@ const AddParentInfo: React.FC = () => {
                   className="form-control"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  
                 />
               </div>
               <div>

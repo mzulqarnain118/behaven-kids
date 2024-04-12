@@ -7,7 +7,7 @@ import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 
 const ValidateTemporaryPin: React.FC = () => {
-  const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
+  const [parentTemporaryFiveDigitPin, setParentTemporaryFiveDigitPin] = useState<string>("");
 
   const navigate = useNavigate();
   const [dotsClicked, setDotsClicked] = useState<number>(0);
@@ -26,14 +26,14 @@ const ValidateTemporaryPin: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (parentFourDigitPin.length >= 5) {
+      if (parentTemporaryFiveDigitPin.length >= 5) {
         try {
           const token = localStorage.getItem("token");
           if (!token) {
             throw new Error("Token not found in localStorage");
           }
 
-          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentsTemporaryPinExist?temporaryPin=${parentFourDigitPin}`;
+          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentsTemporaryPinExist?temporaryPin=${parentTemporaryFiveDigitPin}`;
 
           const response = await fetch(url, {
             method: "GET",
@@ -59,7 +59,7 @@ const ValidateTemporaryPin: React.FC = () => {
           // setShow(true);
           //   navigate("/", { replace: true });
         } catch (error) {
-          setParentFourDigitPin("");
+          setParentTemporaryFiveDigitPin("");
           setShowErrorMessage(true);
           const timer = setTimeout(() => {
             setShowErrorMessage(false);
@@ -72,18 +72,18 @@ const ValidateTemporaryPin: React.FC = () => {
     };
 
     fetchData();
-  }, [parentFourDigitPin]);
+  }, [parentTemporaryFiveDigitPin]);
 
   const InsertPhoneNumber = async (value: string) => {
-    setParentFourDigitPin((prevValue) => prevValue + value);
-console.log("testing " + parentFourDigitPin);
+    setParentTemporaryFiveDigitPin((prevValue) => prevValue + value);
+console.log("testing " + parentTemporaryFiveDigitPin);
     if (dotsClicked < 5) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
   };
 
   const DeletePhoneNumber = () => {
-    setParentFourDigitPin((prevValue) => prevValue.slice(0, -1));
+    setParentTemporaryFiveDigitPin((prevValue) => prevValue.slice(0, -1));
 
     if (dotsClicked > 0) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked - 1);
