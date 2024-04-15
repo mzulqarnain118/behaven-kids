@@ -7,10 +7,11 @@ import { useNavigate  } from "react-router-dom";
 interface CongratulationsPopup {
   showModel: boolean;
   setShowModel: React.Dispatch<React.SetStateAction<any>>;
-  parentFirstName: string;
+  // parentFirstName: string;
 }
 
-const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel, parentFirstName}) => {
+// const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel, parentFirstName}) => {
+  const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setShowModel}) => {
   if (!open) return null;
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ const CongratulationsPopup: React.FC<CongratulationsPopup> = ({showModel, setSho
     
       <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
         <BootstrapModal.Header closeButton>
-          <BootstrapModal.Title style={{fontSize: "30px"}}>Welcome {parentFirstName}</BootstrapModal.Title>
+          <BootstrapModal.Title style={{fontSize: "30px"}}>Your New Pin Is Ready!</BootstrapModal.Title>
         </BootstrapModal.Header>
         <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
           <div className="success-checkmark" >

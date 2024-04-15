@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
 import { backEndCodeURLLocation } from "../config";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
 interface ParentInfo {
   parentID: number;
@@ -24,6 +25,7 @@ const AddParentInfo: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortField, setSortField] = useState<string>("");
+  const navigate = useNavigate();
 
   const options = parentInfo.map((parent) => ({
     value: parent.parentID,
@@ -160,6 +162,7 @@ const AddParentInfo: React.FC = () => {
           response.statusText
         );
       }
+      navigate("/ConnectParentAndChildTogeter");
     } catch (error) {
       console.error(`Error posting data for client ID ${parentInfo}:`, error);
     }
@@ -278,7 +281,8 @@ const AddParentInfo: React.FC = () => {
                       </span>
                     </div>
                     <div style={{ height: "200px", overflowY: "auto" }}>
-                      {sortedChildInfo.map((info, index) => (
+                      {/* {sortedChildInfo.map((info, index) => ( */}
+                      {sortedChildInfo.map((info, ) => (
                         <div key={info.clientID} className="list-group-item d-flex">
                           <input
                             className="form-check-input me-1"

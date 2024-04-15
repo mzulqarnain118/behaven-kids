@@ -15,7 +15,7 @@ interface DecodedToken {
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const [showAddNewParent, setShowAddNewParent] = useState(false);
+  const [, setShowAddNewParent] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [role, setRole] = useState<string>("");
 
@@ -28,13 +28,15 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    const setRoleFromToken = () => {
-      const token = localStorage.getItem("token");
+    const setRoleFromToken = async () => {
+      const token = await localStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token) as DecodedToken;
         const userRole = decoded.role;
-        console.log(userRole);
+        
         setRole(userRole);
+        setShowNavbar(() => true);
+        console.log(userRole);
       } else {
         console.log("Token not found");
       }
@@ -43,6 +45,25 @@ const Navbar: React.FC = () => {
     // Call the function to set role once on component mount
     setRoleFromToken();
   }, []);
+
+  useEffect(() => {
+    const setRoleFromToken = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token) as DecodedToken;
+        const userRole = decoded.role;
+        
+        setRole(userRole);
+        setShowNavbar(() => true);
+        console.log(userRole);
+      } else {
+        console.log("Token not found - v2");
+      }
+    };
+
+    // Call the function to set role once on component mount
+    setRoleFromToken();
+  }, [showNavbar]);
 
   useEffect(() => {
     if (window.location.href === frontEndURLLocation) {
@@ -58,9 +79,9 @@ const Navbar: React.FC = () => {
     navigate("/ConnectParentAndChildTogeter", { replace: true });
   };
 
-  const GoToParentSignInSignOut = () => {
-    navigate("/PhoneNumber", { replace: true });
-  };
+  // const GoToParentSignInSignOut = () => {
+  //   navigate("/PhoneNumber", { replace: true });
+  // };
 
   const EditClientSignInSignOutTime = () => {
     navigate("/EditChildTime", { replace: true });
@@ -134,10 +155,10 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {showNavbar && (
+      {showNavbar === true && (
         <nav className="navbar navbar-expand-lg">
           <div className="container d-flex justify-content-between align-items-center">
-            <p></p>
+          {role !== "parent" && (
             <a className="navbar-brand" href="#">
               <img
                 src={BehavenLogo}
@@ -145,6 +166,7 @@ const Navbar: React.FC = () => {
                 style={{ height: "75px" }}
               />
             </a>
+          )}
             <button
               className="navbar-toggler"
               type="button"
@@ -211,6 +233,7 @@ const Navbar: React.FC = () => {
                   </li>
                 )}
               </ul>
+              <div style={{width: "100%", textAlign: "right"}}>
               <div style={{ marginLeft: "100px" }}>
                 <button
                   style={{
@@ -231,6 +254,8 @@ const Navbar: React.FC = () => {
                   Sign Out
                 </button>
               </div>
+              </div>
+              
             </div>
           </div>
         </nav>

@@ -206,7 +206,9 @@ const ValidateEmailAddress: React.FC = () => {
               backgroundColor: "white",
               color: "goldenrod",
               fontSize: "20px",
+              marginTop: "35px"
             }}
+            disabled={didUserPutAnEmailAddress}
             onClick={ReceptionistGetsTemporaryPin}
           >
             Verify in a different way?

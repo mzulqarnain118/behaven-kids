@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "../App.css";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
+import CongratulationsPopup from "../Components/PopupCongrats";
 
 const ResetPin: React.FC = () => {
   const location = useLocation();
@@ -14,12 +15,12 @@ const ResetPin: React.FC = () => {
   const [parentID] = useState<string>(location.state?.parentID);
   const [canUserResetPin, setCanUserResetPin] = useState<boolean>(false);
 
-  const navigate = useNavigate();
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [reDotsClicked, setReDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [isEnterPinVisible, setIsEnterPinVisible] = useState(true);
   const [isReEnterPinVisible, setIsReEnterPinVisible] = useState(false);
+  const [showModel, setShowModel] = useState<boolean>(false);
 
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
@@ -75,10 +76,11 @@ const ResetPin: React.FC = () => {
               `Failed to fetch data. Response status: ${response.status}`
             );
           }
-
-          navigate("/PhoneNumber", {
-            replace: true,
-          });
+          setShowModel(true);
+          // navigate("/PhoneNumber", {
+          //   replace: true,
+          // });
+          
         } catch (error) {
           setParentPersonalPin("");
           setShowErrorMessage(true);
@@ -200,6 +202,7 @@ const ResetPin: React.FC = () => {
         {showErrorMessage && (
           <ErrorMessage message={"Personal 4 Digit Pin Not The Same"} />
         )}
+        <CongratulationsPopup showModel={showModel} setShowModel={setShowModel}/>
       </div>
     </>
   );
