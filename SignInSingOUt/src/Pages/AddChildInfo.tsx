@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
-import "./CSS/AddParentChildInfo.css";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 

@@ -1,15 +1,23 @@
-
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { frontEndURLLocation } from "../config";
+import BehavenLogo from "../assets/BehavenLogo.jpg";
+import "./Navbar.css";
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+  role: string;
+  // Add other properties if needed
+}
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [showAddNewParent, setShowAddNewParent] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
+  const [role, setRole] = useState<string>("");
 
   const handleGoFullScreen = () => {
     const element = document.documentElement;
@@ -20,14 +28,26 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    const setRoleFromToken = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token) as DecodedToken;
+        const userRole = decoded.role;
+        console.log(userRole);
+        setRole(userRole);
+      } else {
+        console.log("Token not found");
+      }
+    };
+
+    // Call the function to set role once on component mount
+    setRoleFromToken();
+  }, []);
+
+  useEffect(() => {
     if (window.location.href === frontEndURLLocation) {
       setShowNavbar(false);
-    } else {
-      setShowNavbar(true);
     }
-
-    const token = localStorage.getItem("token");
-    setShowAddNewParent(!!token);
   }, [window.location.href]);
 
   const GoToAddNewParent = () => {
@@ -48,6 +68,10 @@ const Navbar: React.FC = () => {
 
   const AddNewClientAsCurrent = () => {
     navigate("/addchildinfo", { replace: true });
+  };
+
+  const CheckParentsTemporaryPin = () => {
+    navigate("/ReceptionistGivesTemporaryPinToParent", { replace: true });
   };
 
   useEffect(() => {
@@ -102,107 +126,111 @@ const Navbar: React.FC = () => {
     }
   }, [localStorage.getItem("token")]);
 
+  const [collapsed, setCollapsed] = useState(true);
+
+  const toggleNavbar = () => {
+    setCollapsed(!collapsed);
+  };
+
   return (
     <>
       {showNavbar && (
-        <nav
-          className="navbar navbar-expand-lg"
-          style={{ backgroundColor: "white" }}
-        >
-          <div className="container-fluid">
+        <nav className="navbar navbar-expand-lg">
+          <div className="container d-flex justify-content-between align-items-center">
+            <p></p>
+            <a className="navbar-brand" href="#">
+              <img
+                src={BehavenLogo}
+                alt="My Image"
+                style={{ height: "75px" }}
+              />
+            </a>
             <button
               className="navbar-toggler"
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
+              onClick={toggleNavbar}
+              aria-expanded={!collapsed ? "true" : "false"}
               aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
             </button>
             <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
+              className={`collapse navbar-collapse ${collapsed ? "" : "show"}`}
+              id="navbarNav"
             >
-              <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item" style={{marginRight: "25px"}}>
-                  {showAddNewParent ? (
-                    <button
-                    style={{width: "150px", height: "50px"}}
-                      className="btn btn-light"
-                      onClick={GoToAddNewParent}
-                    >
+              <ul className="navbar-nav ml-auto">
+                {role === "admin" && (
+                  <li className="nav-item active">
+                    <a className="nav-link" href="#" onClick={GoToAddNewParent}>
                       Add New Parent
-                    </button>
-                  ) : null}
-                </li>
-
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  {showAddNewParent ? (
-                    <button
-                    style={{width: "250px", height: "50px"}}
-                      className="btn btn-light"
+                    </a>
+                  </li>
+                )}
+                {role === "admin" && (
+                  <li className="nav-item">
+                    <a
+                      className="nav-link"
+                      href="#"
                       onClick={AddNewClientAsCurrent}
                     >
-                      Add New Client As Current
-                    </button>
-                  ) : null}
-                </li>
-
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  {showAddNewParent ? (
-                    <button
-                    style={{width: "200px", height: "50px"}}
-                      className="btn btn-light"
+                      Client To Current
+                    </a>
+                  </li>
+                )}
+                {(role === "admin" || role === "secretary") && (
+                  <li className="nav-item">
+                    <a
+                      className="nav-link"
+                      href="#"
+                      onClick={CheckParentsTemporaryPin}
+                    >
+                      Parents Pin
+                    </a>
+                  </li>
+                )}
+                {(role === "admin" || role === "secretary") && (
+                  <li className="nav-item">
+                    <a
+                      className="nav-link"
+                      href="#"
                       onClick={EditClientSignInSignOutTime}
                     >
-                      Edit Sign in/out Time
-                    </button>
-                  ) : null}
-                </li>
-               
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  {showAddNewParent ? (
-                    <button
-                    style={{width: "150px", height: "50px"}}
-                      className="btn btn-light"
+                      Edit Time
+                    </a>
+                  </li>
+                )}
+                {role === "admin" && (
+                  <li className="nav-item">
+                    <a
+                      className="nav-link"
+                      href="#"
                       onClick={GoToConnectParentWithChild}
                     >
                       Connect
-                    </button>
-                  ) : null}
-                </li>
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  {showAddNewParent ? (
-                    <button
-                    style={{width: "175px", height: "50px"}}
-                      className="btn btn-light"
-                      onClick={GoToParentSignInSignOut}
-                    >
-                      Parent Sign In/Out
-                    </button>
-                  ) : null}
-                </li>
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  <button
-                   style={{width: "150px", height: "50px"}}
-                    className="btn btn-info"
-                    onClick={handleGoFullScreen}
-                  >
-                    Go Full Screen
-                  </button>
-                </li>
-                <li className="nav-item" style={{marginRight: "25px"}}>
-                  <button
-                    style={{width: "150px", height: "50px"}}
-                    className="btn btn-danger"
-                    onClick={handleSignOut}
-                  >
-                    Sign Out
-                  </button>
-                </li>
+                    </a>
+                  </li>
+                )}
               </ul>
+              <div style={{ marginLeft: "100px" }}>
+                <button
+                  style={{
+                    width: "150px",
+                    height: "50px",
+                    marginRight: "25px",
+                  }}
+                  className="btn btn-info"
+                  onClick={handleGoFullScreen}
+                >
+                  Go Full Screen
+                </button>
+                <button
+                  style={{ width: "150px", height: "50px" }}
+                  className="btn btn-danger"
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </button>
+              </div>
             </div>
           </div>
         </nav>

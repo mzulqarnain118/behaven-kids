@@ -165,14 +165,18 @@ const AddParentInfo: React.FC = () => {
     }
   };
 
-  const handleCheckboxChange = (index: number) => {
-    console.log("here");
+  const handleCheckboxChange = (clientID: number) => {
+    console.log("here = " + clientID);
     setChildInfo((prevState) => {
-      const updatedChildInfo = [...prevState];
-      updatedChildInfo[index] = {
-        ...updatedChildInfo[index],
-        isChecked: !updatedChildInfo[index].isChecked,
-      };
+      const updatedChildInfo = prevState.map((info) => {
+        if (info.clientID === clientID) {
+          return {
+            ...info,
+            isChecked: !info.isChecked,
+          };
+        }
+        return info;
+      });
       return updatedChildInfo;
     });
   };
@@ -185,7 +189,6 @@ const AddParentInfo: React.FC = () => {
   );
 
   const handleSort = (field: string) => {
-    
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
@@ -245,6 +248,7 @@ const AddParentInfo: React.FC = () => {
                       <span className="flex-grow-1">
                         First Name
                         <button
+                        type="button"
                           className="btn btn-link"
                           onClick={() => handleSort("clientFirstName")}
                         >
@@ -255,6 +259,7 @@ const AddParentInfo: React.FC = () => {
                       <span className="flex-grow-1">
                         Last Name
                         <button
+                        type="button"
                           className="btn btn-link"
                           onClick={() => handleSort("clientLastName")}
                         >
@@ -264,6 +269,7 @@ const AddParentInfo: React.FC = () => {
                       <span className="flex-grow-1">
                         Location ID
                         <button
+                        type="button"
                           className="btn btn-link"
                           onClick={() => handleSort("locationID")}
                         >
@@ -279,7 +285,7 @@ const AddParentInfo: React.FC = () => {
                             type="checkbox"
                             value=""
                             checked={info.isChecked}
-                            onChange={() => handleCheckboxChange(index)}
+                            onChange={() => handleCheckboxChange(info.clientID)}
                           />
                           <div
                             className="flex-grow-1"

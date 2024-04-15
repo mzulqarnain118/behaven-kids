@@ -15,6 +15,7 @@ const LoginPage: React.FC = () => {
     if (token) {
       // Set the state to redirect to dashboard
       navigate("/PhoneNumber", { replace: true });
+      
     }
   }, []);
 
@@ -40,7 +41,10 @@ const LoginPage: React.FC = () => {
 
       localStorage.setItem("token", token);
 
-      navigate("/PhoneNumber", { replace: true });
+      navigate("/PhoneNumber");
+    
+    // Refresh the page
+    window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);
     }

@@ -12,6 +12,7 @@ import ValidateEmailAddress from './Pages/ValidateEmailAddress'
 import ValidateTemporaryPin from './Pages/ValidateTemporaryPin'
 import ResetPin from './Pages/ResetPin'
 import AddChildInfo from './Pages/AddChildInfo'
+import ReceptionistGivesTemporaryPinToParent from './Pages/ReceptionistGivesTemporaryPinToParent'
 
 const App: React.FC = () => {
   return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
       <Route path='/ValidateTemporaryPin' element={<ValidateTemporaryPin/>}></Route>
       <Route path='/ResetPin' element={<ResetPin/>}></Route>
       <Route path='/AddChildInfo' element={<AddChildInfo/>}></Route>
+      <Route path='/ReceptionistGivesTemporaryPinToParent' element={<ReceptionistGivesTemporaryPinToParent/>}></Route>
       </Routes>
     </>
   )

@@ -137,7 +137,7 @@ const ResetPin: React.FC = () => {
           <div>
             {isEnterPinVisible && (
               <div>
-                <h4>Enter Your Personal 4 Digit Pin</h4>
+                <h4>Enter A Personal 4 Digit Pin</h4>
                 <div style={{ marginTop: "15px" }}>
                   {[...Array(4)].map((_, index) => (
                     <span

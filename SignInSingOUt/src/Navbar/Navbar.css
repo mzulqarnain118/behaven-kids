@@ -1,0 +1,27 @@
+.navbar {
+  border-bottom: 1px solid rgb(179, 178, 178); /* or any other color */
+  border-bottom-width: 60%;
+  margin-bottom: 25px;
+}
+
+/* .navbar {
+  position: relative; 
+  margin-bottom: 25px;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%; 
+  width: 60%; 
+  border-bottom: 1px solid grey; 
+} */
+  .navbar-brand {
+    font-size: 24px;
+  }
+  
+  .navbar-nav .nav-link {
+    font-size: 18px;
+    color: black;
+  }
