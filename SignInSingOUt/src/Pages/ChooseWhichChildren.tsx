@@ -28,6 +28,7 @@ interface SignInSignOutTime {
 const ChooseWhichChildren: React.FC = () => {
   const location = useLocation();
   const parentFourDigitPin = location.state?.parentFourDigitPin;
+  const parentLastFourDigitPhoneNumber = location.state?.parentLastFourDigitPhoneNumber;
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,8 +54,8 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState("0 4px 8px 
         if (!token) {
           throw new Error("Token not found in localStorage");
         }
-
-        const urlForDigitPin = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}`;
+console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber);
+        const urlForDigitPin = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
         console.log(urlForDigitPin);
         const responseForDigitPin = await fetch(urlForDigitPin, {
           method: "GET",

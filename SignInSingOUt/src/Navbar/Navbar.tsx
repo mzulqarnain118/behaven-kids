@@ -171,6 +171,7 @@ const Navbar: React.FC = () => {
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasNavbar"
             aria-controls="offcanvasNavbar"
+            style={{marginTop: "15px", marginRight: "15px"}}
           >
             <span className="navbar-toggler-icon"></span>
           </button>

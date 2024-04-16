@@ -63,7 +63,7 @@ const ParentSignIn: React.FC = () => {
           console.log("parentFourDigitPin = " + parentFourDigitPin);
           navigate("/ChooseWhichChildren", {
             replace: true,
-            state: { parentFourDigitPin: parentFourDigitPin },
+            state: { parentFourDigitPin: parentFourDigitPin, parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber },
           });
           setShow(true);
           //   navigate("/", { replace: true });
