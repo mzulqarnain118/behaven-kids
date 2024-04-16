@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
       if (token) {
         const decoded = jwtDecode(token) as DecodedToken;
         const userRole = decoded.role;
-        
+
         setRole(userRole);
         setShowNavbar(() => true);
         console.log(userRole);
@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
       if (token) {
         const decoded = jwtDecode(token) as DecodedToken;
         const userRole = decoded.role;
-        
+
         setRole(userRole);
         setShowNavbar(() => true);
         console.log(userRole);
@@ -85,6 +85,10 @@ const Navbar: React.FC = () => {
 
   const EditClientSignInSignOutTime = () => {
     navigate("/EditChildTime", { replace: true });
+  };
+
+  const GoToPhoneNumberPage = () => {
+    navigate("/PhoneNumber", { replace: true });
   };
 
   const AddNewClientAsCurrent = () => {
@@ -155,24 +159,80 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {showNavbar === true && (
+    {(showNavbar === true && role === "parent") && (
+      <nav className="navbar bg-white fixed-top">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">
+     
+          </a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div
+            className="offcanvas offcanvas-end"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+            style={{ width: "350px" }}
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                Menu
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item" style={{ height: "65px" }}>
+                  <a className="nav-link active" aria-current="page" href="#" onClick={GoToPhoneNumberPage}>
+                  <span style={{fontSize: "20px"}}>&#10227; Refresh</span> 
+                  </a>
+                </li>
+                <li className="nav-item" style={{ height: "65px" }}>
+                  <a className="nav-link active" aria-current="page" href="#" onClick={handleGoFullScreen}>
+                  <span style={{fontSize: "20px"}}>&#10530; Full Screen</span> 
+                  </a>
+                </li>
+                <li className="nav-item" style={{ height: "65px" }}>
+                  <a className="nav-link" href="#" onClick={handleSignOut}>
+                  <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign Out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+      )}
+      {(showNavbar === true && role !== "parent") && (
         <nav className="navbar navbar-expand-lg">
           <div className="container d-flex justify-content-between align-items-center">
-          {role !== "parent" && (
-            <a className="navbar-brand" href="#">
-              <img
-                src={BehavenLogo}
-                alt="My Image"
-                style={{ height: "75px" }}
-              />
-            </a>
-          )}
+            {role !== "parent" && (
+              <a className="navbar-brand" href="#">
+                <img
+                  src={BehavenLogo}
+                  alt="My Image"
+                  style={{ height: "75px" }}
+                />
+              </a>
+            )}
             <button
               className="navbar-toggler"
               type="button"
               onClick={toggleNavbar}
               aria-expanded={!collapsed ? "true" : "false"}
               aria-label="Toggle navigation"
+              style={{ marginLeft: "80%" }}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -233,29 +293,28 @@ const Navbar: React.FC = () => {
                   </li>
                 )}
               </ul>
-              <div style={{width: "100%", textAlign: "right"}}>
-              <div style={{ marginLeft: "100px" }}>
-                <button
-                  style={{
-                    width: "150px",
-                    height: "50px",
-                    marginRight: "25px",
-                  }}
-                  className="btn btn-info"
-                  onClick={handleGoFullScreen}
-                >
-                  Go Full Screen
-                </button>
-                <button
-                  style={{ width: "150px", height: "50px" }}
-                  className="btn btn-danger"
-                  onClick={handleSignOut}
-                >
-                  Sign Out
-                </button>
-              </div>
-              </div>
-              
+               <div style={{ width: "100%", textAlign: "right" }}>
+                <div style={{ marginLeft: "100px" }}>
+                  <button
+                    style={{
+                      width: "150px",
+                      height: "50px",
+                      marginRight: "25px",
+                    }}
+                    className="btn btn-info"
+                    onClick={handleGoFullScreen}
+                  >
+                    Go Full Screen
+                  </button>
+                  <button
+                    style={{ width: "150px", height: "50px" }}
+                    className="btn btn-danger"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div> 
             </div>
           </div>
         </nav>
