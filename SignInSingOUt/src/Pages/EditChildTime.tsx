@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { backEndCodeURLLocation } from "../config";
-import moment, { min } from "moment";
+import moment from "moment";
 import "./CSS/EditChildTime.css";
-import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
+import axios from "axios";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 interface SignInSignOut {
   id: number;
@@ -14,12 +15,63 @@ interface SignInSignOut {
   clientLastName: string;
 }
 
+interface ChildInfo {
+  clientID: number;
+  firstName: string;
+  lastName: string;
+  locationID: string;
+}
+
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
+  const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+
+  const animatedComponents = makeAnimated();
+
+  const options = childInfo.map((parent) => ({
+    value: parent.clientID,
+    label: `${parent.firstName} ${parent.lastName}`,
+  }));
 
   useEffect(() => {
     fetchSchedule();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in localStorage");
+        }
+
+        const url = `${backEndCodeURLLocation}SignIn/GetAllClientInfoWhereTheClientIsNotAlreadyActive`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch data. Response status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+
+        setChildInfo(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const fetchSchedule = async () => {
@@ -101,6 +153,59 @@ const EditChildTime: React.FC = () => {
     }
   };
 
+  const handleUpdateTimeForManualTime = async (
+    field: "signInTime" | "signOutTime",
+    newValue: string
+  ) => {
+    try {
+      const currentTime = new Date();
+      const currentHours = currentTime.getHours();
+      const currentMinutes = currentTime.getMinutes();
+
+      // Parse the input time (newValue) into hours and minutes
+      const [newHours, newMinutes] = newValue.split(":").map(Number);
+
+      // Convert both current and input times to minutes
+      const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+      const newValueInMinutes = newHours * 60 + newMinutes;
+
+      console.log("New value = " + newValue);
+      console.log("Current time = " + newValueInMinutes);
+      if (newValueInMinutes > currentTimeInMinutes) {
+        alert("Choose a time [not greater] than the current time.");
+
+        return;
+      }
+
+      if (field === "signInTime") {
+        const [newSignInHours, newSignInMinutes] = newValue
+          .split(":")
+          .map(Number);
+
+        const newSignInTime = newSignInHours * 60 + newSignInMinutes;
+
+        const [signOutHours, signOutMinutes] = selectSignOutTime
+          .split(":")
+          .map(Number);
+
+        const currentSignOutTime = signOutHours * 60 + signOutMinutes;
+
+        if (newSignInTime > currentSignOutTime) {
+          alert("[Sign In Time] Greater Than [Sign Out Time]");
+
+          return;
+        }
+      }
+
+      if (field === "signOutTime") {
+        setSelectSignOutTime(() => newValue);
+      }
+
+    } catch (error) {
+      console.error("Error updating time:", error);
+    }
+  };
+
   const UpdateSignInSignOutTime = async (
     id: number,
     signInTime: string,
@@ -132,42 +237,71 @@ const EditChildTime: React.FC = () => {
     setEditingItemId(null);
   };
 
-  const SaveToExcelAndConvertToPDF = async () => {
-    const ws = XLSX.utils.json_to_sheet(schedule);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    // Convert workbook to a binary Excel file
-    const excelData = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-    const excelBlob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
+  const DownloadPDF = async () => {
     try {
-        const token = localStorage.getItem("token");
-        const formData = new FormData();
-        formData.append('excelFile', excelBlob, 'data.xlsx');
-
-        const response = await fetch(`${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            console.error('Error:', response.statusText);
-            // Handle error
-        } else {
-            // File successfully sent and converted to PDF
-            const pdfBlob = await response.blob();
-            // Handle the PDF blob, for example, you can download it or display it
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
+        {
+          responseType: "blob", // Specify response type as blob
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    } catch (error) {
-        // Handle fetch error
-        console.error('Fetch Error:', error);
-    }
-};
+      );
 
+      // Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create an anchor element to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "converted.pdf";
+
+      // Append the anchor element to the body and click it
+      document.body.appendChild(a);
+      a.click();
+
+      // Remove the anchor element after download
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    }
+  };
+
+  const AddNewSignOut = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
+        {
+          responseType: "blob", // Specify response type as blob
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create an anchor element to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "converted.pdf";
+
+      // Append the anchor element to the body and click it
+      document.body.appendChild(a);
+      a.click();
+
+      // Remove the anchor element after download
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    }
+  };
 
   // const EditSignInSignOutTime = async () => {
   //   setEditing(true);
@@ -180,6 +314,11 @@ const EditChildTime: React.FC = () => {
   ) => {
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
+  };
+
+  const handleSelectChange = (selectedOptions: any) => {
+    setSelectedOptions(selectedOptions); // Update state with selected options
+    console.log(selectedOptions);
   };
 
   return (
@@ -259,9 +398,67 @@ const EditChildTime: React.FC = () => {
               </td>
             </tr>
           ))}
+        
+            <tr>
+              {/* <td>{item.id}</td> */}
+              <td>
+                <Select
+                  required
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={options}
+                  onChange={handleSelectChange}
+                  value={selectedOptions}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                  }}
+                />
+              </td>
+              <td>
+                <input
+                  type="time"
+                  className="form-control"
+                  value={selectedOptions}
+                  onChange={(e) =>
+                    handleUpdateTimeForManualTime("signInTime", e.target.value)
+                   }
+                />
+              </td>
+              <td>
+                <input
+                  type="time"
+                  className="form-control"
+                  onChange={(e) =>
+                    handleUpdateTimeForManualTime("signOutTime", e.target.value)
+                  }
+                />
+              </td>
+              <td>
+                <span>
+                  <button className="btn btn-cancel">Cancel</button>
+                  <button className="btn btn-update">Add</button>
+                </span>
+              </td>
+            </tr>
+          
         </tbody>
       </table>
-      <button onClick={SaveToExcelAndConvertToPDF}>Hello</button>
+      <button onClick={DownloadPDF}>Download PDF</button>
+      <button onClick={AddNewSignOut}>Add New Sign/Out</button>
     </div>
   );
 };
