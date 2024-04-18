@@ -99,7 +99,7 @@ const ReceptionistGivesTemporaryPinToParent: React.FC = () => {
          <div className="card-body">
          <div className="parentInfoGridContainer">
               <div className="form-group parentGridContaineritem">
-              <h5>Select a parent: </h5>
+              <h3>Select a parent: </h3>
           {parents.map((parent) => (
             <Button
               key={parent.parentID}
@@ -107,6 +107,7 @@ const ReceptionistGivesTemporaryPinToParent: React.FC = () => {
               onClick={() => {
                 OpenPopUp(parent.parentFirstName, parent.parentLastName, parent.parentID)
               }}
+              style={{height: "75px", width: "150px", fontSize: "20px"}}
             >
               {parent.parentFirstName} {parent.parentLastName}
             </Button>

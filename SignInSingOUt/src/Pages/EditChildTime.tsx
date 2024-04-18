@@ -417,6 +417,7 @@ const EditChildTime: React.FC = () => {
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   options={options}
+                  isClearable={true}
                   onChange={handleSelectChange}
                   value={selectedOptions}
                   styles={{
@@ -449,17 +450,35 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-                <input
-                  type="time"
-                  className="form-control"
-                  onChange={(e) =>
-                    handleUpdateTimeForManualTime("signOutTime", e.target.value)
-                  }
+              <Select
+                  required
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={options}
+                  isClearable={true}
+                  onChange={handleSelectChange}
+                  value={selectedOptions}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                  }}
                 />
               </td>
               <td>
                 <span>
-                  <button className="btn btn-cancel">Cancel</button>
                   <button className="btn btn-update">Add</button>
                 </span>
               </td>

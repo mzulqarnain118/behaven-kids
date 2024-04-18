@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
   }, [showNavbar]);
 
   useEffect(() => {
-    if (window.location.href === frontEndURLLocation) {
+    if (window.location.href === frontEndURLLocation || window.location.href === frontEndURLLocation + "#") {
       setShowNavbar(false);
     }
   }, [window.location.href]);
@@ -164,11 +164,11 @@ const Navbar: React.FC = () => {
     }
   }, [localStorage.getItem("token")]);
 
-  const [collapsed, setCollapsed] = useState(true);
+  // const [collapsed, setCollapsed] = useState(true);
 
-  const toggleNavbar = () => {
-    setCollapsed(!collapsed);
-  };
+  // const toggleNavbar = () => {
+  //   setCollapsed(!collapsed);
+  // };
 
   return (
     <>
@@ -299,7 +299,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={AddNewClientAsCurrent}
                     >
-                      <span style={{ fontSize: "20px" }}> Client To Current</span>
+                      <span style={{ fontSize: "20px" }}>Make Clients Active</span>
                     </a>
                   </li>
                   )}
@@ -311,7 +311,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={CheckParentsTemporaryPin}
                     >
-                      <span style={{ fontSize: "20px" }}> Parents Pin</span>
+                      <span style={{ fontSize: "20px" }}>Check Parents Temporary Pin</span>
                     </a>
                   </li>
                   )}
@@ -323,7 +323,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={EditClientSignInSignOutTime}
                     >
-                      <span style={{ fontSize: "20px" }}> Edit Time</span>
+                      <span style={{ fontSize: "20px" }}>Sign In/Out Management</span>
                     </a>
                   </li>
                   )}
@@ -335,7 +335,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={GoToConnectParentWithChild}
                     >
-                      <span style={{ fontSize: "20px" }}> Connect Parents To Client</span>
+                      <span style={{ fontSize: "20px" }}> Connect Parents To Client(s)</span>
                     </a>
                   </li>
                   )}

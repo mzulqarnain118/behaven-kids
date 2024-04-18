@@ -28,7 +28,8 @@ interface SignInSignOutTime {
 const ChooseWhichChildren: React.FC = () => {
   const location = useLocation();
   const parentFourDigitPin = location.state?.parentFourDigitPin;
-  const parentLastFourDigitPhoneNumber = location.state?.parentLastFourDigitPhoneNumber;
+  const parentLastFourDigitPhoneNumber =
+    location.state?.parentLastFourDigitPhoneNumber;
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,9 +44,13 @@ const ChooseWhichChildren: React.FC = () => {
   const [pointerEventsSignOut, setPointerEventsSignOut] = useState<
     "auto" | "none"
   >("auto");
- 
-  const [boxShadowEventsSignIn, setBoxShadowEventsSignIn] = useState("0 4px 8px rgba(0, 0, 0, 0.4)");
-const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState("0 4px 8px rgba(0, 0, 0, 0.4)");
+
+  const [boxShadowEventsSignIn, setBoxShadowEventsSignIn] = useState(
+    "0 4px 8px rgba(0, 0, 0, 0.4)"
+  );
+  const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState(
+    "0 4px 8px rgba(0, 0, 0, 0.4)"
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +59,9 @@ const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState("0 4px 8px 
         if (!token) {
           throw new Error("Token not found in localStorage");
         }
-console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber);
+        console.log(
+          "parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
+        );
         const urlForDigitPin = `${backEndCodeURLLocation}SignIn/GetParentsChildrenInfo?parentPinID=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
         console.log(urlForDigitPin);
         const responseForDigitPin = await fetch(urlForDigitPin, {
@@ -229,7 +236,7 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
 
   const handleDivClick = (
     childId: number,
-    isSignIn: string,
+    isSignIn: string
     // isSignOut: string,
     // isChecked: boolean
   ) => {
@@ -259,49 +266,38 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
     const isCheckedPresent = updatedChildrenInfo.some(
       (child) => child.isChecked === true
     );
-    
-    if (isCheckedPresent === true)
-    {
+
+    if (isCheckedPresent === true) {
       setDidUserCheckAClient(false);
       if (isSignIn !== null) {
-        setPointerEventsSignIn(() => ("auto"));
-        setPointerEventsSignOut(() => ("none"));
-
+        setPointerEventsSignIn(() => "auto");
+        setPointerEventsSignOut(() => "none");
       } else if (isSignIn === null) {
-        setPointerEventsSignIn(() => ("none"));
-        setPointerEventsSignOut(() => ("auto"));
+        setPointerEventsSignIn(() => "none");
+        setPointerEventsSignOut(() => "auto");
       }
-    }
-    else {
+    } else {
       setDidUserCheckAClient(true);
-      setPointerEventsSignIn(() => ("auto"));
-        setPointerEventsSignOut(() => ("auto"));
+      setPointerEventsSignIn(() => "auto");
+      setPointerEventsSignOut(() => "auto");
     }
 
     for (let i = 0; i < updatedChildrenInfo.length; i++) {
-    
-      if (isCheckedPresent === true)
-      {
+      if (isCheckedPresent === true) {
         if (isSignIn !== null) {
-          setBoxShadowEventsSignIn(() => ("0 4px 8px rgba(255, 0, 0, 0.4)"))
+          setBoxShadowEventsSignIn(() => "0 4px 8px rgba(255, 0, 0, 0.4)");
           console.log("hello");
-          
-  
         } else if (isSignIn === null) {
           console.log("hello 2");
-          setBoxShadowEventsSignOut(() => ("0 4px 8px rgba(0, 128, 0, 0.4)"))
-          
+          setBoxShadowEventsSignOut(() => "0 4px 8px rgba(0, 128, 0, 0.4)");
         }
         break;
-      }
-      else
-      {
-        console.log("hello 3")
-        setBoxShadowEventsSignIn(() => ( "0 4px 8px rgba(0, 0, 0, 0.4)"))
-        setBoxShadowEventsSignOut(() => ("0 4px 8px rgba(0, 0, 0, 0.4)"))
+      } else {
+        console.log("hello 3");
+        setBoxShadowEventsSignIn(() => "0 4px 8px rgba(0, 0, 0, 0.4)");
+        setBoxShadowEventsSignOut(() => "0 4px 8px rgba(0, 0, 0, 0.4)");
       }
     }
-    
   };
 
   const handleSubmit = async () => {
@@ -400,8 +396,8 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
         alt="Behaven Logo"
         style={{ height: "75px", marginBottom: "25px" }}
       />
-            <h4>&#128198; {new Date().toLocaleDateString()}</h4>
-            <br/>
+      <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+      <br />
       {childrenInfo.map((info) => (
         <div
           className="card"
@@ -425,10 +421,7 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
             //   info.signOutTimeData,
             //   info.isChecked
             // )
-            handleDivClick(
-              info.childId,
-              info.signInTimeData,
-            )
+            handleDivClick(info.childId, info.signInTimeData)
           }
         >
           <div
@@ -436,9 +429,10 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
             style={{
               display: "flex",
               justifyContent: "space-between",
-              boxShadow: info.signInTimeData !== null
-              ? boxShadowEventsSignIn
-              : boxShadowEventsSignOut,
+              boxShadow:
+                info.signInTimeData !== null
+                  ? boxShadowEventsSignIn
+                  : boxShadowEventsSignOut,
             }}
           >
             <div
@@ -497,7 +491,7 @@ console.log("parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
 
       <button
         className="btn btn-primary btn-lg"
-        style={{width: "150px", height: "75px"}}
+        style={{ width: "150px", height: "75px" }}
         onClick={handleSubmit}
         disabled={didUserCheckAClient}
       >
