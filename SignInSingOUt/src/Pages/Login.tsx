@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import personLogInImage from "../assets/personLogIn.svg";
 import lockPassword from "../assets/lockPassword.svg";
+import BehavenLogo from "../assets/BehavenLogo.jpg";
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+  role: string;
+  // Add other properties if needed
+}
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+
 
   useEffect(() => {
     // Check if the user is already authenticated (e.g., token exists)
@@ -41,7 +50,13 @@ const LoginPage: React.FC = () => {
 
       localStorage.setItem("token", token);
 
-      navigate("/PhoneNumber");
+      const decoded = jwtDecode(token) as DecodedToken;
+      const userRole = decoded.role;
+
+      if (userRole === "parent")
+        navigate("/PhoneNumber");
+      else if (userRole === "admin" || userRole === "secretary" )
+        navigate("/EditChildTime");
     
     // Refresh the page
     window.location.reload();
@@ -52,6 +67,22 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
+                 <img
+                  src={BehavenLogo}
+                  alt="My Image"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "125px",
+                    margin: "0 auto",
+                    position: "absolute",
+                    top: "20%",
+                    left: "49%",
+                    transform: "translate(-50%, -50%)",
+                    
+                  }}
+                />
       <div
         style={{
           display: "flex",
@@ -65,6 +96,7 @@ const LoginPage: React.FC = () => {
           transform: "translate(-50%, -50%)"
         }}
       >
+   
         <form onSubmit={handleLogin}>
           <div className="card" style={{ width: "500px", textAlign: "center" }}>
             <div className="card-body">

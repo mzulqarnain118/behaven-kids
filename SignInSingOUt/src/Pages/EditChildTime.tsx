@@ -329,8 +329,11 @@ const EditChildTime: React.FC = () => {
           <tr>
             {/* <th>ID</th> */}
             <th>Client Name</th>
+            
             <th>Sign In Time</th>
+            <th>Who</th>
             <th>Sign Out Time</th>
+            <th>Who</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -341,6 +344,7 @@ const EditChildTime: React.FC = () => {
               <td>
                 {item.clientFirstName} {item.clientLastName}
               </td>
+              
               <td>
                 <input
                   type="time"
@@ -353,6 +357,9 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
+                <p>Mom</p>
+              </td>
+              <td>
                 <input
                   type="time"
                   className="form-control"
@@ -362,6 +369,9 @@ const EditChildTime: React.FC = () => {
                   }
                   disabled={editingItemId !== item.id}
                 />
+              </td>
+              <td>
+                <p>Mom</p>
               </td>
               <td>
                 {editingItemId !== item.id ? (

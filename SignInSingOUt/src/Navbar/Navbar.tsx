@@ -19,12 +19,23 @@ const Navbar: React.FC = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [role, setRole] = useState<string>("");
 
+  const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+
+  const closeOffcanvas = () => {
+    setIsOffcanvasOpen(false);
+  };
+
+  const handleToggleOffcanvas = () => {
+    setIsOffcanvasOpen(!isOffcanvasOpen);
+  };
+
   const handleGoFullScreen = () => {
     const element = document.documentElement;
     if (element.requestFullscreen) {
       element.requestFullscreen();
       setShowNavbar(false);
     }
+    closeOffcanvas();
   };
 
   useEffect(() => {
@@ -89,6 +100,7 @@ const Navbar: React.FC = () => {
 
   const GoToPhoneNumberPage = () => {
     navigate("/PhoneNumber", { replace: true });
+    closeOffcanvas();
   };
 
   const AddNewClientAsCurrent = () => {
@@ -139,6 +151,7 @@ const Navbar: React.FC = () => {
   const handleSignOut = () => {
     localStorage.removeItem("token");
     navigate("/", { replace: true });
+    closeOffcanvas();
   };
 
   useEffect(() => {
@@ -159,163 +172,182 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-    {(showNavbar === true && role === "parent") && (
-      <nav className="navbar bg-white fixed-top">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-     
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasNavbar"
-            aria-controls="offcanvasNavbar"
-            style={{marginTop: "15px", marginRight: "15px"}}
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div
-            className="offcanvas offcanvas-end"
-            id="offcanvasNavbar"
-            aria-labelledby="offcanvasNavbarLabel"
-            style={{ width: "350px" }}
-          >
-            <div className="offcanvas-header">
-              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
-                Menu
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="offcanvas"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="offcanvas-body">
-              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                <li className="nav-item" style={{ height: "65px" }}>
-                  <a className="nav-link active" aria-current="page" href="#" onClick={GoToPhoneNumberPage}>
-                  <span style={{fontSize: "20px"}}>&#10227; Refresh</span> 
-                  </a>
-                </li>
-                <li className="nav-item" style={{ height: "65px" }}>
-                  <a className="nav-link active" aria-current="page" href="#" onClick={handleGoFullScreen}>
-                  <span style={{fontSize: "20px"}}>&#10530; Full Screen</span> 
-                  </a>
-                </li>
-                <li className="nav-item" style={{ height: "65px" }}>
-                  <a className="nav-link" href="#" onClick={handleSignOut}>
-                  <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign Out
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </nav>
-      )}
-      {(showNavbar === true && role !== "parent") && (
-        <nav className="navbar navbar-expand-lg">
-          <div className="container d-flex justify-content-between align-items-center">
-            {role !== "parent" && (
-              <a className="navbar-brand" href="#">
-                <img
-                  src={BehavenLogo}
-                  alt="My Image"
-                  style={{ height: "75px" }}
-                />
-              </a>
-            )}
+      {showNavbar === true && role === "parent" && (
+        <nav className="navbar bg-white fixed-top">
+          <div className="container-fluid">
+            <a className="navbar-brand" href="#"></a>
             <button
               className="navbar-toggler"
               type="button"
-              onClick={toggleNavbar}
-              aria-expanded={!collapsed ? "true" : "false"}
-              aria-label="Toggle navigation"
-              style={{ marginLeft: "80%" }}
+              onClick={handleToggleOffcanvas}
+              aria-controls="offcanvasNavbar"
+              style={{ marginTop: "15px", marginRight: "15px" }}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
             <div
-              className={`collapse navbar-collapse ${collapsed ? "" : "show"}`}
-              id="navbarNav"
+              className={`offcanvas offcanvas-end ${
+                isOffcanvasOpen ? "show" : ""
+              }`}
+              id="offcanvasNavbar"
+              aria-labelledby="offcanvasNavbarLabel"
+              style={{ width: "350px" }}
             >
-              <ul className="navbar-nav ml-auto">
-                {role === "admin" && (
-                  <li className="nav-item active">
-                    <a className="nav-link" href="#" onClick={GoToAddNewParent}>
-                      Add New Parent
+              <div className="offcanvas-header">
+                <img
+                  src={BehavenLogo}
+                  alt="My Image"
+                  style={{ height: "60px" }}
+                />
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="offcanvas"
+                  aria-label="Close"
+                  style={{marginRight: "5px"}}
+                  onClick={closeOffcanvas}
+                ></button>
+              </div>
+              <div className="offcanvas-body">
+                <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={GoToPhoneNumberPage}
+                    >
+                      <span style={{ fontSize: "20px" }}>&#10227; Refresh</span>
                     </a>
                   </li>
-                )}
-                {role === "admin" && (
-                  <li className="nav-item">
+                  <li className="nav-item" style={{ height: "65px" }}>
                     <a
-                      className="nav-link"
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={handleGoFullScreen}
+                    >
+                      <span style={{ fontSize: "20px" }}>
+                        &#10530; Full Screen
+                      </span>
+                    </a>
+                  </li>
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a className="nav-link" href="#" onClick={handleSignOut}>
+                      <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign
+                      Out
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
+      {showNavbar === true && role !== "parent" && (
+        <nav className="navbar bg-white ">
+          <div className="container-fluid">
+          <button
+              className="navbar-toggler"
+              type="button"
+              onClick={handleToggleOffcanvas}
+              aria-controls="offcanvasNavbar"
+              style={{marginLeft: "25px"}}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <img src={BehavenLogo} alt="My Image" style={{ height: "75px", marginRight: "45%" }} />
+           
+            <div
+              className={`offcanvas offcanvas-start ${
+                isOffcanvasOpen ? "show" : ""
+              }`}
+              id="offcanvasNavbar"
+              aria-labelledby="offcanvasNavbarLabel"
+              style={{ width: "350px" }}
+            >
+               <div className="offcanvas-header">
+
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="offcanvas"
+                  aria-label="Close"
+                  style={{marginRight: "5px"}}
+                  onClick={closeOffcanvas}
+                ></button>
+              </div>
+              <div className="offcanvas-body">
+                <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                {role === "admin" && (
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={GoToAddNewParent}
+                    >
+                      <span style={{ fontSize: "20px" }}>Add New Parent</span>
+                    </a>
+                  </li>
+                  )}
+                  {role === "admin" && (
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
                       href="#"
                       onClick={AddNewClientAsCurrent}
                     >
-                      Client To Current
+                      <span style={{ fontSize: "20px" }}> Client To Current</span>
                     </a>
                   </li>
-                )}
-                {(role === "admin" || role === "secretary") && (
-                  <li className="nav-item">
+                  )}
+                   {(role === "admin" || role === "secretary") && (
+                  <li className="nav-item" style={{ height: "65px" }}>
                     <a
-                      className="nav-link"
+                      className="nav-link active"
+                      aria-current="page"
                       href="#"
                       onClick={CheckParentsTemporaryPin}
                     >
-                      Parents Pin
+                      <span style={{ fontSize: "20px" }}> Parents Pin</span>
                     </a>
                   </li>
-                )}
-                {(role === "admin" || role === "secretary") && (
-                  <li className="nav-item">
+                  )}
+                   {(role === "admin" || role === "secretary") && (
+                  <li className="nav-item" style={{ height: "65px" }}>
                     <a
-                      className="nav-link"
+                      className="nav-link active"
+                      aria-current="page"
                       href="#"
                       onClick={EditClientSignInSignOutTime}
                     >
-                      Edit Time
+                      <span style={{ fontSize: "20px" }}> Edit Time</span>
                     </a>
                   </li>
-                )}
-                {role === "admin" && (
-                  <li className="nav-item">
+                  )}
+                  {role === "admin" && (
+                  <li className="nav-item" style={{ height: "65px" }}>
                     <a
-                      className="nav-link"
+                      className="nav-link active"
+                      aria-current="page"
                       href="#"
                       onClick={GoToConnectParentWithChild}
                     >
-                      Connect
+                      <span style={{ fontSize: "20px" }}> Connect Parents To Client</span>
                     </a>
                   </li>
-                )}
-              </ul>
-               <div style={{ width: "100%", textAlign: "right" }}>
-                <div style={{ marginLeft: "100px" }}>
-                  <button
-                    style={{
-                      width: "150px",
-                      height: "50px",
-                      marginRight: "25px",
-                    }}
-                    className="btn btn-info"
-                    onClick={handleGoFullScreen}
-                  >
-                    Go Full Screen
-                  </button>
-                  <button
-                    style={{ width: "150px", height: "50px" }}
-                    className="btn btn-danger"
-                    onClick={handleSignOut}
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              </div> 
+                  )}
+
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a className="nav-link" href="#" onClick={handleSignOut}>
+                      <span style={{ fontSize: "20px" }}></span> Sign
+                      Out
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </nav>
