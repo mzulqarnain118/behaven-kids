@@ -8,14 +8,15 @@ import ErrorMessage from "../Components/ErrorMessage";
 
 const ParentSignIn: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const parentLastFourDigitPhoneNumber =
     location.state?.parentLastFourDigitPhoneNumber;
   console.log(parentLastFourDigitPhoneNumber);
+
+
   const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
-
   const [, setParentName] = useState<string>("");
-
-  const navigate = useNavigate();
   const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
@@ -57,13 +58,11 @@ const ParentSignIn: React.FC = () => {
           }
 
           const data = await response.json();
-
           setParentName(data.parentFirstName);
           setShowErrorMessage(false);
-          console.log("parentFourDigitPin = " + parentFourDigitPin);
           navigate("/ChooseWhichChildren", {
             replace: true,
-            state: { parentFourDigitPin: parentFourDigitPin, parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber },
+            state: { parentFourDigitPin: parentFourDigitPin, parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber, parentID: data.parentId },
           });
           setShow(true);
           //   navigate("/", { replace: true });

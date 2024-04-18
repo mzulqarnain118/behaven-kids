@@ -28,8 +28,8 @@ interface SignInSignOutTime {
 const ChooseWhichChildren: React.FC = () => {
   const location = useLocation();
   const parentFourDigitPin = location.state?.parentFourDigitPin;
-  const parentLastFourDigitPhoneNumber =
-    location.state?.parentLastFourDigitPhoneNumber;
+  const parentLastFourDigitPhoneNumber = location.state?.parentLastFourDigitPhoneNumber;
+  const parentID = location.state?.parentID;
 
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +55,7 @@ const ChooseWhichChildren: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("parentID = " + parentID);
         const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("Token not found in localStorage");
@@ -331,7 +332,7 @@ const ChooseWhichChildren: React.FC = () => {
     try {
       console.log("ClientID = " + clientID);
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignIn?clientID=${clientID}`,
+        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignIn?clientID=${clientID}&parentID=${parentID}`,
         {
           method: "POST",
           headers: {
@@ -358,7 +359,7 @@ const ChooseWhichChildren: React.FC = () => {
     try {
       console.log("ClientID = " + clientID);
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignOut?clientID=${clientID}`,
+        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignOut?clientID=${clientID}&parentID=${parentID}`,
         {
           method: "POST",
           headers: {

@@ -13,6 +13,10 @@ interface SignInSignOut {
   signInAndOutDate: string;
   clientFirstName: string;
   clientLastName: string;
+  droppedInParentFirstName : string;
+  droppedInParentLastName : string;
+  pickedOutParentFirstName : string;
+  pickedOutParentLastName : string;
 }
 
 interface ChildInfo {
@@ -329,7 +333,6 @@ const EditChildTime: React.FC = () => {
           <tr>
             {/* <th>ID</th> */}
             <th>Client Name</th>
-            
             <th>Sign In Time</th>
             <th>Who</th>
             <th>Sign Out Time</th>
@@ -357,7 +360,7 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-                <p>Mom</p>
+                {item.droppedInParentFirstName} {item.droppedInParentLastName}
               </td>
               <td>
                 <input
@@ -371,7 +374,7 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-                <p>Mom</p>
+              {item.pickedOutParentFirstName} {item.pickedOutParentLastName}
               </td>
               <td>
                 {editingItemId !== item.id ? (
