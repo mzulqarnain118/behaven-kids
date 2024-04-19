@@ -8,6 +8,9 @@ import makeAnimated from "react-select/animated";
 
 interface SignInSignOut {
   id: number;
+  clientID: number;
+  droppedInParentID: number;
+  pickedOutParentID: number;
   signInTime: string;
   signOutTime: string;
   signInAndOutDate: string;
@@ -26,11 +29,22 @@ interface ChildInfo {
   locationID: string;
 }
 
+interface ParentInfo {
+  parentID: number;
+  parentFirstName: string;
+  parentLastName: string;
+}
+
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+  const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
+  const [selectedWhoDropedInOutOptions, setSelectedWhoDropedInOutOptions] = useState<any[]>([]);
+  const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
+
 
   const animatedComponents = makeAnimated();
 
@@ -38,6 +52,11 @@ const EditChildTime: React.FC = () => {
     value: parent.clientID,
     label: `${parent.firstName} ${parent.lastName}`,
   }));
+
+  // const dropInOutOptions = parentInfo.map((parent) => ({
+  //   value: parent.parentID,
+  //   label: `${parent.parentFirstName} ${parent.parentLastName}`,
+  // }));
 
   useEffect(() => {
     fetchSchedule();
@@ -307,22 +326,65 @@ const EditChildTime: React.FC = () => {
     }
   };
 
-  // const EditSignInSignOutTime = async () => {
-  //   setEditing(true);
-  // };
+  
+  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIN: number,) => {
+    const token = localStorage.getItem("token");
+  
+    try {
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/GetAllParentsAndGuardiansWhoCanDropInOutAClient?clientID=${parentID}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setParentInfo(() => data);
+        console.log(data);
+        const options = data.map((parent: any) => ({
+          value: parent.parentID,
+          label: `${parent.parentFirstName} ${parent.parentLastName}`,
+        }));
+        setDropInOutOptions(options);
+        const selectedOption = options.find(
+          (option: { value: number; label: string }) => option.value === parentIDWhoDropIN
+        );
+        
+        setSelectedDropInOption(() => selectedOption);
+      } else {
+        console.error("Error fetching data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
   const EditSignInSignOutTime = (
     itemId: number,
+    clientId: number,
+    parentIDWhoDropIN: number,
     currentSignOutTime: string
   ) => {
+    console.log("clientId = " + clientId);
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
+    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIN);
   };
 
   const handleSelectChange = (selectedOptions: any) => {
     setSelectedOptions(selectedOptions); // Update state with selected options
-    console.log(selectedOptions);
+    const selectedOption = dropInOutOptions.find(
+      (option: { value: number; label: string }) => option.value === selectedOptions.value
+    );
+    setSelectedDropInOption(() => selectedOption);
+    console.log("dropInOutOptions = ", selectedOption);
   };
 
   return (
@@ -360,7 +422,34 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-                {item.droppedInParentFirstName} {item.droppedInParentLastName}
+                {/* {item.droppedInParentFirstName} {item.droppedInParentLastName} */}
+                <Select
+                  required
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={dropInOutOptions}
+                  isClearable={true}
+                  onChange={handleSelectChange}
+                  value={selectedDropInOption}
+                  isDisabled={editingItemId !== item.id}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                  }}
+                />
               </td>
               <td>
                 <input
@@ -374,14 +463,14 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-              {item.pickedOutParentFirstName} {item.pickedOutParentLastName}
+              {item.pickedOutParentID}{item.pickedOutParentFirstName} {item.pickedOutParentLastName}
               </td>
               <td>
                 {editingItemId !== item.id ? (
                   <button
                     className="btn btn-edit"
                     onClick={() =>
-                      EditSignInSignOutTime(item.id, item.signOutTime)
+                      EditSignInSignOutTime(item.id, item.clientID, item.droppedInParentID, item.signOutTime)
                     }
                   >
                     Edit
