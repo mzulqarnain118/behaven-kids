@@ -44,7 +44,8 @@ const EditChildTime: React.FC = () => {
   const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
   const [selectedWhoDropedInOutOptions, setSelectedWhoDropedInOutOptions] = useState<any[]>([]);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
-  const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any | null }>({});
+  const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any }>({});
+  const [selectedDropOutOptions, setSelectedDropOutOptions] = useState<{ [key: number]: any }>({});
 
 
 
@@ -329,7 +330,7 @@ const EditChildTime: React.FC = () => {
   };
 
   
-  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIN: number, itemId: number) => {
+  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIn: number, parentIDWhoPickedUp: number, itemId: number) => {
     const token = localStorage.getItem("token");
   
     try {
@@ -353,17 +354,26 @@ const EditChildTime: React.FC = () => {
           label: `${parent.parentFirstName} ${parent.parentLastName}`,
         }));
   
-        console.log("options", options);
         setDropInOutOptions(() => options);
   
-        const selectedOption = options.find(
-          (option: { value: number; label: string }) => option.value === parentIDWhoDropIN
+        const selectedOptionForDropIn = options.find(
+          (option: { value: number; label: string }) => option.value === parentIDWhoDropIn
         );
   
-        // setSelectedDropInOptions((prevSelectedOptions) => ({
-        //   ...prevSelectedOptions,
-        //   [itemId]: selectedOption || null,
-        // }));
+        setSelectedDropInOptions((prevSelectedOptions) => ({
+          ...prevSelectedOptions,
+          [itemId]: selectedOptionForDropIn,
+        }));
+
+        
+        const selectedOptionForPickedUp = options.find(
+          (option: { value: number; label: string }) => option.value === parentIDWhoPickedUp
+        );
+
+        setSelectedDropOutOptions((prevSelectedOptions) => ({
+          ...prevSelectedOptions,
+          [itemId]: selectedOptionForPickedUp,
+        }));
       } else {
         console.error("Error fetching data:", response.statusText);
       }
@@ -377,13 +387,14 @@ const EditChildTime: React.FC = () => {
   const EditSignInSignOutTime = (
     itemId: number,
     clientId: number,
-    parentIDWhoDropIN: number,
+    parentIDWhoDropIn: number,
+    parentIDWhoPickedUp: number,
     currentSignOutTime: string
   ) => {
     console.log("clientId = " + clientId);
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
-    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIN, itemId);
+    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIn, parentIDWhoPickedUp, itemId);
   };
 
   // const handleSelectChange = (selectedOptions: any) => {
@@ -437,7 +448,6 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-                {/* {item.droppedInParentFirstName} {item.droppedInParentLastName} */}
                 <Select
                   required
                   closeMenuOnSelect={false}
@@ -445,7 +455,14 @@ const EditChildTime: React.FC = () => {
                   options={dropInOutOptions}
                   isClearable={true}
                   onChange={(selectedOption) => handleSelectChange(selectedOption, item.id)}
-                  value={selectedDropInOptions[item.id]}
+                  value={
+                    selectedDropInOptions[item.id]
+                      ? selectedDropInOptions[item.id]
+                      : {
+                          value: "",
+                          label: `${item.droppedInParentFirstName} ${item.droppedInParentLastName}`,
+                        }
+                  }
                   isDisabled={editingItemId !== item.id}
                   styles={{
                     // Styles for the container of the Select component
@@ -478,14 +495,47 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-              {item.pickedOutParentID}{item.pickedOutParentFirstName} {item.pickedOutParentLastName}
+              <Select
+                  required
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={dropInOutOptions}
+                  isClearable={true}
+                  onChange={(selectedOption) => handleSelectChange(selectedOption, item.id)}
+                  value={
+                    selectedDropOutOptions[item.id]
+                      ? selectedDropOutOptions[item.id]
+                      : {
+                          value: "",
+                          label: `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}`,
+                        }
+                  }
+                  isDisabled={editingItemId !== item.id}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: "20px", // Adjust the font size here
+                    }),
+                  }}
+                />
               </td>
               <td>
                 {editingItemId !== item.id ? (
                   <button
                     className="btn btn-edit"
                     onClick={() =>
-                      EditSignInSignOutTime(item.id, item.clientID, item.droppedInParentID, item.signOutTime)
+                      EditSignInSignOutTime(item.id, item.clientID, item.droppedInParentID, item.pickedOutParentID, item.signOutTime)
                     }
                   >
                     Edit
