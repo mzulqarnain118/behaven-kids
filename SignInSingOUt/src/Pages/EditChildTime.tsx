@@ -44,6 +44,8 @@ const EditChildTime: React.FC = () => {
   const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
   const [selectedWhoDropedInOutOptions, setSelectedWhoDropedInOutOptions] = useState<any[]>([]);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
+  const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any | null }>({});
+
 
 
   const animatedComponents = makeAnimated();
@@ -327,7 +329,7 @@ const EditChildTime: React.FC = () => {
   };
 
   
-  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIN: number,) => {
+  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIN: number, itemId: number) => {
     const token = localStorage.getItem("token");
   
     try {
@@ -341,21 +343,27 @@ const EditChildTime: React.FC = () => {
           },
         }
       );
-      
+  
       if (response.ok) {
         const data = await response.json();
-        setParentInfo(() => data);
-        console.log(data);
+        setParentInfo(data);
+  
         const options = data.map((parent: any) => ({
           value: parent.parentID,
           label: `${parent.parentFirstName} ${parent.parentLastName}`,
         }));
-        setDropInOutOptions(options);
+  
+        console.log("options", options);
+        setDropInOutOptions(() => options);
+  
         const selectedOption = options.find(
           (option: { value: number; label: string }) => option.value === parentIDWhoDropIN
         );
-        
-        setSelectedDropInOption(() => selectedOption);
+  
+        // setSelectedDropInOptions((prevSelectedOptions) => ({
+        //   ...prevSelectedOptions,
+        //   [itemId]: selectedOption || null,
+        // }));
       } else {
         console.error("Error fetching data:", response.statusText);
       }
@@ -375,16 +383,23 @@ const EditChildTime: React.FC = () => {
     console.log("clientId = " + clientId);
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
-    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIN);
+    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIN, itemId);
   };
 
-  const handleSelectChange = (selectedOptions: any) => {
-    setSelectedOptions(selectedOptions); // Update state with selected options
-    const selectedOption = dropInOutOptions.find(
-      (option: { value: number; label: string }) => option.value === selectedOptions.value
-    );
-    setSelectedDropInOption(() => selectedOption);
-    console.log("dropInOutOptions = ", selectedOption);
+  // const handleSelectChange = (selectedOptions: any) => {
+  //   setSelectedOptions(selectedOptions); // Update state with selected options
+  //   const selectedOption = dropInOutOptions.find(
+  //     (option: { value: number; label: string }) => option.value === selectedOptions.value
+  //   );
+  //   setSelectedDropInOption(() => selectedOption);
+  //   console.log("dropInOutOptions = ", selectedOption);
+  // };
+
+  const handleSelectChange = (selectedOption: any, itemId: number) => {
+    setSelectedDropInOptions((prevSelectedOptions) => ({
+      ...prevSelectedOptions,
+      [itemId]: selectedOption,
+    }));
   };
 
   return (
@@ -429,8 +444,8 @@ const EditChildTime: React.FC = () => {
                   components={animatedComponents}
                   options={dropInOutOptions}
                   isClearable={true}
-                  onChange={handleSelectChange}
-                  value={selectedDropInOption}
+                  onChange={(selectedOption) => handleSelectChange(selectedOption, item.id)}
+                  value={selectedDropInOptions[item.id]}
                   isDisabled={editingItemId !== item.id}
                   styles={{
                     // Styles for the container of the Select component
@@ -504,7 +519,7 @@ const EditChildTime: React.FC = () => {
             <tr>
               {/* <td>{item.id}</td> */}
               <td>
-                <Select
+                {/* <Select
                   required
                   closeMenuOnSelect={false}
                   components={animatedComponents}
@@ -529,7 +544,7 @@ const EditChildTime: React.FC = () => {
                       fontSize: "20px", // Adjust the font size here
                     }),
                   }}
-                />
+                /> */}
               </td>
               <td>
                 <input
@@ -542,7 +557,7 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-              <Select
+              {/* <Select
                   required
                   closeMenuOnSelect={false}
                   components={animatedComponents}
@@ -567,7 +582,7 @@ const EditChildTime: React.FC = () => {
                       fontSize: "20px", // Adjust the font size here
                     }),
                   }}
-                />
+                /> */}
               </td>
               <td>
                 <span>
@@ -579,7 +594,6 @@ const EditChildTime: React.FC = () => {
         </tbody>
       </table>
       <button onClick={DownloadPDF}>Download PDF</button>
-      <button onClick={AddNewSignOut}>Add New Sign/Out</button>
     </div>
   );
 };
