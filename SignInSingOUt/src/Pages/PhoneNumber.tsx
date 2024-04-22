@@ -5,6 +5,12 @@ import "../App.css";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+  role: string;
+  // Add other properties if needed
+}
 
 const ParentSignIn: React.FC = () => {
   const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] =
@@ -19,6 +25,18 @@ const ParentSignIn: React.FC = () => {
     if (!token) {
       navigate("/", { replace: true });
     }
+    // else {
+    //   // Set the state to redirect to dashboard
+    //   const decoded = jwtDecode(token) as DecodedToken;
+    //   const userRole = decoded.role;
+
+    //   if (userRole === "parent")
+    //     navigate("/PhoneNumber");
+    //   else if (userRole === "admin" || userRole === "secretary" )
+    //     navigate("/EditChildTime");
+      
+    
+    // }
   });
 
   useEffect(() => {

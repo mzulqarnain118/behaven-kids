@@ -16,10 +16,10 @@ interface SignInSignOut {
   signInAndOutDate: string;
   clientFirstName: string;
   clientLastName: string;
-  droppedInParentFirstName : string;
-  droppedInParentLastName : string;
-  pickedOutParentFirstName : string;
-  pickedOutParentLastName : string;
+  droppedInParentFirstName: string;
+  droppedInParentLastName: string;
+  pickedOutParentFirstName: string;
+  pickedOutParentLastName: string;
 }
 
 interface ChildInfo {
@@ -38,28 +38,26 @@ interface ParentInfo {
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
+  const [selectManualSignInTime, setSelectManualSignInTime] = useState<string>("");
+  const [selectManualParent, setSelectedManualParent] = useState<string>("");
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
-  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [selectedChildOptions, setSelectedChildOptions] = useState<any[]>([]);
   const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
   const [selectedWhoDropedInOutOptions, setSelectedWhoDropedInOutOptions] = useState<any[]>([]);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
-  const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any }>({});
-  const [selectedDropOutOptions, setSelectedDropOutOptions] = useState<{ [key: number]: any }>({});
-
-
+  const [dropInManualOptions, setDropInManualOptions] = useState<any[]>([]);
+  const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any; }>({});
+  const [selectedDropOutOptions, setSelectedDropOutOptions] = useState<{ [key: number]: any; }>({});
+  const [selectedDropInParentID, setSelectedDropInParentID] = useState<number | null>(null);
+  const [selectedDropOutParentID, setSelectedDropOutParentID] = useState<number | null>(null);
 
   const animatedComponents = makeAnimated();
 
-  const options = childInfo.map((parent) => ({
-    value: parent.clientID,
-    label: `${parent.firstName} ${parent.lastName}`,
+  const clientNameOptions = childInfo.map((client) => ({
+    value: client.clientID,
+    label: `${client.firstName} ${client.lastName}`,
   }));
-
-  // const dropInOutOptions = parentInfo.map((parent) => ({
-  //   value: parent.parentID,
-  //   label: `${parent.parentFirstName} ${parent.parentLastName}`,
-  // }));
 
   useEffect(() => {
     fetchSchedule();
@@ -73,7 +71,7 @@ const EditChildTime: React.FC = () => {
           throw new Error("Token not found in localStorage");
         }
 
-        const url = `${backEndCodeURLLocation}SignIn/GetAllClientInfoWhereTheClientIsNotAlreadyActive`;
+        const url = `${backEndCodeURLLocation}SignIn/GetAllClientsThatAreActive`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -90,6 +88,8 @@ const EditChildTime: React.FC = () => {
         }
 
         const data = await response.json();
+
+        console.log(data);
 
         setChildInfo(data);
       } catch (error) {
@@ -179,10 +179,7 @@ const EditChildTime: React.FC = () => {
     }
   };
 
-  const handleUpdateTimeForManualTime = async (
-    field: "signInTime" | "signOutTime",
-    newValue: string
-  ) => {
+  const handleUpdateTimeForManualTime = async (newValue: string) => {
     try {
       const currentTime = new Date();
       const currentHours = currentTime.getHours();
@@ -203,30 +200,7 @@ const EditChildTime: React.FC = () => {
         return;
       }
 
-      if (field === "signInTime") {
-        const [newSignInHours, newSignInMinutes] = newValue
-          .split(":")
-          .map(Number);
-
-        const newSignInTime = newSignInHours * 60 + newSignInMinutes;
-
-        const [signOutHours, signOutMinutes] = selectSignOutTime
-          .split(":")
-          .map(Number);
-
-        const currentSignOutTime = signOutHours * 60 + signOutMinutes;
-
-        if (newSignInTime > currentSignOutTime) {
-          alert("[Sign In Time] Greater Than [Sign Out Time]");
-
-          return;
-        }
-      }
-
-      if (field === "signOutTime") {
-        setSelectSignOutTime(() => newValue);
-      }
-
+      setSelectManualSignInTime(() => newValue);
     } catch (error) {
       console.error("Error updating time:", error);
     }
@@ -240,7 +214,7 @@ const EditChildTime: React.FC = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}`,
+        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}`,
         {
           method: "POST",
           headers: {
@@ -250,7 +224,9 @@ const EditChildTime: React.FC = () => {
           // body: JSON.stringify(clientIDs),
         }
       );
-      CancelEditSignInSignOutTime();
+      setEditingItemId(null);
+      setSelectedDropInParentID(null);
+      setSelectedDropOutParentID(null);
       if (!response.ok) {
         console.error(`Failed to post data :`, response.statusText);
       }
@@ -261,6 +237,11 @@ const EditChildTime: React.FC = () => {
 
   const CancelEditSignInSignOutTime = () => {
     setEditingItemId(null);
+    setDropInOutOptions([]);
+    setSelectedDropInOptions({});
+    setSelectedDropOutOptions({});
+    setSelectedDropInParentID(null);
+    setSelectedDropOutParentID(null);
   };
 
   const DownloadPDF = async () => {
@@ -296,46 +277,50 @@ const EditChildTime: React.FC = () => {
     }
   };
 
-  const AddNewSignOut = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
-        {
-          responseType: "blob", // Specify response type as blob
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  // const AddNewSignOut = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.get(
+  //       `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
+  //       {
+  //         responseType: "blob", // Specify response type as blob
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      // Create a temporary URL for the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     // Create a temporary URL for the blob
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
 
-      // Create an anchor element to trigger the download
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "converted.pdf";
+  //     // Create an anchor element to trigger the download
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = "converted.pdf";
 
-      // Append the anchor element to the body and click it
-      document.body.appendChild(a);
-      a.click();
+  //     // Append the anchor element to the body and click it
+  //     document.body.appendChild(a);
+  //     a.click();
 
-      // Remove the anchor element after download
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Error downloading PDF:", error);
-    }
-  };
+  //     // Remove the anchor element after download
+  //     window.URL.revokeObjectURL(url);
+  //     document.body.removeChild(a);
+  //   } catch (error) {
+  //     console.error("Error downloading PDF:", error);
+  //   }
+  // };
 
-  
-  const fetchAutoriziedParentsForTheClient = async (parentID: number, parentIDWhoDropIn: number, parentIDWhoPickedUp: number, itemId: number) => {
+  const fetchAutoriziedParentsForTheClient = async (
+    clientID: number,
+    parentIDWhoDropIn: number,
+    parentIDWhoPickedUp: number,
+    itemId: number
+  ) => {
     const token = localStorage.getItem("token");
-  
+
     try {
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/GetAllParentsAndGuardiansWhoCanDropInOutAClient?clientID=${parentID}`,
+        `${backEndCodeURLLocation}SignIn/GetAllParentsAndGuardiansWhoCanDropInOutAClient?clientID=${clientID}`,
         {
           method: "GET",
           headers: {
@@ -344,30 +329,31 @@ const EditChildTime: React.FC = () => {
           },
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
         setParentInfo(data);
-  
+
         const options = data.map((parent: any) => ({
           value: parent.parentID,
           label: `${parent.parentFirstName} ${parent.parentLastName}`,
         }));
-  
+
         setDropInOutOptions(() => options);
-  
+
         const selectedOptionForDropIn = options.find(
-          (option: { value: number; label: string }) => option.value === parentIDWhoDropIn
+          (option: { value: number; label: string }) =>
+            option.value === parentIDWhoDropIn
         );
-  
+
         setSelectedDropInOptions((prevSelectedOptions) => ({
           ...prevSelectedOptions,
           [itemId]: selectedOptionForDropIn,
         }));
 
-        
         const selectedOptionForPickedUp = options.find(
-          (option: { value: number; label: string }) => option.value === parentIDWhoPickedUp
+          (option: { value: number; label: string }) =>
+            option.value === parentIDWhoPickedUp
         );
 
         setSelectedDropOutOptions((prevSelectedOptions) => ({
@@ -394,24 +380,118 @@ const EditChildTime: React.FC = () => {
     console.log("clientId = " + clientId);
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
-    fetchAutoriziedParentsForTheClient(clientId, parentIDWhoDropIn, parentIDWhoPickedUp, itemId);
+    fetchAutoriziedParentsForTheClient(
+      clientId,
+      parentIDWhoDropIn,
+      parentIDWhoPickedUp,
+      itemId
+    );
   };
 
-  // const handleSelectChange = (selectedOptions: any) => {
-  //   setSelectedOptions(selectedOptions); // Update state with selected options
-  //   const selectedOption = dropInOutOptions.find(
-  //     (option: { value: number; label: string }) => option.value === selectedOptions.value
-  //   );
-  //   setSelectedDropInOption(() => selectedOption);
-  //   console.log("dropInOutOptions = ", selectedOption);
-  // };
+  const SelectAChildNameManually = async (selectedOptions: any) => {
+    setSelectedChildOptions(selectedOptions); // Update state with selected options
+    const selectedOption = clientNameOptions.find(
+      (option: { value: number; label: string }) =>
+        option.value === selectedOptions.value
+    );
+    setSelectedDropInOption(() => selectedOption);
 
-  const handleSelectChange = (selectedOption: any, itemId: number) => {
+    console.log("selectedOption ", selectedOption);
+    
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/GetAllParentsAndGuardiansWhoCanDropInOutAClient?clientID=${selectedOption?.value}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setParentInfo(data);
+
+        const options = data.map((parent: any) => ({
+          value: parent.parentID,
+          label: `${parent.parentFirstName} ${parent.parentLastName}`,
+        }));
+
+        setDropInManualOptions(() => options);
+
+      } else {
+        console.error("Error fetching data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+
+  };
+
+  const SelectAParentNameManually = async (selectedOptions: any) => {
+    // setSelectedChildOptions(selectedOptions); // Update state with selected options
+    // const selectedOption = clientNameOptions.find(
+    //   (option: { value: number; label: string }) =>
+    //     option.value === selectedOptions.value
+    // );
+    // setSelectedDropInOption(() => selectedOption);
+    setSelectedManualParent(selectedOptions)
+    console.log("selectedOption ", selectedOptions);
+    
+  };
+
+  const ChangeDropInParentOption = (selectedOption: any, itemId: number) => {
+    console.log("itemId = " + itemId);
     setSelectedDropInOptions((prevSelectedOptions) => ({
       ...prevSelectedOptions,
       [itemId]: selectedOption,
     }));
+    setSelectedDropInParentID(selectedOption.value);
   };
+
+  const ChangePickUpParentOption = (selectedOption: any, itemId: number) => {
+    console.log("itemId = " + itemId);
+    setSelectedDropOutOptions((prevSelectedOptions) => ({
+      ...prevSelectedOptions,
+      [itemId]: selectedOption,
+    }));
+    setSelectedDropOutParentID(selectedOption.value);
+  };
+
+  const AddClientNewSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("selectedChildOptions ", selectedChildOptions.value);
+    console.log("SelectManualSignInTime ", selectManualSignInTime);
+    console.log("setSelectedManualParent ", selectManualParent);
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/AddManualClientSignInAndWhichParentDropChildIn?clientID=${selectedChildOptions.value}&signInTime=${selectManualSignInTime}&parentID=${selectManualParent.value}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify(clientIDs),
+        }
+      );
+      // setEditingItemId(null);
+      // setSelectedDropInParentID(null);
+      // setSelectedDropOutParentID(null);
+      if (!response.ok) {
+        console.error(`Failed to post data :`, response.statusText);
+      }
+      fetchSchedule();
+    } catch (error) {
+      console.error(`Error posting data:`, error);
+    }
+
+   }
 
   return (
     <div className="time-schedule-editor">
@@ -435,7 +515,7 @@ const EditChildTime: React.FC = () => {
               <td>
                 {item.clientFirstName} {item.clientLastName}
               </td>
-              
+
               <td>
                 <input
                   type="time"
@@ -450,18 +530,19 @@ const EditChildTime: React.FC = () => {
               <td>
                 <Select
                   required
-                  closeMenuOnSelect={false}
+                  closeMenuOnSelect={true}
                   components={animatedComponents}
                   options={dropInOutOptions}
-                  isClearable={true}
-                  onChange={(selectedOption) => handleSelectChange(selectedOption, item.id)}
+                  onChange={(selectedOption) =>
+                    ChangeDropInParentOption(selectedOption, item.id)
+                  }
                   value={
                     selectedDropInOptions[item.id]
                       ? selectedDropInOptions[item.id]
                       : {
-                          value: "",
-                          label: `${item.droppedInParentFirstName} ${item.droppedInParentLastName}`,
-                        }
+                        value: "",
+                        label: `${item.droppedInParentFirstName} ${item.droppedInParentLastName}`,
+                      }
                   }
                   isDisabled={editingItemId !== item.id}
                   styles={{
@@ -495,20 +576,21 @@ const EditChildTime: React.FC = () => {
                 />
               </td>
               <td>
-              <Select
+                <Select
                   required
-                  closeMenuOnSelect={false}
+                  closeMenuOnSelect={true}
                   components={animatedComponents}
                   options={dropInOutOptions}
-                  isClearable={true}
-                  onChange={(selectedOption) => handleSelectChange(selectedOption, item.id)}
+                  onChange={(selectedOption) =>
+                    ChangePickUpParentOption(selectedOption, item.id)
+                  }
                   value={
                     selectedDropOutOptions[item.id]
                       ? selectedDropOutOptions[item.id]
                       : {
-                          value: "",
-                          label: `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}`,
-                        }
+                        value: "",
+                        label: `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}`,
+                      }
                   }
                   isDisabled={editingItemId !== item.id}
                   styles={{
@@ -535,7 +617,13 @@ const EditChildTime: React.FC = () => {
                   <button
                     className="btn btn-edit"
                     onClick={() =>
-                      EditSignInSignOutTime(item.id, item.clientID, item.droppedInParentID, item.pickedOutParentID, item.signOutTime)
+                      EditSignInSignOutTime(
+                        item.id,
+                        item.clientID,
+                        item.droppedInParentID,
+                        item.pickedOutParentID,
+                        item.signOutTime
+                      )
                     }
                   >
                     Edit
@@ -565,84 +653,98 @@ const EditChildTime: React.FC = () => {
               </td>
             </tr>
           ))}
-        
-            <tr>
-              {/* <td>{item.id}</td> */}
-              <td>
-                {/* <Select
-                  required
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  options={options}
-                  isClearable={true}
-                  onChange={handleSelectChange}
-                  value={selectedOptions}
-                  styles={{
-                    // Styles for the container of the Select component
-                    control: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                    // Styles for the dropdown menu
-                    menu: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                    // Styles for individual options
-                    option: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                  }}
-                /> */}
-              </td>
-              <td>
-                <input
-                  type="time"
-                  className="form-control"
-                  value={selectedOptions}
-                  onChange={(e) =>
-                    handleUpdateTimeForManualTime("signInTime", e.target.value)
-                   }
-                />
-              </td>
-              <td>
-              {/* <Select
-                  required
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  options={options}
-                  isClearable={true}
-                  onChange={handleSelectChange}
-                  value={selectedOptions}
-                  styles={{
-                    // Styles for the container of the Select component
-                    control: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                    // Styles for the dropdown menu
-                    menu: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                    // Styles for individual options
-                    option: (provided) => ({
-                      ...provided,
-                      fontSize: "20px", // Adjust the font size here
-                    }),
-                  }}
-                /> */}
-              </td>
-              <td>
-                <span>
-                  <button className="btn btn-update">Add</button>
-                </span>
-              </td>
-            </tr>
-          
         </tbody>
       </table>
+      <div className="time-schedule-editor">
+        <br />
+        <form>
+          <table>
+            {/* Table headers and existing rows */}
+            <tbody>
+              {/* Existing rows */}
+              <tr>
+                {/* Form fields for new entry */}
+                <td>
+                  <Select
+                    required
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    options={clientNameOptions}
+                    isClearable={true}
+                    onChange={SelectAChildNameManually}
+                    value={selectedChildOptions}
+                    styles={{
+                      // Styles for the container of the Select component
+                      control: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                      // Styles for the dropdown menu
+                      menu: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                      // Styles for individual options
+                      option: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                    }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="time"
+                    className="form-control"
+                    value={selectManualSignInTime}
+                    onChange={(e) =>
+                      handleUpdateTimeForManualTime(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+                </td>
+                <td>
+                  <Select
+                    required
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    options={dropInManualOptions}
+                    isClearable={true}
+                    onChange={SelectAParentNameManually}
+                    value={selectManualParent}
+                    styles={{
+                      // Styles for the container of the Select component
+                      control: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                      // Styles for the dropdown menu
+                      menu: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                      // Styles for individual options
+                      option: (provided) => ({
+                        ...provided,
+                        fontSize: "20px", // Adjust the font size here
+                      }),
+                    }}
+                  />
+                </td>
+                <td>
+                  <span>
+                    <button type="submit" className="btn btn-update" onClick={AddClientNewSignIn}>
+                      Add
+                    </button>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
       <button onClick={DownloadPDF}>Download PDF</button>
     </div>
   );

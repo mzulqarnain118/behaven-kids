@@ -23,7 +23,13 @@ const LoginPage: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       // Set the state to redirect to dashboard
-      navigate("/PhoneNumber", { replace: true });
+      const decoded = jwtDecode(token) as DecodedToken;
+      const userRole = decoded.role;
+
+      if (userRole === "parent")
+        navigate("/PhoneNumber");
+      else if (userRole === "admin" || userRole === "secretary" )
+        navigate("/EditChildTime");
       
     }
   }, []);
