@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEventHandler } from "react";
 import { backEndCodeURLLocation } from "../config";
 import moment from "moment";
 import "./CSS/EditChildTime.css";
 import axios from "axios";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import PopupDatePicker from "../Components/PopupDatePicker";
 
 interface SignInSignOut {
   id: number;
@@ -35,22 +36,28 @@ interface ParentInfo {
   parentLastName: string;
 }
 
+interface Option {
+  value: any; 
+  label: any;
+}
+
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
   const [selectManualSignInTime, setSelectManualSignInTime] = useState<string>("");
-  const [selectManualParent, setSelectedManualParent] = useState<string>("");
+  const [selectManualParent, setSelectedManualParent] = useState<Option>();
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
-  const [selectedChildOptions, setSelectedChildOptions] = useState<any[]>([]);
+  const [selectedChildOptions, setSelectedChildOptions] = useState<Option>();
   const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
-  const [selectedWhoDropedInOutOptions, setSelectedWhoDropedInOutOptions] = useState<any[]>([]);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
   const [dropInManualOptions, setDropInManualOptions] = useState<any[]>([]);
   const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any; }>({});
   const [selectedDropOutOptions, setSelectedDropOutOptions] = useState<{ [key: number]: any; }>({});
   const [selectedDropInParentID, setSelectedDropInParentID] = useState<number | null>(null);
   const [selectedDropOutParentID, setSelectedDropOutParentID] = useState<number | null>(null);
+  const [didUserChoseASignOutTime, setDidUserChoseASignOutTime] = useState<boolean>(false);
+  const [showModel, setShowModel] = useState<boolean>(false);
 
   const animatedComponents = makeAnimated();
 
@@ -167,6 +174,7 @@ const EditChildTime: React.FC = () => {
 
       if (field === "signOutTime") {
         setSelectSignOutTime(() => newValue);
+        setDidUserChoseASignOutTime(true);
       }
 
       setSchedule((prevSchedule) =>
@@ -244,71 +252,13 @@ const EditChildTime: React.FC = () => {
     setSelectedDropOutParentID(null);
   };
 
-  const DownloadPDF = async () => {
+  const OpenShowDialogForChoosingADateForExcelToPDF = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
-        {
-          responseType: "blob", // Specify response type as blob
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Create a temporary URL for the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-
-      // Create an anchor element to trigger the download
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "converted.pdf";
-
-      // Append the anchor element to the body and click it
-      document.body.appendChild(a);
-      a.click();
-
-      // Remove the anchor element after download
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      setShowModel(true);
     } catch (error) {
       console.error("Error downloading PDF:", error);
     }
   };
-
-  // const AddNewSignOut = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const response = await axios.get(
-  //       `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF`,
-  //       {
-  //         responseType: "blob", // Specify response type as blob
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     // Create a temporary URL for the blob
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-
-  //     // Create an anchor element to trigger the download
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = "converted.pdf";
-
-  //     // Append the anchor element to the body and click it
-  //     document.body.appendChild(a);
-  //     a.click();
-
-  //     // Remove the anchor element after download
-  //     window.URL.revokeObjectURL(url);
-  //     document.body.removeChild(a);
-  //   } catch (error) {
-  //     console.error("Error downloading PDF:", error);
-  //   }
-  // };
 
   const fetchAutoriziedParentsForTheClient = async (
     clientID: number,
@@ -433,12 +383,6 @@ const EditChildTime: React.FC = () => {
   };
 
   const SelectAParentNameManually = async (selectedOptions: any) => {
-    // setSelectedChildOptions(selectedOptions); // Update state with selected options
-    // const selectedOption = clientNameOptions.find(
-    //   (option: { value: number; label: string }) =>
-    //     option.value === selectedOptions.value
-    // );
-    // setSelectedDropInOption(() => selectedOption);
     setSelectedManualParent(selectedOptions)
     console.log("selectedOption ", selectedOptions);
     
@@ -462,15 +406,15 @@ const EditChildTime: React.FC = () => {
     setSelectedDropOutParentID(selectedOption.value);
   };
 
-  const AddClientNewSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const AddClientNewSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("selectedChildOptions ", selectedChildOptions.value);
+    console.log("selectedChildOptions ", selectedChildOptions?.value);
     console.log("SelectManualSignInTime ", selectManualSignInTime);
     console.log("setSelectedManualParent ", selectManualParent);
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddManualClientSignInAndWhichParentDropChildIn?clientID=${selectedChildOptions.value}&signInTime=${selectManualSignInTime}&parentID=${selectManualParent.value}`,
+        `${backEndCodeURLLocation}SignIn/AddManualClientSignInAndWhichParentDropChildIn?clientID=${selectedChildOptions?.value}&signInTime=${selectManualSignInTime}&parentID=${selectManualParent?.value}`,
         {
           method: "POST",
           headers: {
@@ -512,11 +456,11 @@ const EditChildTime: React.FC = () => {
           {schedule.map((item) => (
             <tr key={item.id}>
               {/* <td>{item.id}</td> */}
-              <td>
+              <td style={{width: "250px"}}>
                 {item.clientFirstName} {item.clientLastName}
               </td>
 
-              <td>
+              <td style={{width: "200px"}}>
                 <input
                   type="time"
                   className="form-control"
@@ -527,7 +471,7 @@ const EditChildTime: React.FC = () => {
                   disabled={editingItemId !== item.id}
                 />
               </td>
-              <td>
+              <td style={{width: "250px"}}>
                 <Select
                   required
                   closeMenuOnSelect={true}
@@ -592,7 +536,7 @@ const EditChildTime: React.FC = () => {
                         label: `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}`,
                       }
                   }
-                  isDisabled={editingItemId !== item.id}
+                  isDisabled={editingItemId !== item.id || !didUserChoseASignOutTime}
                   styles={{
                     // Styles for the container of the Select component
                     control: (provided) => ({
@@ -657,17 +601,14 @@ const EditChildTime: React.FC = () => {
       </table>
       <div className="time-schedule-editor">
         <br />
-        <form>
+        <form onSubmit={AddClientNewSignIn}>
           <table>
-            {/* Table headers and existing rows */}
             <tbody>
-              {/* Existing rows */}
               <tr>
-                {/* Form fields for new entry */}
-                <td>
+                <td style={{width: "250px"}}>
                   <Select
                     required
-                    closeMenuOnSelect={false}
+                    closeMenuOnSelect={true}
                     components={animatedComponents}
                     options={clientNameOptions}
                     isClearable={true}
@@ -689,10 +630,11 @@ const EditChildTime: React.FC = () => {
                         ...provided,
                         fontSize: "20px", // Adjust the font size here
                       }),
+                      
                     }}
                   />
                 </td>
-                <td>
+                <td style={{width: "200px"}}>
                   <input
                     type="time"
                     className="form-control"
@@ -705,10 +647,10 @@ const EditChildTime: React.FC = () => {
                     required
                   />
                 </td>
-                <td>
+                <td style={{width: "250px"}}>
                   <Select
                     required
-                    closeMenuOnSelect={false}
+                    closeMenuOnSelect={true}
                     components={animatedComponents}
                     options={dropInManualOptions}
                     isClearable={true}
@@ -735,7 +677,7 @@ const EditChildTime: React.FC = () => {
                 </td>
                 <td>
                   <span>
-                    <button type="submit" className="btn btn-update" onClick={AddClientNewSignIn}>
+                    <button type="submit" className="btn btn-update" >
                       Add
                     </button>
                   </span>
@@ -744,8 +686,13 @@ const EditChildTime: React.FC = () => {
             </tbody>
           </table>
         </form>
+  
       </div>
-      <button onClick={DownloadPDF}>Download PDF</button>
+      <div style={{textAlign: "center", marginTop: "25px"}}>
+      <button onClick={OpenShowDialogForChoosingADateForExcelToPDF} className="btn btn-primary" style={{width: "250px", height: "60px", fontSize: "25px"}}> Download PDF &#128197;</button>
+      </div>
+      
+      <PopupDatePicker showModel={showModel} setShowModel={setShowModel}/>
     </div>
   );
 };
