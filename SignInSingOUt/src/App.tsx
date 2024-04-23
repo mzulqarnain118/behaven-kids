@@ -13,6 +13,7 @@ import ValidateTemporaryPin from './Pages/ValidateTemporaryPin'
 import ResetPin from './Pages/ResetPin'
 import AddChildInfo from './Pages/AddChildInfo'
 import ReceptionistGivesTemporaryPinToParent from './Pages/ReceptionistGivesTemporaryPinToParent'
+import ClientInOutNoShow from './Pages/ClientInOutNoShow'
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,7 @@ const App: React.FC = () => {
       <Route path='/ResetPin' element={<ResetPin/>}></Route>
       <Route path='/AddChildInfo' element={<AddChildInfo/>}></Route>
       <Route path='/ReceptionistGivesTemporaryPinToParent' element={<ReceptionistGivesTemporaryPinToParent/>}></Route>
+      <Route path='/ClientInOutNoShow' element={<ClientInOutNoShow/>}></Route>
       </Routes>
     </>
   )

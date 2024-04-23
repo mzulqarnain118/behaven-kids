@@ -45,10 +45,10 @@ const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
   const [selectManualSignInTime, setSelectManualSignInTime] = useState<string>("");
-  const [selectManualParent, setSelectedManualParent] = useState<Option>();
+  const [selectManualParent, setSelectedManualParent] = useState<Option | null>(null);
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
-  const [selectedChildOptions, setSelectedChildOptions] = useState<Option>();
+  const [selectedChildOptions, setSelectedChildOptions] = useState<Option | null>(null);
   const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
   const [dropInManualOptions, setDropInManualOptions] = useState<any[]>([]);
@@ -408,9 +408,8 @@ const EditChildTime: React.FC = () => {
 
   const AddClientNewSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("selectedChildOptions ", selectedChildOptions?.value);
-    console.log("SelectManualSignInTime ", selectManualSignInTime);
-    console.log("setSelectedManualParent ", selectManualParent);
+
+
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
@@ -431,6 +430,9 @@ const EditChildTime: React.FC = () => {
         console.error(`Failed to post data :`, response.statusText);
       }
       fetchSchedule();
+      setSelectedChildOptions(null);
+      setSelectManualSignInTime("");
+      setSelectedManualParent(null);
     } catch (error) {
       console.error(`Error posting data:`, error);
     }

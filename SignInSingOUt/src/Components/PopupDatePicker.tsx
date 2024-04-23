@@ -8,8 +8,8 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import moment from "moment";
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
+
 
 interface PopupTemporaryPin {
     showModel: boolean;
@@ -19,6 +19,8 @@ interface PopupTemporaryPin {
 const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel }) => {
 
     const [selectManualSignInTime, setSelectManualSignInTime] = useState<Dayjs | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [didUserCheckAClient, setDidUserCheckAClient] = useState(false);
 
     if (!open) return null;
 
@@ -28,6 +30,8 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
 
     const DownloadPDF = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
+            setIsSubmitting(true);
+            setDidUserCheckAClient(true);
             e.preventDefault();
             const token = localStorage.getItem("token");
             const response = await axios.get(
@@ -55,6 +59,9 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             // Remove the anchor element after download
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+            setIsSubmitting(false)
+            setDidUserCheckAClient(false);
+            setShowModel(false);
         } catch (error) {
             console.error("Error downloading PDF:", error);
         }
@@ -71,11 +78,11 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <form onSubmit={DownloadPDF} style={{ display: 'flex' }}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DatePicker']}>
-                                        <DatePicker  value={selectManualSignInTime} onChange={(newValue) => setSelectManualSignInTime(newValue)}/>
+                                    <DemoContainer components={['DatePicker']} >
+                                        <DatePicker  value={selectManualSignInTime} onChange={(newValue) => setSelectManualSignInTime(newValue)} slotProps={{textField: {required: true}}}/>
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <input className="btn btn-primary" type="submit" style={{marginLeft: "15px", marginTop: "8px", height: "55px", width: "100px" }}/>
+                                <button className="btn btn-primary" type="submit" style={{marginLeft: "15px", marginTop: "8px", height: "55px", width: "125px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>
                             </form>
                         </div>
                     </BootstrapModal.Body>

@@ -90,9 +90,9 @@ const Navbar: React.FC = () => {
     navigate("/ConnectParentAndChildTogeter", { replace: true });
   };
 
-  // const GoToParentSignInSignOut = () => {
-  //   navigate("/PhoneNumber", { replace: true });
-  // };
+  const GoToClientInOutNoShow = () => {
+    navigate("/ClientInOutNoShow", { replace: true });
+  };
 
   const EditClientSignInSignOutTime = () => {
     navigate("/EditChildTime", { replace: true });
@@ -336,6 +336,18 @@ const Navbar: React.FC = () => {
                       onClick={GoToConnectParentWithChild}
                     >
                       <span style={{ fontSize: "20px" }}> Connect Parents To Client(s)</span>
+                    </a>
+                  </li>
+                  )}
+                   {role === "admin" && (
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={GoToClientInOutNoShow}
+                    >
+                      <span style={{ fontSize: "20px" }}>Client In/Out/No show</span>
                     </a>
                   </li>
                   )}
