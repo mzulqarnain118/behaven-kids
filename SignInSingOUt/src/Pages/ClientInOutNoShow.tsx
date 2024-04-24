@@ -37,8 +37,10 @@ const ClientInOutNoShow: React.FC = () => {
             );
             if (response.ok) {
                 const data = await response.json();
+                
                 const signedOutClients: ClientSignInInfo[] = [];
-const signedInClients: ClientSignInInfo[] = [];
+                const signedInClients: ClientSignInInfo[] = [];
+
                 data.forEach((item: ClientSignInInfo) => {
                     item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm A");
                     item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm A");

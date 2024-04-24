@@ -36,7 +36,7 @@ interface ParentInfo {
 }
 
 interface Option {
-  value: any; 
+  value: any;
   label: any;
 }
 
@@ -234,6 +234,7 @@ const EditChildTime: React.FC = () => {
       setEditingItemId(null);
       setSelectedDropInParentID(null);
       setSelectedDropOutParentID(null);
+      fetchSchedule();
       if (!response.ok) {
         console.error(`Failed to post data :`, response.statusText);
       }
@@ -249,6 +250,7 @@ const EditChildTime: React.FC = () => {
     setSelectedDropOutOptions({});
     setSelectedDropInParentID(null);
     setSelectedDropOutParentID(null);
+    fetchSchedule();
   };
 
   const OpenShowDialogForChoosingADateForExcelToPDF = async () => {
@@ -346,7 +348,7 @@ const EditChildTime: React.FC = () => {
     setSelectedDropInOption(() => selectedOption);
 
     console.log("selectedOption ", selectedOption);
-    
+
     const token = localStorage.getItem("token");
 
     try {
@@ -384,7 +386,7 @@ const EditChildTime: React.FC = () => {
   const SelectAParentNameManually = async (selectedOptions: any) => {
     setSelectedManualParent(selectedOptions)
     console.log("selectedOption ", selectedOptions);
-    
+
   };
 
   const ChangeDropInParentOption = (selectedOption: any, itemId: number) => {
@@ -408,6 +410,29 @@ const EditChildTime: React.FC = () => {
   const AddClientNewSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log("scedule = ", schedule);
+    let alreadyLoggedIn = false;
+    let clientFirstName;
+    let clientLastName;
+
+    schedule.forEach((item: SignInSignOut) => {
+      console.log(item.signOutTime);
+      if (selectedChildOptions?.value == item.clientID && item.signOutTime === "Invalid date") {
+        console.log("Already logged in");
+        alreadyLoggedIn = true;
+        clientFirstName = item.clientFirstName;
+        clientLastName = item.clientLastName;
+        return;
+      }
+    });
+
+    if (alreadyLoggedIn) {
+      setSelectedChildOptions(null);
+      setSelectManualSignInTime("");
+      setSelectedManualParent(null);
+      alert(clientFirstName + " " + clientLastName + " already signed in");
+      return; // Exit the function if the condition was met
+    }
 
     const token = localStorage.getItem("token");
     try {
@@ -422,9 +447,7 @@ const EditChildTime: React.FC = () => {
           // body: JSON.stringify(clientIDs),
         }
       );
-      // setEditingItemId(null);
-      // setSelectedDropInParentID(null);
-      // setSelectedDropOutParentID(null);
+
       if (!response.ok) {
         console.error(`Failed to post data :`, response.statusText);
       }
@@ -436,7 +459,7 @@ const EditChildTime: React.FC = () => {
       console.error(`Error posting data:`, error);
     }
 
-   }
+  }
 
   return (
     <div className="time-schedule-editor">
@@ -457,11 +480,11 @@ const EditChildTime: React.FC = () => {
           {schedule.map((item) => (
             <tr key={item.id}>
               {/* <td>{item.id}</td> */}
-              <td style={{width: "250px"}}>
+              <td style={{ width: "250px" }}>
                 {item.clientFirstName} {item.clientLastName}
               </td>
 
-              <td style={{width: "200px"}}>
+              <td style={{ width: "200px" }}>
                 <input
                   type="time"
                   className="form-control"
@@ -472,7 +495,7 @@ const EditChildTime: React.FC = () => {
                   disabled={editingItemId !== item.id}
                 />
               </td>
-              <td style={{width: "250px"}}>
+              <td style={{ width: "250px" }}>
                 <Select
                   required
                   closeMenuOnSelect={true}
@@ -534,7 +557,7 @@ const EditChildTime: React.FC = () => {
                       ? selectedDropOutOptions[item.id]
                       : {
                         value: "",
-                        label: `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}`,
+                        label: item.pickedOutParentFirstName !== null ? `${item.pickedOutParentFirstName} ${item.pickedOutParentLastName}` : "",
                       }
                   }
                   isDisabled={editingItemId !== item.id || !didUserChoseASignOutTime}
@@ -606,7 +629,7 @@ const EditChildTime: React.FC = () => {
           <table>
             <tbody>
               <tr>
-                <td style={{width: "250px"}}>
+                <td style={{ width: "250px" }}>
                   <Select
                     required
                     closeMenuOnSelect={true}
@@ -631,11 +654,11 @@ const EditChildTime: React.FC = () => {
                         ...provided,
                         fontSize: "20px", // Adjust the font size here
                       }),
-                      
+
                     }}
                   />
                 </td>
-                <td style={{width: "200px"}}>
+                <td style={{ width: "200px" }}>
                   <input
                     type="time"
                     className="form-control"
@@ -648,7 +671,7 @@ const EditChildTime: React.FC = () => {
                     required
                   />
                 </td>
-                <td style={{width: "250px"}}>
+                <td style={{ width: "250px" }}>
                   <Select
                     required
                     closeMenuOnSelect={true}
@@ -687,13 +710,13 @@ const EditChildTime: React.FC = () => {
             </tbody>
           </table>
         </form>
-  
+
       </div>
-      <div style={{textAlign: "center", marginTop: "25px"}}>
-      <button onClick={OpenShowDialogForChoosingADateForExcelToPDF} className="btn btn-primary" style={{width: "250px", height: "60px", fontSize: "25px"}}> Download PDF &#128197;</button>
+      <div style={{ textAlign: "center", marginTop: "25px" }}>
+        <button onClick={OpenShowDialogForChoosingADateForExcelToPDF} className="btn btn-primary" style={{ width: "250px", height: "60px", fontSize: "25px" }}> Download PDF &#128197;</button>
       </div>
-      
-      <PopupDatePicker showModel={showModel} setShowModel={setShowModel}/>
+
+      <PopupDatePicker showModel={showModel} setShowModel={setShowModel} />
     </div>
   );
 };
