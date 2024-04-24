@@ -5,12 +5,7 @@ import "../App.css";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
-import { jwtDecode } from "jwt-decode";
-
-interface DecodedToken {
-  role: string;
-  // Add other properties if needed
-}
+// import { jwtDecode } from "jwt-decode";
 
 const ParentSignIn: React.FC = () => {
   const [parentLastFourDigitPhoneNumber, setParentLastFourDigitPhoneNumber] =

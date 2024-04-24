@@ -10,6 +10,7 @@ interface ClientSignInInfo {
     firstName: string;
     lastName: string;
     signInTime: string;
+    signOutTime: string;
 }
 
 const ClientInOutNoShow: React.FC = () => {
@@ -20,13 +21,13 @@ const ClientInOutNoShow: React.FC = () => {
 
     const today = dayjs();
 
-  // Format the date as you need
+    // Format the date as you need
     const formattedDate = today.format('MM-DD-YYYY');
 
     useEffect(() => {
         fetchCurrentClientsThatAreSignedIn();
         fetchCurrentClientsThatAreSignedOut();
-        fetchCurrentClientsWhoAreNotSignInAndSignOut();
+        //fetchCurrentClientsWhoAreNotSignInAndSignOut();
     }, []);
 
     const fetchCurrentClientsThatAreSignedIn = async () => {
@@ -36,31 +37,22 @@ const ClientInOutNoShow: React.FC = () => {
             );
             if (response.ok) {
                 const data = await response.json();
+                const signedOutClients: ClientSignInInfo[] = [];
+const signedInClients: ClientSignInInfo[] = [];
                 data.forEach((item: ClientSignInInfo) => {
                     item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm A");
+                    item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm A");
+                    if (item.signOutTime !== "Invalid date") {
+                        console.log("out ", item);
+                        signedOutClients.push(item);
+                    } else {
+                        console.log("in ", item);
+                        signedInClients.push(item);
+                    }
                 });
-                setClientsWhoAreSignedIn(data);
-                console.log("data", data);
-            } else {
-                console.error("Error fetching schedule:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error fetching schedule:", error);
-        }
-    };
 
-    const fetchCurrentClientsWhoAreNotSignInAndSignOut= async () => {
-        try {
-            const response = await fetch(
-                `${backEndCodeURLLocation}Client/GetCurrentSignOutClients`
-            );
-            if (response.ok) {
-                const data = await response.json();
-                data.forEach((item: ClientSignInInfo) => {
-                    item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm A");
-                });
-                setClientsWhoAreSignedOut(data);
-                console.log("data", data);
+                setClientsWhoAreSignedOut(signedOutClients);
+                setClientsWhoAreSignedIn(signedInClients);
             } else {
                 console.error("Error fetching schedule:", response.statusText);
             }
@@ -92,11 +84,11 @@ const ClientInOutNoShow: React.FC = () => {
     return (
         <>
             <div className="time-schedule-editor">
-                <br/>
-                <div style={{textAlign: "center"}}>
+                <br />
+                <div style={{ textAlign: "center" }}>
                     <h2>{formattedDate}</h2>
                 </div>
-                
+
                 <h2>Signed In Clients</h2>
                 <table >
                     <thead >
@@ -122,7 +114,7 @@ const ClientInOutNoShow: React.FC = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="time-schedule-editor" style={{marginTop: "50px"}}>
+            <div className="time-schedule-editor" style={{ marginTop: "50px" }}>
                 <h2> Signed Out Clients</h2>
                 <table>
                     <thead >
@@ -148,7 +140,7 @@ const ClientInOutNoShow: React.FC = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="time-schedule-editor" style={{marginTop: "50px"}}>
+            <div className="time-schedule-editor" style={{ marginTop: "50px" }}>
                 <h2> Absent Clients</h2>
                 <table>
                     <thead >

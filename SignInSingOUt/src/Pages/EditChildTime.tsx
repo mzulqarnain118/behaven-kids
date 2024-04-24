@@ -1,8 +1,7 @@
-import React, { useState, useEffect, FormEventHandler } from "react";
+import React, { useState, useEffect } from "react";
 import { backEndCodeURLLocation } from "../config";
 import moment from "moment";
 import "./CSS/EditChildTime.css";
-import axios from "axios";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import PopupDatePicker from "../Components/PopupDatePicker";
@@ -47,9 +46,9 @@ const EditChildTime: React.FC = () => {
   const [selectManualSignInTime, setSelectManualSignInTime] = useState<string>("");
   const [selectManualParent, setSelectedManualParent] = useState<Option | null>(null);
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
-  const [parentInfo, setParentInfo] = useState<ParentInfo[]>([]);
+  const [, setParentInfo] = useState<ParentInfo[]>([]);
   const [selectedChildOptions, setSelectedChildOptions] = useState<Option | null>(null);
-  const [selectedDropInOption, setSelectedDropInOption] = useState<any | null>(null);
+  const [, setSelectedDropInOption] = useState<any | null>(null);
   const [dropInOutOptions, setDropInOutOptions] = useState<any[]>([]);
   const [dropInManualOptions, setDropInManualOptions] = useState<any[]>([]);
   const [selectedDropInOptions, setSelectedDropInOptions] = useState<{ [key: number]: any; }>({});
