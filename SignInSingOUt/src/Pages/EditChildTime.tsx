@@ -118,6 +118,7 @@ const EditChildTime: React.FC = () => {
           item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm");
         });
         setSchedule(data);
+        console.log("data ", data);
       } else {
         console.error("Error fetching schedule:", response.statusText);
       }
@@ -220,6 +221,13 @@ const EditChildTime: React.FC = () => {
   ) => {
     const token = localStorage.getItem("token");
     try {
+      
+      if (signOutTime !== "Invalid date" && selectedDropOutParentID === null)
+        {
+          alert ("Please choose the Guarandian who picked client up!")
+          return;
+        }
+
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}`,
         {
@@ -321,14 +329,29 @@ const EditChildTime: React.FC = () => {
 
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
-  const EditSignInSignOutTime = (
+  const EditSignInSignOutTime = async (
     itemId: number,
     clientId: number,
     parentIDWhoDropIn: number,
     parentIDWhoPickedUp: number,
     currentSignOutTime: string
   ) => {
-    console.log("clientId = " + clientId);
+    // setEditingItemId(null);
+    // setDropInOutOptions([]);
+    // setSelectedDropInParentID(null);
+    // setSelectedDropOutParentID(null);
+    fetchSchedule();
+
+    console.log("currentSignOutTime = " + currentSignOutTime);
+
+    if (currentSignOutTime !== "Invalid date")
+      {
+        setDidUserChoseASignOutTime(true);
+      }
+      else {
+        setDidUserChoseASignOutTime(false);
+      }
+      
     setSelectSignOutTime(() => currentSignOutTime);
     setEditingItemId(itemId);
     fetchAutoriziedParentsForTheClient(

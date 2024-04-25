@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef  } from "react";
 import "./CSS/AddParentChildInfo.css";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
+import Webcam from "react-webcam";
+import axios from 'axios';
+
 
 interface ParentInfo {
   firstName: string;
@@ -76,34 +79,76 @@ const AddParentInfo: React.FC = () => {
 
     fetchData();
   }, []);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      setSelectedImage(files[0]);
+    }
+  };
 
   const handleSubmit = async () => {
     // e.preventDefault();
-    console.log("Parent Info:", parentInfo);
+    // console.log("Parent Info:", parentInfo);
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ parentInfo }),
-        }
-      );
+    //   const response = await fetch(
+    //     `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({ parentInfo }),
+    //     }
+    //   );
 
-      if (!response.ok) {
-        console.error(
-          `Failed to post data for client ID ${parentInfo}:`,
-          response.statusText
-        );
-      }
+    //   if (!response.ok) {
+    //     console.error(
+    //       `Failed to post data for client ID ${parentInfo}:`,
+    //       response.statusText
+    //     );
+    //   }
+
+      const formData = new FormData();
+    formData.append('parentInfo', JSON.stringify(parentInfo));
+    if (selectedImage) {
+      formData.append('file', selectedImage);
+    }
+
+    const response2 = await axios.post('https://192.168.0.9:9999/Parent/AddParentImage', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response2.status === 200) {
+      console.log('Data posted successfully');
+    } else {
+      console.error(`Failed to post data for client ID ${parentInfo}: ${response2.statusText}`);
+    }
     } catch (error) {
       console.error(`Error posting data for client ID ${parentInfo}:`, error);
     }
 
+  };
+  const webcamRef = useRef<Webcam>(null);
+  const [cameraActive, setCameraActive] = useState<boolean>(false);
+  const handleCapture = () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        fetch(imageSrc)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const file = new File([blob], "photo.png", { type: "image/png" });
+            setSelectedImage(file);
+          })
+          .catch((error) => console.error("Error converting image:", error));
+      }
+    }
   };
 
   return (
@@ -210,11 +255,54 @@ const AddParentInfo: React.FC = () => {
                     fontSize: "25px",
                     
                   }}
-                  
-                  
+
                 />
               </div>
+              <div>
+                <label htmlFor="parentImage" style={{fontSize: "20px"}}>Choose an image from file computer: </label>
+                <input
+                  style={{fontSize: "20px"}}
+                  type="file"
+                  accept="image/*"
+                  id="parentImage"
+                  onChange={handleImageSelect}
+                />
+              </div>
+              {selectedImage && (
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Selected"
+                  style={{ width: "200px", height: "auto" }}
+                />
+              )}
               <br />
+              <br />
+              <button
+                type="button"
+                className="btn btn-primary btn-lg"
+                onClick={() => setCameraActive(!cameraActive)}
+              >
+                {cameraActive ? "Turn Off Camera" : "Turn On Camera"}
+              </button>
+              {/* Display camera view if active */}
+              {cameraActive && (
+                <div className="form-group parentGridContaineritem">
+                  <label htmlFor="parentCamera">Take Picture</label>
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-lg"
+                    onClick={handleCapture}
+                  >
+                    Capture
+                  </button>
+                </div>
+              )}
             <button type="submit" className="btn btn-primary btn-lg" >
               Submit
             </button>
