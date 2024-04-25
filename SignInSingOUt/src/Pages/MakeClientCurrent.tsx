@@ -12,7 +12,7 @@ interface ChildInfo {
   locationID: string;
 }
 
-const AddChildInfo: React.FC = () => {
+const MakeClientCurrent: React.FC = () => {
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
@@ -175,4 +175,4 @@ const AddChildInfo: React.FC = () => {
   );
 };
 
-export default AddChildInfo;
+export default MakeClientCurrent;

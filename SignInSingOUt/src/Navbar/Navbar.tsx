@@ -104,7 +104,7 @@ const Navbar: React.FC = () => {
   };
 
   const AddNewClientAsCurrent = () => {
-    navigate("/addchildinfo", { replace: true });
+    navigate("/MakeClientCurrent", { replace: true });
   };
 
   const CheckParentsTemporaryPin = () => {
@@ -278,6 +278,7 @@ const Navbar: React.FC = () => {
                 ></button>
               </div>
               <div className="offcanvas-body">
+                {/* <div style={{backgroundColor: "green", height: "50px"}}></div> */}
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                 {role === "admin" && (
                   <li className="nav-item" style={{ height: "65px" }}>

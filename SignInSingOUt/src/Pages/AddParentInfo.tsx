@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./CSS/AddParentChildInfo.css";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -37,7 +37,7 @@ const AddParentInfo: React.FC = () => {
 
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
 
-  const [phone, ] = useState("");
+  const [phone,] = useState("");
 
   useEffect(() => {
     console.log(childInfo);
@@ -92,48 +92,50 @@ const AddParentInfo: React.FC = () => {
     // console.log("Parent Info:", parentInfo);
     const token = localStorage.getItem("token");
     try {
-    //   const response = await fetch(
-    //     `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({ parentInfo }),
-    //     }
-    //   );
+      const response = await fetch(
+        `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ parentInfo }),
+        }
+      );
 
-    //   if (!response.ok) {
-    //     console.error(
-    //       `Failed to post data for client ID ${parentInfo}:`,
-    //       response.statusText
-    //     );
-    //   }
+      if (!response.ok) {
+        console.error(
+          `Failed to post data for client ID ${parentInfo}:`,
+          response.statusText
+        );
+      }
 
       const formData = new FormData();
-    formData.append('parentInfo', JSON.stringify(parentInfo));
-    if (selectedImage) {
-      formData.append('file', selectedImage);
-    }
+      formData.append('parentInfo', JSON.stringify(parentInfo));
+      if (selectedImage) {
+        formData.append('file', selectedImage);
+      }
 
-    const response2 = await axios.post('https://192.168.0.9:9999/Parent/AddParentImage', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const response2 = await axios.post('https://192.168.0.9:9999/Parent/AddParentImage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (response2.status === 200) {
-      console.log('Data posted successfully');
-    } else {
-      console.error(`Failed to post data for client ID ${parentInfo}: ${response2.statusText}`);
-    }
+      if (response2.status === 200) {
+        console.log('Data posted successfully');
+      } else {
+        console.error(`Failed to post data for client ID ${parentInfo}: ${response2.statusText}`);
+      }
     } catch (error) {
       console.error(`Error posting data for client ID ${parentInfo}:`, error);
     }
 
   };
+
+
   const webcamRef = useRef<Webcam>(null);
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const handleCapture = () => {
@@ -175,7 +177,7 @@ const AddParentInfo: React.FC = () => {
                 <label htmlFor="parentFirstName">First Name</label>
                 <input
                   type="input"
-                  style={{height: "50px", fontSize: "25px"}}
+                  style={{ height: "50px", fontSize: "25px" }}
                   className="form-control"
                   id="parentFirstName"
                   placeholder="First Name"
@@ -194,7 +196,7 @@ const AddParentInfo: React.FC = () => {
                 <input
                   type="input"
                   className="form-control"
-                  style={{height: "50px", fontSize: "25px"}}
+                  style={{ height: "50px", fontSize: "25px" }}
                   id="parentLastName"
                   placeholder="Last Name"
                   value={parentInfo.lastName}
@@ -207,13 +209,13 @@ const AddParentInfo: React.FC = () => {
                   required
                 />
               </div>
-              
+
 
               <div className="form-group parentGridContaineritem">
                 <label htmlFor="parentPin">Email Address</label>
                 <input
                   type="email"
-                  style={{height: "50px", fontSize: "25px"}}
+                  style={{ height: "50px", fontSize: "25px" }}
                   className="form-control"
                   id="parentPin"
                   placeholder="Email Address"
@@ -253,15 +255,15 @@ const AddParentInfo: React.FC = () => {
                     width: "100%",
                     height: "50px",
                     fontSize: "25px",
-                    
+
                   }}
 
                 />
               </div>
               <div>
-                <label htmlFor="parentImage" style={{fontSize: "20px"}}>Choose an image from file computer: </label>
+                <label htmlFor="parentImage" style={{ fontSize: "20px" }}>Choose an image from file computer: </label>
                 <input
-                  style={{fontSize: "20px"}}
+                  style={{ fontSize: "20px" }}
                   type="file"
                   accept="image/*"
                   id="parentImage"
@@ -275,8 +277,7 @@ const AddParentInfo: React.FC = () => {
                   style={{ width: "200px", height: "auto" }}
                 />
               )}
-              <br />
-              <br />
+  
               <button
                 type="button"
                 className="btn btn-primary btn-lg"
@@ -303,11 +304,13 @@ const AddParentInfo: React.FC = () => {
                   </button>
                 </div>
               )}
-            <button type="submit" className="btn btn-primary btn-lg" >
-              Submit
-            </button>
+                          <br />
+              <br />
+              <button type="submit" className="btn btn-primary btn-lg" >
+                Submit
+              </button>
             </div>
-            
+
           </form>
         </div>
       </div>
