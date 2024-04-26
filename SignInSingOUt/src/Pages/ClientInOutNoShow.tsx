@@ -42,8 +42,8 @@ const ClientInOutNoShow: React.FC = () => {
                 const signedInClients: ClientSignInInfo[] = [];
 
                 data.forEach((item: ClientSignInInfo) => {
-                    item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm A");
-                    item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm A");
+                    item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
+                    item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm A");
                     if (item.signOutTime !== "Invalid date") {
                         console.log("out ", item);
                         signedOutClients.push(item);
@@ -71,7 +71,7 @@ const ClientInOutNoShow: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 data.forEach((item: ClientSignInInfo) => {
-                    item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm A");
+                    item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
                 });
                 setClientsWhoAreNotSignInAndSignOut(data);
                 console.log("data", data);
@@ -96,8 +96,9 @@ const ClientInOutNoShow: React.FC = () => {
                     <thead >
                         <tr >
                             {/* <th>ID</th> */}
-                            <th style={{ backgroundColor: "lightgreen" }}>Client Name</th>
-                            <th style={{ backgroundColor: "lightgreen" }}>Sign In Time</th>
+                            <th style={{ backgroundColor: "lightgreen", width: "550px"}}>Client Name</th>
+                            <th style={{ backgroundColor: "lightgreen", width: "450px" }}>Sign In Time</th>
+                            <th style={{ backgroundColor: "lightgreen" }}>Total: {clientsWhoAreSignedIn.length.toString()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -122,8 +123,9 @@ const ClientInOutNoShow: React.FC = () => {
                     <thead >
                         <tr style={{ backgroundColor: "lightgreen" }}>
                             {/* <th>ID</th> */}
-                            <th style={{ backgroundColor: "lightpink" }}>Client Name</th>
-                            <th style={{ backgroundColor: "lightpink" }}>Signed Out Time</th>
+                            <th style={{ backgroundColor: "lightpink", width: "550px"}}>Client Name</th>
+                            <th style={{ backgroundColor: "lightpink", width: "450px" }}>Sign Out Time</th>
+                            <th style={{ backgroundColor: "lightpink" }}>Total: {clientsWhoAreSignedOut.length.toString()}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -148,7 +150,8 @@ const ClientInOutNoShow: React.FC = () => {
                     <thead >
                         <tr style={{ backgroundColor: "lightgreen" }}>
                             {/* <th>ID</th> */}
-                            <th style={{ backgroundColor: "lightgrey" }}>Client Name</th>
+                            <th style={{ backgroundColor: "lightgrey", width: "1000px" }}>Client Name</th>
+                            <th style={{ backgroundColor: "lightgrey" }}>Total: {clientsWhoAreNotSignInAndSignOut.length.toString()}</th>
                         </tr>
                     </thead>
                     <tbody>

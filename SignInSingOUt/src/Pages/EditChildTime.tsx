@@ -114,8 +114,8 @@ const EditChildTime: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         data.forEach((item: SignInSignOut) => {
-          item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm");
-          item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm");
+          item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm");
+          item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm");
         });
         setSchedule(data);
         console.log("data ", data);
