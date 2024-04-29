@@ -20,6 +20,7 @@ const ParentSignIn: React.FC = () => {
   const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [errorMessagText, setErrorMessageText] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -38,12 +39,12 @@ const ParentSignIn: React.FC = () => {
         try {
           const token = localStorage.getItem("token");
           if (!token) {
-            throw new Error("Token not found in localStorage");
+            navigate("/", {
+              replace: true,
+            });
           }
 
-          const url = `${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
-
-          const response = await fetch(url, {
+          const response = await fetch(`${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,12 +52,12 @@ const ParentSignIn: React.FC = () => {
             },
           });
 
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch data. Response status: ${response.status}`
-            );
+          if (!response.ok) 
+          {
+            ShowErrorMessageToUser("Couldn't Find Pin Number");
+            return;
           }
-
+          console.log("response.ok" + response.ok);
           const data = await response.json();
           setParentName(data.parentFirstName);
           setShowErrorMessage(false);
@@ -67,20 +68,27 @@ const ParentSignIn: React.FC = () => {
           setShow(true);
           //   navigate("/", { replace: true });
         } catch (error) {
-          setParentFourDigitPin("");
-          setShowErrorMessage(true);
-          const timer = setTimeout(() => {
-            setShowErrorMessage(false);
-          }, 3000);
-          () => clearTimeout(timer);
-          setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
-          console.error("Error fetching data:", error);
+          
+          ShowErrorMessageToUser("error" + error);
         }
       }
     };
 
     fetchData();
   }, [parentFourDigitPin]);
+
+  const ShowErrorMessageToUser = async (errorMessage: string) => {
+    setErrorMessageText(errorMessage);
+    setParentFourDigitPin("");
+    setShowErrorMessage(true);
+    const timer = setTimeout(() => {
+      setShowErrorMessage(false);
+    }, 3000);
+    () => clearTimeout(timer);
+    setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
+    
+
+  }
 
   const InsertPhoneNumber = async (value: string) => {
     setParentFourDigitPin((prevValue) => prevValue + value);
@@ -162,11 +170,10 @@ const ParentSignIn: React.FC = () => {
             Forgot Pin?
           </button>
         </div>
-        {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
-        {showErrorMessage && (
-          <ErrorMessage message={"Couldn't Find Pin Number"} />
-        )}
       </div>
+      {showErrorMessage && (
+          <ErrorMessage message={errorMessagText} />
+        )}
     </>
   );
 };

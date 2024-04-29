@@ -14,6 +14,7 @@ const ParentSignIn: React.FC = () => {
   const navigate = useNavigate();
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [errorMessagText, setErrorMessageText] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,53 +36,60 @@ const ParentSignIn: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (parentLastFourDigitPhoneNumber.length >= 4) {
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) {
-            throw new Error("Token not found in localStorage");
-          }
-          const url = `${backEndCodeURLLocation}SignIn/CheckParentPhoneNumber?parentPhoneNumber=${parentLastFourDigitPhoneNumber}`;
-          console.log(url);
-
-          const response = await fetch(url, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch data. Response status: ${response.status}`
-            );
-          }
-
-          setShowErrorMessage(false);
-          navigate("/ParentsPin", {
-            replace: true,
-            state: {
-              parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
-            },
-          });
-          // setShow(true);
-        } catch (error) {
-          setParentLastFourDigitPhoneNumber("");
-          setShowErrorMessage(true);
-          const timer = setTimeout(() => {
-            setShowErrorMessage(false);
-          }, 3000);
-          () => clearTimeout(timer);
-          setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
-          console.error("Error fetching data:", error);
-        }
-      }
-    };
-
-    fetchData();
+    FindParentPhoneNumber();
   }, [parentLastFourDigitPhoneNumber]);
+
+  const FindParentPhoneNumber = async () => {
+    if (parentLastFourDigitPhoneNumber.length >= 4) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/", {
+            replace: true,
+          });
+        }
+
+        const response = await fetch(`${backEndCodeURLLocation}SignIn/CheckParentPhoneNumber?parentPhoneNumber=${parentLastFourDigitPhoneNumber}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+            ShowErrorMessageToUser("Couldn't Find Phone Number Or Network issues.");
+            return;
+        }
+
+        setShowErrorMessage(false);
+
+        navigate("/ParentsPin", {
+          replace: true,
+          state: {
+            parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
+          },
+        });
+
+       
+      } catch (error) {
+        ShowErrorMessageToUser("Error: " + error);
+      }
+    }
+  };
+
+
+  const ShowErrorMessageToUser = async (errorMessage: string) => {
+    setErrorMessageText("Error: " + errorMessage);
+    setParentLastFourDigitPhoneNumber("");
+    setShowErrorMessage(true);
+    const timer = setTimeout(() => {
+      setShowErrorMessage(false);
+    }, 3000);
+    () => clearTimeout(timer);
+    setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
+
+  }
 
   const InsertPhoneNumber = async (value: string) => {
     setParentLastFourDigitPhoneNumber((prevValue) => prevValue + value);
@@ -145,7 +153,7 @@ const ParentSignIn: React.FC = () => {
         </div>
       </div>
       {showErrorMessage && (
-        <ErrorMessage message={"Couldn't Find Phone Number"} />
+        <ErrorMessage message={errorMessagText} />
       )}
     </>
   );

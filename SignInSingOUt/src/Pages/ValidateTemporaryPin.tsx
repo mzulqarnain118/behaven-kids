@@ -136,10 +136,11 @@ console.log("testing " + parentTemporaryFiveDigitPin);
           </div>
         </div>
         {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
-        {showErrorMessage && (
+        
+      </div>
+      {showErrorMessage && (
           <ErrorMessage message={"Incorrect 5 Digit Pin"} />
         )}
-      </div>
     </>
   );
 };

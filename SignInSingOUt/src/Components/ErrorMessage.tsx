@@ -14,7 +14,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
     color: 'white',
     padding: '10px',
     textAlign: 'center',
-    width: '30%',
+    width: '60%',
     height: "50px" }}>
       {message}
     </div>

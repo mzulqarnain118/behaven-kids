@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+// import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
-import Webcam from "react-webcam";
-import axios from 'axios';
+// import Webcam from "react-webcam";
+// import axios from 'axios';
 
 
 interface ParentInfo {
@@ -79,13 +80,13 @@ const AddParentInfo: React.FC = () => {
 
     fetchData();
   }, []);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setSelectedImage(files[0]);
-    }
-  };
+  // const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  // const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
+  //   if (files && files.length > 0) {
+  //     setSelectedImage(files[0]);
+  //   }
+  // };
 
   const handleSubmit = async () => {
     // e.preventDefault();
@@ -111,23 +112,23 @@ const AddParentInfo: React.FC = () => {
         );
       }
 
-      const formData = new FormData();
-      formData.append('parentInfo', JSON.stringify(parentInfo));
-      if (selectedImage) {
-        formData.append('file', selectedImage);
-      }
+      // const formData = new FormData();
+      // formData.append('parentInfo', JSON.stringify(parentInfo));
+      // if (selectedImage) {
+      //   formData.append('file', selectedImage);
+      // }
 
-      const response2 = await axios.post('https://192.168.0.9:9999/Parent/AddParentImage', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // const response2 = await axios.post('https://192.168.0.9:9999/Parent/AddParentImage', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
 
-      if (response2.status === 200) {
+      if (response.status === 200) {
         console.log('Data posted successfully');
       } else {
-        console.error(`Failed to post data for client ID ${parentInfo}: ${response2.statusText}`);
+        console.error(`Failed to post data for client ID ${parentInfo}: ${response.statusText}`);
       }
     } catch (error) {
       console.error(`Error posting data for client ID ${parentInfo}:`, error);
@@ -136,22 +137,22 @@ const AddParentInfo: React.FC = () => {
   };
 
 
-  const webcamRef = useRef<Webcam>(null);
-  const [cameraActive, setCameraActive] = useState<boolean>(false);
-  const handleCapture = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      if (imageSrc) {
-        fetch(imageSrc)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const file = new File([blob], "photo.png", { type: "image/png" });
-            setSelectedImage(file);
-          })
-          .catch((error) => console.error("Error converting image:", error));
-      }
-    }
-  };
+  // const webcamRef = useRef<Webcam>(null);
+  // const [cameraActive, setCameraActive] = useState<boolean>(false);
+  // const handleCapture = () => {
+  //   if (webcamRef.current) {
+  //     const imageSrc = webcamRef.current.getScreenshot();
+  //     if (imageSrc) {
+  //       fetch(imageSrc)
+  //         .then((res) => res.blob())
+  //         .then((blob) => {
+  //           const file = new File([blob], "photo.png", { type: "image/png" });
+  //           setSelectedImage(file);
+  //         })
+  //         .catch((error) => console.error("Error converting image:", error));
+  //     }
+  //   }
+  // };
 
   return (
     <div
@@ -260,7 +261,7 @@ const AddParentInfo: React.FC = () => {
 
                 />
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="parentImage" style={{ fontSize: "20px" }}>Choose an image from file computer: </label>
                 <input
                   style={{ fontSize: "20px" }}
@@ -285,7 +286,6 @@ const AddParentInfo: React.FC = () => {
               >
                 {cameraActive ? "Turn Off Camera" : "Turn On Camera"}
               </button>
-              {/* Display camera view if active */}
               {cameraActive && (
                 <div className="form-group parentGridContaineritem">
                   <label htmlFor="parentCamera">Take Picture</label>
@@ -303,7 +303,7 @@ const AddParentInfo: React.FC = () => {
                     Capture
                   </button>
                 </div>
-              )}
+              )} */}
                           <br />
               <br />
               <button type="submit" className="btn btn-primary btn-lg" >

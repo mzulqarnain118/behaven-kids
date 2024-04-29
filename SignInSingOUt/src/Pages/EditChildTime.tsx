@@ -114,8 +114,8 @@ const EditChildTime: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         data.forEach((item: SignInSignOut) => {
-          item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm");
-          item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm");
+          item.signInTime = moment(item.signInTime, "HH:mm").format("HH:mm");
+          item.signOutTime = moment(item.signOutTime, "HH:mm").format("HH:mm");
         });
         setSchedule(data);
         console.log("data ", data);
@@ -217,12 +217,14 @@ const EditChildTime: React.FC = () => {
   const UpdateSignInSignOutTime = async (
     id: number,
     signInTime: string,
-    signOutTime: string
+    signOutTime: string,
+    pickedUpParent: string
   ) => {
     const token = localStorage.getItem("token");
     try {
-      
-      if (signOutTime !== "Invalid date" && selectedDropOutParentID === null)
+      console.log("signOutTime = " + signOutTime);
+      console.log("pickedUpParent = " + pickedUpParent);
+      if (signOutTime !== "Invalid date" && selectedDropOutParentID === null && pickedUpParent === null)
         {
           alert ("Please choose the Guarandian who picked client up!")
           return;
@@ -633,7 +635,8 @@ const EditChildTime: React.FC = () => {
                         UpdateSignInSignOutTime(
                           item.id,
                           item.signInTime,
-                          item.signOutTime
+                          item.signOutTime,
+                          item.pickedOutParentFirstName
                         )
                       }
                     >

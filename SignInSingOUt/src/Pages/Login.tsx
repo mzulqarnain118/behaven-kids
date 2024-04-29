@@ -19,7 +19,6 @@ const LoginPage: React.FC = () => {
 
 
   useEffect(() => {
-    // Check if the user is already authenticated (e.g., token exists)
     const token = localStorage.getItem("token");
     if (token) {
       // Set the state to redirect to dashboard
@@ -28,9 +27,9 @@ const LoginPage: React.FC = () => {
 
       if (userRole === "parent")
         navigate("/PhoneNumber");
-      else if (userRole === "admin" || userRole === "secretary" )
+      else if (userRole === "admin" || userRole === "secretary")
         navigate("/EditChildTime");
-      
+
     }
   }, []);
 
@@ -61,34 +60,40 @@ const LoginPage: React.FC = () => {
 
       if (userRole === "parent")
         navigate("/PhoneNumber");
-      else if (userRole === "admin" || userRole === "secretary" )
+      else if (userRole === "admin" || userRole === "secretary")
         navigate("/EditChildTime");
-    
-    // Refresh the page
-    window.location.reload();
-    } catch (error) {
-      console.error("Login failed:", error);
+
+      // Refresh the page
+      window.location.reload();
+    } catch (error: any) {
+      if (error.message === "Failed to fetch") {
+        alert("Connection lost. Please check your internet connection.");
+        // Handle the lost connection error appropriately, such as showing a message to the user.
+      } else {
+        alert("Login failed:" + error.message);
+        // Handle other types of errors
+      }
     }
   };
 
   return (
     <>
-                 <img
-                  src={BehavenLogo}
-                  alt="My Image"
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "125px",
-                    margin: "0 auto",
-                    position: "absolute",
-                    top: "20%",
-                    left: "49%",
-                    transform: "translate(-50%, -50%)",
-                    
-                  }}
-                />
+      <img
+        src={BehavenLogo}
+        alt="My Image"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "125px",
+          margin: "0 auto",
+          position: "absolute",
+          top: "20%",
+          left: "49%",
+          transform: "translate(-50%, -50%)",
+
+        }}
+      />
       <div
         style={{
           display: "flex",
@@ -102,7 +107,7 @@ const LoginPage: React.FC = () => {
           transform: "translate(-50%, -50%)"
         }}
       >
-   
+
         <form onSubmit={handleLogin}>
           <div className="card" style={{ width: "500px", textAlign: "center" }}>
             <div className="card-body">

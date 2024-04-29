@@ -51,7 +51,7 @@ const ValidateEmailAddress: React.FC = () => {
           );
         }
 
-        
+
         const parentEmailAddress = await response.text();
         const hiddenEmailAddress = parentEmailAddress.replace(/^(..).*?(?=@)/, (_, firstChar) => `${firstChar}${'.'.repeat(parentEmailAddress.indexOf('@'))}`);
         setParentsEmailAddress(parentEmailAddress);
@@ -105,10 +105,10 @@ const ValidateEmailAddress: React.FC = () => {
   const ReceptionistGetsTemporaryPin = async () => {
     const token = localStorage.getItem("token");
     try {
-      console.log(
-        "parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
-      );
-      console.log("parentsEmailAddress = " + parentsEmailAddress);
+      // console.log(
+      //   "parentLastFourDigitPhoneNumber = " + parentLastFourDigitPhoneNumber
+      // );
+      // console.log("parentsEmailAddress = " + parentsEmailAddress);
 
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/SendTemporaryEmailVerificationSoReceptionistCanReadIt?parentPhoneNumber=${parentLastFourDigitPhoneNumber}&parentEmailAddress=${parentsEmailAddress}`,
@@ -149,11 +149,11 @@ const ValidateEmailAddress: React.FC = () => {
       <div className="CommentDropDown_Grid">
         <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
         <br />
+        <br />
         <form onSubmit={handleSubmit}>
-          <p style={{ fontSize: "20px" }}>
-            Please enter your email address to retrive your Pin
+          <p style={{ fontSize: "25px", fontWeight: "500" }}>
+            Is this your Email Address?
           </p>
-          <br />
           <div>
             <div className="input-group">
               <div className="input-group-prepend">
@@ -170,7 +170,7 @@ const ValidateEmailAddress: React.FC = () => {
                 </span>
               </div>
               <input
-              disabled = {true}
+                disabled={true}
                 type="email"
                 style={{
                   height: "65px",
@@ -186,33 +186,35 @@ const ValidateEmailAddress: React.FC = () => {
                 value={hideParentsEmailAddress}
                 required
               />
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                disabled={didUserPutAnEmailAddress}
+                style={{marginLeft: "20px", backgroundColor: "lightblue", color: "black", fontWeight: "700"}}
+              >
+                {isSubmitting ? "Submitting..." : "Send By Email"}
+              </button>
             </div>
-            
+
           </div>
           <br />
-          <button
-            type="submit"
-            className="btn btn-primary btn-lg"
-            disabled={didUserPutAnEmailAddress}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
+
         </form>
 
         <button
-            type="button"
-            className="btn btn-outline-dark"
-            style={{
-              backgroundColor: "white",
-              color: "goldenrod",
-              fontSize: "20px",
-              marginTop: "35px"
-            }}
-            disabled={didUserPutAnEmailAddress}
-            onClick={ReceptionistGetsTemporaryPin}
-          >
-            Verify in a different way?
-          </button>
+          type="button"
+          className="btn btn-outline-dark"
+          style={{
+            backgroundColor: "white",
+            color: "goldenrod",
+            fontSize: "25px",
+            marginTop: "45px"
+          }}
+          disabled={didUserPutAnEmailAddress}
+          onClick={ReceptionistGetsTemporaryPin}
+        >
+          Verify in a different way?
+        </button>
       </div>
 
       {showErrorMessage && (

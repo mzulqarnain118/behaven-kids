@@ -137,7 +137,7 @@ const ClientInOutNoShow: React.FC = () => {
                                 </td>
 
                                 <td style={{ width: "100px" }}>
-                                    {item.signInTime}
+                                    {item.signOutTime}
                                 </td>
                             </tr>
                         ))}

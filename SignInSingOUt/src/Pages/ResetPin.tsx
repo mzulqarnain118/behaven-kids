@@ -199,11 +199,12 @@ const ResetPin: React.FC = () => {
           </div>
         </div>
         {/* <CongratulationsPopup showModel={show} setShowModel={setShow} parentFirstName={parentName}/> */}
-        {showErrorMessage && (
-          <ErrorMessage message={"Personal 4 Digit Pin Not The Same"} />
-        )}
+        
         <CongratulationsPopup showModel={showModel} setShowModel={setShowModel}/>
       </div>
+      {showErrorMessage && (
+          <ErrorMessage message={"Personal 4 Digit Pin Not The Same"} />
+        )}
     </>
   );
 };
