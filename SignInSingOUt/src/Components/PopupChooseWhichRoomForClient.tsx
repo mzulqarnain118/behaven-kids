@@ -34,7 +34,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             <div>
                 <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
                     <BootstrapModal.Header closeButton>
-                        <BootstrapModal.Title style={{ fontSize: "30px" }}>Your New Pin Is Ready!</BootstrapModal.Title>
+                        <BootstrapModal.Title style={{ fontSize: "30px" }}>Choose A Room</BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         <div style={{ textAlign: "center" }}>

@@ -54,7 +54,7 @@ const ResetPin: React.FC = () => {
 
           return;
         }
-
+console.log(`${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${parentID}&parentNewPinNumber=${reParentPersonalPin}`);
         try {
           const token = localStorage.getItem("token");
           if (!token) {

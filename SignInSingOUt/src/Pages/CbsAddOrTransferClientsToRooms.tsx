@@ -69,15 +69,16 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
                     item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm A");
                     if (item.signOutTime === "Invalid date") {
-                        
-                    } else {
                         signedInClients.push(item);
+                    } else {
+                        console.log("here");
+                        
                     }
                 });
 
                 setClientsWhoAreSignedIn(signedInClients);
 
-                setChildInfo(data);
+                // setChildInfo(data);
 
                 //   navigate("/", { replace: true });
             } catch (error) {
