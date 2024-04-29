@@ -27,6 +27,11 @@ interface ChildInfo {
     defaultRoomID: number;
 }
 
+interface ClientInfoResponse {
+    distinctClientSignInOutInfo: ChildInfo[];
+    allClientsWhoAreDefaultedForARoom: ChildInfo[];
+}
+
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
@@ -47,7 +52,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     throw new Error("Token not found in localStorage");
                 }
 
-                const url = `${backEndCodeURLLocation}Cbs/GetCBSandClientsRooms`;
+                const url = `${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent`;
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -61,24 +66,29 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     alert(`Failed to fetch data. Response status: ${response.status}`)
                 }
 
-                const data = await response.json();
+                // console.log("response", response);
 
-                const signedInClients: ChildInfo[] = [];
+                const data: ClientInfoResponse = await response.json();
 
-                data.forEach((item: ChildInfo) => {
-                    item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
-                    item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm A");
-                    if (item.signOutTime === "Invalid date") {
-                        signedInClients.push(item);
-                    } else {
-                        console.log("here");
+                // const signedInClients: ChildInfo[] = [];
+                // const defaultedClients: ChildInfo[] = [];
+
+                // console.log("data = ", data)
+
+                // data.distinctClientSignInOutInfo.forEach((item: ChildInfo) => {
+                //     item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
+                //     item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm A");
+                //     if (item.signOutTime === "Invalid date") {
+                //         signedInClients.push(item);
+                //     } else {
+                //         console.log("here");
                         
-                    }
-                });
+                //     }
+                // });
 
-                setClientsWhoAreSignedIn(signedInClients);
+                setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
 
-                // setChildInfo(data);
+                setChildInfo(data.allClientsWhoAreDefaultedForARoom);
 
                 //   navigate("/", { replace: true });
             } catch (error) {
