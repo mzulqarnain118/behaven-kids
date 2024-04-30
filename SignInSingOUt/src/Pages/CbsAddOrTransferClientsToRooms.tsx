@@ -52,7 +52,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     throw new Error("Token not found in localStorage");
                 }
 
-                const url = `${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent`;
+                const url = `${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=8`;
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -66,31 +66,14 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     alert(`Failed to fetch data. Response status: ${response.status}`)
                 }
 
-                // console.log("response", response);
-
                 const data: ClientInfoResponse = await response.json();
 
-                // const signedInClients: ChildInfo[] = [];
-                // const defaultedClients: ChildInfo[] = [];
-
-                // console.log("data = ", data)
-
-                // data.distinctClientSignInOutInfo.forEach((item: ChildInfo) => {
-                //     item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
-                //     item.signOutTime = moment(item.signOutTime, "HH:mm").format("hh:mm A");
-                //     if (item.signOutTime === "Invalid date") {
-                //         signedInClients.push(item);
-                //     } else {
-                //         console.log("here");
-                        
-                //     }
-                // });
+                console.log("data = ", data)
 
                 setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
 
                 setChildInfo(data.allClientsWhoAreDefaultedForARoom);
 
-                //   navigate("/", { replace: true });
             } catch (error) {
                 alert("Error fetching data:" +  error);
             }
@@ -101,6 +84,33 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const WhichRoomWillClientGoTo = async () => {
         setShowModel(true);
+    };
+
+    const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
+        try {
+            console.log(`${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`);
+            const token = localStorage.getItem("token");
+            
+            if (!token) {
+                throw new Error("Token not found in localStorage");
+            }
+            const url = `${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`;
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                alert(`Failed to fetch data. Response status: ${response.status}`)
+            }
+
+        } catch (error) {
+            alert("Error fetching data:" +  error);
+        }
     };
 
     return (
@@ -126,8 +136,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             <h2>Parrot</h2>
 
                         </div>
-
-
                     </div>
                     <div className="card-body">
                         <h2>Ins</h2>
@@ -138,7 +146,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                         {clientsWhoAreSignedIn.map((info, ) => (
                          <div>
                             <br/>
-                            <button onClick={WhichRoomWillClientGoTo} className="btn btn-warning" style={{width: "250px"}}>{info.clientFirstName + info.clientLastName}</button>
+                            <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="btn btn-warning" style={{width: "250px"}}>{info.clientFirstName + " " + info.clientLastName}</button>
                         </div>
                       ))}
 
