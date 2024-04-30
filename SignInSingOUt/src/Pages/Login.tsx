@@ -24,11 +24,13 @@ const LoginPage: React.FC = () => {
       // Set the state to redirect to dashboard
       const decoded = jwtDecode(token) as DecodedToken;
       const userRole = decoded.role;
-
+console.log("userrole = " + userRole)
       if (userRole === "parent")
         navigate("/PhoneNumber");
       else if (userRole === "admin" || userRole === "secretary")
         navigate("/EditChildTime");
+      else if (userRole === "floor")
+        navigate("/CbsAddOrTransferClientsToRooms");
 
     }
   }, []);

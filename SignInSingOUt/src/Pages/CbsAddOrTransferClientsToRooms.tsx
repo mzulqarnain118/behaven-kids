@@ -1,21 +1,11 @@
-// import { useState, useEffect, useRef } from "react";
 import { useState, useEffect } from "react";
 import "./CSS/AddParentChildInfo.css";
-// import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
-import moment from "moment";
 import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
-
-
-// interface CbsInfo {
-
-//     cbsFirstName: string;
-//     cbsLastName: string;
-//     roomID: string;
-//     children: ChildInfo[];
-// }
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 interface ChildInfo {
     id: number
@@ -32,17 +22,53 @@ interface ClientInfoResponse {
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
 }
 
+interface DecodedToken {
+    actort: string;
+}
+
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
-    // const [clientsWhoAreSignedOut, setClientsWhoAreSignedOut] = useState<ChildInfo[]>([]);
+    const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
 
-
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    throw new Error("Token not found in localStorage");
+                }
+                const decoded = jwtDecode(token) as DecodedToken;
+                const userFloorID = decoded.actort;
 
-    }, [childInfo]);
+                console.log("userfloorID = " + userFloorID);
+
+                const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${userFloorID}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    alert(`Failed to fetch data. Response status: ${response.status}`)
+                }
+
+                const data: ClientInfoResponse = await response.json();
+
+                setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+
+                setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+
+            } catch (error) {
+                alert("Useffect 1 - Error fetching data:" + error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,7 +78,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     throw new Error("Token not found in localStorage");
                 }
 
-                const url = `${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=8`;
+                const decoded = jwtDecode(token) as DecodedToken;
+                const userFloorID = decoded.actort;
+
+                const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${userFloorID}`;
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -66,16 +95,12 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     alert(`Failed to fetch data. Response status: ${response.status}`)
                 }
 
-                const data: ClientInfoResponse = await response.json();
+                const data = await response.json();
 
-                console.log("data = ", data)
-
-                setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
-
-                setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+                setClientsWhoAreCurrentlyInARoom(data);
 
             } catch (error) {
-                alert("Error fetching data:" +  error);
+                alert("Useffect 2 - Error fetching data:" + error);
             }
         };
 
@@ -88,9 +113,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
         try {
-            console.log(`${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`);
             const token = localStorage.getItem("token");
-            
+
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
@@ -107,9 +131,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             if (!response.ok) {
                 alert(`Failed to fetch data. Response status: ${response.status}`)
             }
-
+            window.location.reload();
         } catch (error) {
-            alert("Error fetching data:" +  error);
+            alert("Error fetching data:" + error);
         }
     };
 
@@ -132,39 +156,43 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 >
 
                     <div>
+                        <h2>Parrot</h2>
                         <div className="card-body">
-                            <h2>Parrot</h2>
 
+                            <h2>Ins</h2>
+                            {clientsWhoAreCurrentlyInARoom.map((info,) => (
+                                <div>
+                                    <br />
+                                    <button onClick={() => WhichRoomWillClientGoTo()} className="btn btn-success" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <div className="card-body">
-                        <h2>Ins</h2>
 
-                    </div>
                     <div className="card-body">
                         <h2>Needs assigning</h2>
-                        {clientsWhoAreSignedIn.map((info, ) => (
-                         <div>
-                            <br/>
-                            <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="btn btn-warning" style={{width: "250px"}}>{info.clientFirstName + " " + info.clientLastName}</button>
-                        </div>
-                      ))}
+                        {clientsWhoAreSignedIn.map((info,) => (
+                            <div>
+                                <br />
+                                <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="btn btn-warning" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                            </div>
+                        ))}
 
                     </div>
                     <div className="card-body">
                         <h2>Absent</h2>
-                        {childInfo.map((info, ) => (
-                         <div>
-                            <br/>
-                            <button className="btn btn-secondary" style={{width: "250px"}}>{info.clientFirstName + info.clientLastName}</button>
-                        </div>
-                      ))}
+                        {childInfo.map((info,) => (
+                            <div>
+                                <br />
+                                <button className="btn btn-secondary" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                            </div>
+                        ))}
 
                     </div>
                 </div>
 
             </div>
-            <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel}/> 
+            <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} />
         </>
     );
 };

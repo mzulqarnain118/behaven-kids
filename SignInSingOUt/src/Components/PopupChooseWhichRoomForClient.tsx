@@ -38,13 +38,11 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         <div style={{ textAlign: "center" }}>
-                            <button className="btn btn-primary btn-lg" onClick={AssignCurrentRoom}>Parrot</button>
-
                             <div style={{ textAlign: "center" }}>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Bee</button>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Apple</button>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Bird</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Parrot</button>
+                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Terappy</button>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Horse</button>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Playground</button>
                                 <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Time Out Upstairs</button>
