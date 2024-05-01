@@ -22,6 +22,8 @@ interface ClientInfoResponse {
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
 }
 
+
+
 interface DecodedToken {
     actort: string;
 }
@@ -32,6 +34,25 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
+    const [data, setData] = useState<ChildInfo[]>([]);
+
+    useEffect(() => {
+        const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
+    
+        eventSource.onmessage = (event) => {
+          const newData = JSON.parse(event.data);
+          console.log ("newData", newData);
+        };
+   
+        eventSource.onerror = (error) => {
+          console.error('EventSource failed:', error);
+          eventSource.close();
+        };
+    
+        return () => {
+          eventSource.close();
+        };
+      }, []); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -167,6 +188,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+                    
                     </div>
 
                     <div className="card-body">
