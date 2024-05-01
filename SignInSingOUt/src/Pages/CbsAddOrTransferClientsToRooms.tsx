@@ -22,10 +22,9 @@ interface ClientInfoResponse {
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
 }
 
-
-
 interface DecodedToken {
     actort: string;
+    Location: string;
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
@@ -34,25 +33,27 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
-    const [data, setData] = useState<ChildInfo[]>([]);
+    const [roomID, setRoomID] = useState<string>("");
+    const [locationID, setLocationID] = useState<string>("");
+    const [clientID, setClientID] = useState<number| null>(null);
 
-    useEffect(() => {
-        const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
+    // useEffect(() => {
+    //     const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
     
-        eventSource.onmessage = (event) => {
-          const newData = JSON.parse(event.data);
-          console.log ("newData", newData);
-        };
+    //     eventSource.onmessage = (event) => {
+    //       const newData = JSON.parse(event.data);
+    //       console.log ("newData", newData);
+    //     };
    
-        eventSource.onerror = (error) => {
-          console.error('EventSource failed:', error);
-          eventSource.close();
-        };
+    //     eventSource.onerror = (error) => {
+    //       console.error('EventSource failed:', error);
+    //       eventSource.close();
+    //     };
     
-        return () => {
-          eventSource.close();
-        };
-      }, []); 
+    //     return () => {
+    //       eventSource.close();
+    //     };
+    //   }, []); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,8 +64,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 }
                 const decoded = jwtDecode(token) as DecodedToken;
                 const userFloorID = decoded.actort;
-
-                console.log("userfloorID = " + userFloorID);
+                const Location = decoded.Location;
+                setRoomID(userFloorID);
+                setLocationID(Location);
 
                 const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${userFloorID}`, {
                     method: "GET",
@@ -128,7 +130,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         fetchData();
     }, []);
 
-    const WhichRoomWillClientGoTo = async () => {
+    const WhichRoomWillClientGoTo = async (clientID: number) => {
+        setClientID(clientID);
         setShowModel(true);
     };
 
@@ -184,7 +187,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             {clientsWhoAreCurrentlyInARoom.map((info,) => (
                                 <div>
                                     <br />
-                                    <button onClick={() => WhichRoomWillClientGoTo()} className="btn btn-success" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                    <button onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="btn btn-success" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                 </div>
                             ))}
                         </div>
@@ -214,7 +217,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
 
             </div>
-            <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} />
+            {clientID !== null && (
+            <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID} locationID={locationID} clientID={clientID} />
+            )}
         </>
     );
 };
