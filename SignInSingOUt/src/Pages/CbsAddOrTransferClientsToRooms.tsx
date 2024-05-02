@@ -23,112 +23,175 @@ interface ClientInfoResponse {
 }
 
 interface DecodedToken {
-    actort: string;
+    StaffID: string;
     Location: string;
+}
+
+interface CbsInfo {
+    cbsStaffFirstName: string;
+    cbsStaffLastName: string;
+    cbsRoomID: number;
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+    const [cbsInfo, setCbsInfo] = useState<CbsInfo>();
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
-    const [roomID, setRoomID] = useState<string>("");
+    const [roomID, setRoomID] = useState<number| null>(null);
     const [locationID, setLocationID] = useState<string>("");
-    const [clientID, setClientID] = useState<number| null>(null);
+    const [clientID, setClientID] = useState<number | null>(null);
 
     // useEffect(() => {
     //     const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
-    
+
     //     eventSource.onmessage = (event) => {
     //       const newData = JSON.parse(event.data);
     //       console.log ("newData", newData);
     //     };
-   
+
     //     eventSource.onerror = (error) => {
     //       console.error('EventSource failed:', error);
     //       eventSource.close();
     //     };
-    
+
     //     return () => {
     //       eventSource.close();
     //     };
-    //   }, []); 
+    //   }, []);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    throw new Error("Token not found in localStorage");
-                }
-                const decoded = jwtDecode(token) as DecodedToken;
-                const userFloorID = decoded.actort;
-                const Location = decoded.Location;
-                setRoomID(userFloorID);
-                setLocationID(Location);
-
-                const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${userFloorID}`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    alert(`Failed to fetch data. Response status: ${response.status}`)
-                }
-
-                const data: ClientInfoResponse = await response.json();
-
-                setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
-
-                setChildInfo(data.allClientsWhoAreDefaultedForARoom);
-
-            } catch (error) {
-                alert("Useffect 1 - Error fetching data:" + error);
-            }
-        };
-
-        fetchData();
+        getCBSInformation();
+        getClientsThatAreWaitingInTheWaitingRoom();
+        getAllClientsThatAreInARoom();
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    throw new Error("Token not found in localStorage");
-                }
-
-                const decoded = jwtDecode(token) as DecodedToken;
-                const userFloorID = decoded.actort;
-
-                const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${userFloorID}`;
-
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                if (!response.ok) {
-                    alert(`Failed to fetch data. Response status: ${response.status}`)
-                }
-
-                const data = await response.json();
-
-                setClientsWhoAreCurrentlyInARoom(data);
-
-            } catch (error) {
-                alert("Useffect 2 - Error fetching data:" + error);
+    const getCBSInformation = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token not found in localStorage");
             }
-        };
+            const decoded = jwtDecode(token) as DecodedToken;
+            const staffID = decoded.StaffID;
 
-        fetchData();
-    }, []);
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetCbsInformation?staffID=${staffID}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                alert(`Failed to fetch data. Response status: ${response.status}`)
+            }
+
+            const data = await response.json();
+            setRoomID(prev => data[0].cbsRoomID);
+
+        } catch (error) {
+            alert("Useffect 1 - Error fetching data:" + error);
+        }
+    };
+
+    const getClientsThatAreWaitingInTheWaitingRoom = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token not found in localStorage");
+            }
+            console.log("roomID = " + roomID)
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                alert(`Failed to fetch data. Response status: ${response.status}`)
+            }
+
+            const data: ClientInfoResponse = await response.json();
+
+            setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+
+            setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+
+        } catch (error) {
+            alert("Useffect 1 - Error fetching data:" + error);
+        }
+    };
+
+    const getAllClientsThatAreInARoom = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token not found in localStorage");
+            }
+
+            const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${10}`;
+
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                alert(`Failed to fetch data. Response status: ${response.status}`)
+            }
+
+            const data = await response.json();
+
+            setClientsWhoAreCurrentlyInARoom(data);
+
+        } catch (error) {
+            alert("Useffect 2 - Error fetching data:" + error);
+        }
+    };
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const token = localStorage.getItem("token");
+    //             if (!token) {
+    //                 throw new Error("Token not found in localStorage");
+    //             }
+    //             const decoded = jwtDecode(token) as DecodedToken;
+    //              const staffID = decoded.StaffID;
+
+    //             setRoomID("staffID = " + staffID);
+
+    //             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${staffID}`, {
+    //                 method: "GET",
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                     "Content-Type": "application/json",
+    //                 },
+    //             });
+    //             if (!response.ok) {
+    //                 alert(`Failed to fetch data. Response status: ${response.status}`)
+    //             }
+
+    //             const data: ClientInfoResponse = await response.json();
+
+    //             setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+
+    //             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+
+    //         } catch (error) {
+    //             alert("Useffect 1 - Error fetching data:" + error);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, []);
+
 
     const WhichRoomWillClientGoTo = async (clientID: number) => {
         setClientID(clientID);
@@ -191,7 +254,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                    
+
                     </div>
 
                     <div className="card-body">
@@ -218,7 +281,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
             </div>
             {clientID !== null && (
-            <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID} locationID={locationID} clientID={clientID} />
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID} locationID={locationID} clientID={clientID} />
             )}
         </>
     );
