@@ -82,13 +82,13 @@ const MakeClientCurrent: React.FC = () => {
       );
 
       if (!response.ok) {
-        console.error(
-          `Failed to post data for client ID:`,
-          response.statusText
-        );
+        alert(`Failed to post data for client ID:` + response.statusText)
+        return;
       }
+      window.location.reload();
+
     } catch (error) {
-      console.error(`Error posting data for client ID:`, error);
+        alert(`Error posting data for client ID:` +  error);
     }
   };
   const animatedComponents = makeAnimated();

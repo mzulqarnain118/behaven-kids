@@ -92,7 +92,9 @@ const AddParentInfo: React.FC = () => {
     // e.preventDefault();
     // console.log("Parent Info:", parentInfo);
     const token = localStorage.getItem("token");
+
     try {
+      console.log(`${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`)
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/AddParentGuardianDetail?firstName=${parentInfo.firstName}&lastName=${parentInfo.lastName}&phoneNumber=${parentInfo.PhoneNumber.substring(1)}&parentEmailAddress=${parentInfo.EmailAdress}`,
         {
@@ -106,12 +108,10 @@ const AddParentInfo: React.FC = () => {
       );
 
       if (!response.ok) {
-        console.error(
-          `Failed to post data for client ID ${parentInfo}:`,
-          response.statusText
-        );
+        alert("Parent might already exist. Please check the database");
+        return;
       }
-
+      window.location.reload();
       // const formData = new FormData();
       // formData.append('parentInfo', JSON.stringify(parentInfo));
       // if (selectedImage) {
