@@ -3,11 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import "./CSS/ChooseWhichChildren.css";
+import ClientsCheckinCheckoutPopup from "../Components/PopupClientsCheckinCheckout"
 
 interface ClientInfo {
   clientID: number;
   firstName: string;
   lastName: string;
+}
+
+interface ParentGuardianInfo {
+  parentID: number;
+  parentFirstName: string;
+  parentLastName: string;
 }
 
 interface ChildInfo {
@@ -34,9 +41,12 @@ const ChooseWhichChildren: React.FC = () => {
   const [childrenInfo, setChildrenInfo] = useState<ChildInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [didUserCheckAClient, setDidUserCheckAClient] = useState(true);
-  const [clientClockInClockOutData, setClientClockInClockOutData] = useState<
-    SignInSignOutTime[]
-  >([]);
+  const [clientClockInClockOutData, setClientClockInClockOutData] = useState<SignInSignOutTime[]>([]);
+  const [parentName, setParentName] = useState<string>("");
+  const [blurAmount, setBlurAmount] = useState<number>(0);
+  const [showModel, setShowModel] = useState<boolean>(false);
+
+
   const navigate = useNavigate();
   const [pointerEventsSignIn, setPointerEventsSignIn] = useState<
     "auto" | "none"
@@ -51,6 +61,50 @@ const ChooseWhichChildren: React.FC = () => {
   const [boxShadowEventsSignOut, setBoxShadowEventsSignOut] = useState(
     "0 4px 8px rgba(0, 0, 0, 0.4)"
   );
+
+  useEffect(() => {
+    
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Token not found in localStorage");
+        }
+        
+        const responseForDigitPin = await fetch(`${backEndCodeURLLocation}Parent/GetTheParentWhoSignInInfo?parentID=${parentID}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!responseForDigitPin.ok) {
+          alert("Network issues");
+        }
+
+        const getParentInfo: ParentGuardianInfo = await responseForDigitPin.json();
+
+        setParentName(getParentInfo.parentFirstName + " " + getParentInfo.parentLastName);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    setTimeout(() => {
+      setShowModel(false);
+      setBlurAmount(0);
+    }, 5000);
+
+    setShowModel(true);
+    setBlurAmount(10);
+
+    
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +143,7 @@ const ChooseWhichChildren: React.FC = () => {
               item.clientInfo.clientID,
               token
             );
-            /////////////////////
+            
             try {
               const urlForSignInAndSignOut = `${backEndCodeURLLocation}SignIn/GetClientSignInSignOutTime?clientID=${item.clientInfo.clientID}`;
               console.log(urlForSignInAndSignOut);
@@ -390,14 +444,23 @@ const ChooseWhichChildren: React.FC = () => {
         alignItems: "center",
         height: "100vh",
         marginTop: "50px",
+        filter: `blur(${blurAmount}px)`
       }}
+
     >
+      <br/>
       <img
         src={BehavenLogo}
         alt="Behaven Logo"
         style={{ height: "75px", marginBottom: "25px" }}
       />
-      <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+
+    <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+    <h4 style={{marginTop: "10px"}}>&#128336; {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h4>
+
+      <br />
+      <div style={{border: "solid 1px", padding: "25px"}}>
+      <h4 style={{color: "#ffc107"}}>{parentName}</h4>
       <br />
       {childrenInfo.map((info) => (
         <div
@@ -416,12 +479,6 @@ const ChooseWhichChildren: React.FC = () => {
           }}
           key={info.childId}
           onClick={() =>
-            // handleDivClick(
-            //   info.childId,
-            //   info.signInTimeData,
-            //   info.signOutTimeData,
-            //   info.isChecked
-            // )
             handleDivClick(info.childId, info.signInTimeData)
           }
         >
@@ -489,10 +546,12 @@ const ChooseWhichChildren: React.FC = () => {
           </div>
         </div>
       ))}
-
+</div>
+<ClientsCheckinCheckoutPopup showModel={showModel} setShowModel={setShowModel} clientFirstName="hello" clientLastName="testing" isCheckIn={false}/>
+<br/>
       <button
         className="btn btn-primary btn-lg"
-        style={{ width: "150px", height: "75px" }}
+        style={{ width: "150px", height: "75px", backgroundColor: "#ffc107", color: "black", fontWeight: "bold", fontSize: "25px"}}
         onClick={handleSubmit}
         disabled={didUserCheckAClient}
       >

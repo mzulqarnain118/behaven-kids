@@ -51,8 +51,7 @@ const ParentSignIn: React.FC = () => {
             },
           });
 
-          if (!response.ok) 
-          {
+          if (!response.ok) {
             ShowErrorMessageToUser("Couldn't Find Pin Number");
             return;
           }
@@ -67,7 +66,7 @@ const ParentSignIn: React.FC = () => {
           setShow(true);
           //   navigate("/", { replace: true });
         } catch (error) {
-          
+
           ShowErrorMessageToUser("error" + error);
         }
       }
@@ -85,7 +84,7 @@ const ParentSignIn: React.FC = () => {
     }, 3000);
     () => clearTimeout(timer);
     setDotsClicked((prevDotsClicked) => prevDotsClicked * 0);
-    
+
 
   }
 
@@ -106,10 +105,12 @@ const ParentSignIn: React.FC = () => {
   };
 
   const GoToForgotPinPage = () => {
-    navigate("/ValidateEmailAddress", { replace: true,
+    navigate("/ValidateEmailAddress", {
+      replace: true,
       state: {
         parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
-      }, });
+      },
+    });
   };
 
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
@@ -117,11 +118,12 @@ const ParentSignIn: React.FC = () => {
   return (
     <>
       <div className="ContentComponentBody" id="my_fullscreen">
+
         <div className="CommentDropDown_Grid">
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
           <div>
-            <h3>Enter Last 4 digt Pin (🔒)</h3>
+            <h3>Enter Last 4 digt Pin (🔒) </h3>
             <div style={{ marginTop: "15px" }}>
               {[...Array(4)].map((_, index) => (
                 <span
@@ -171,8 +173,8 @@ const ParentSignIn: React.FC = () => {
         </div>
       </div>
       {showErrorMessage && (
-          <ErrorMessage message={errorMessagText} />
-        )}
+        <ErrorMessage message={errorMessagText} />
+      )}
     </>
   );
 };

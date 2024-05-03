@@ -111,7 +111,10 @@ const AddParentInfo: React.FC = () => {
         alert("Parent might already exist. Please check the database");
         return;
       }
+
+      if (response.ok) {
       window.location.reload();
+      }
       // const formData = new FormData();
       // formData.append('parentInfo', JSON.stringify(parentInfo));
       // if (selectedImage) {

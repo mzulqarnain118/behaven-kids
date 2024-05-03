@@ -185,10 +185,14 @@ const Navbar: React.FC = () => {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
+            {(window.location.href.includes('ParentsPin') || window.location.href.includes('ChooseWhichChildren') || window.location.href.includes('ValidateEmailAddress') || window.location.href.includes('ValidateTemporaryPin') || window.location.href.includes('ResetPin')) && (
+            <div style={{ position: 'absolute', top:-25, left: 0}}>
+              <button onClick={GoToPhoneNumberPage} style={{background: 'none', border: 'none', fontSize: "75px", width: "100px", marginBottom: "50px"}}>{'\u2190'}</button>
+            </div>
+            )}
             <div
-              className={`offcanvas offcanvas-end ${
-                isOffcanvasOpen ? "show" : ""
-              }`}
+              className={`offcanvas offcanvas-end ${isOffcanvasOpen ? "show" : ""
+                }`}
               id="offcanvasNavbar"
               aria-labelledby="offcanvasNavbarLabel"
               style={{ width: "350px" }}
@@ -204,7 +208,7 @@ const Navbar: React.FC = () => {
                   className="btn-close"
                   data-bs-dismiss="offcanvas"
                   aria-label="Close"
-                  style={{marginRight: "5px"}}
+                  style={{ marginRight: "5px" }}
                   onClick={closeOffcanvas}
                 ></button>
               </div>
@@ -247,110 +251,109 @@ const Navbar: React.FC = () => {
       {showNavbar === true && role !== "parent" && (
         <nav className="navbar bg-white ">
           <div className="container-fluid">
-          <button
+            <button
               className="navbar-toggler"
               type="button"
               onClick={handleToggleOffcanvas}
               aria-controls="offcanvasNavbar"
-              style={{marginLeft: "25px"}}
+              style={{ marginLeft: "25px" }}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
             <img src={BehavenLogo} alt="My Image" style={{ height: "75px", marginRight: "45%" }} />
-           
+
             <div
-              className={`offcanvas offcanvas-start ${
-                isOffcanvasOpen ? "show" : ""
-              }`}
+              className={`offcanvas offcanvas-start ${isOffcanvasOpen ? "show" : ""
+                }`}
               id="offcanvasNavbar"
               aria-labelledby="offcanvasNavbarLabel"
               style={{ width: "350px" }}
             >
-               <div className="offcanvas-header">
+              <div className="offcanvas-header">
 
                 <button
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="offcanvas"
                   aria-label="Close"
-                  style={{marginRight: "5px"}}
+                  style={{ marginRight: "5px" }}
                   onClick={closeOffcanvas}
                 ></button>
               </div>
               <div className="offcanvas-body">
                 {/* <div style={{backgroundColor: "green", height: "50px"}}></div> */}
                 <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                {role === "admin" && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={GoToAddNewParent}
-                    >
-                      <span style={{ fontSize: "20px" }}>Add New Parent</span>
-                    </a>
-                  </li>
+                  {role === "admin" && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={GoToAddNewParent}
+                      >
+                        <span style={{ fontSize: "20px" }}>Add New Parent</span>
+                      </a>
+                    </li>
                   )}
                   {role === "admin" && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={AddNewClientAsCurrent}
-                    >
-                      <span style={{ fontSize: "20px" }}>Make Clients Active</span>
-                    </a>
-                  </li>
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={AddNewClientAsCurrent}
+                      >
+                        <span style={{ fontSize: "20px" }}>Make Clients Active</span>
+                      </a>
+                    </li>
                   )}
-                   {(role === "admin" || role === "secretary") && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={CheckParentsTemporaryPin}
-                    >
-                      <span style={{ fontSize: "20px" }}>Check Parents Temporary Pin</span>
-                    </a>
-                  </li>
+                  {(role === "admin" || role === "secretary") && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={CheckParentsTemporaryPin}
+                      >
+                        <span style={{ fontSize: "20px" }}>Check Parents Temporary Pin</span>
+                      </a>
+                    </li>
                   )}
-                   {(role === "admin" || role === "secretary") && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={EditClientSignInSignOutTime}
-                    >
-                      <span style={{ fontSize: "20px" }}>Sign In/Out Management</span>
-                    </a>
-                  </li>
+                  {(role === "admin" || role === "secretary") && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={EditClientSignInSignOutTime}
+                      >
+                        <span style={{ fontSize: "20px" }}>Sign In/Out Management</span>
+                      </a>
+                    </li>
                   )}
                   {role === "admin" && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={GoToConnectParentWithChild}
-                    >
-                      <span style={{ fontSize: "20px" }}> Connect Parents To Client(s)</span>
-                    </a>
-                  </li>
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={GoToConnectParentWithChild}
+                      >
+                        <span style={{ fontSize: "20px" }}> Connect Parents To Client(s)</span>
+                      </a>
+                    </li>
                   )}
-                   {role === "admin" && (
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={GoToClientInOutNoShow}
-                    >
-                      <span style={{ fontSize: "20px" }}>Client In/Out/No show</span>
-                    </a>
-                  </li>
+                  {role === "admin" && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={GoToClientInOutNoShow}
+                      >
+                        <span style={{ fontSize: "20px" }}>Client In/Out/No show</span>
+                      </a>
+                    </li>
                   )}
 
                   <li className="nav-item" style={{ height: "65px" }}>
