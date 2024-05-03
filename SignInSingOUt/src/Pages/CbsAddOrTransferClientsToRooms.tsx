@@ -31,18 +31,20 @@ interface CbsInfo {
     cbsStaffFirstName: string;
     cbsStaffLastName: string;
     cbsRoomID: number;
+    cbsRoomName: string;
+    cbsLocationID: string;
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
-    const [cbsInfo, setCbsInfo] = useState<CbsInfo>();
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
-    const [roomID, setRoomID] = useState<number| null>(null);
+    const [roomID, setRoomID] = useState<number| null>(null);;
     const [locationID, setLocationID] = useState<string>("");
     const [clientID, setClientID] = useState<number | null>(null);
+    const [roomName, setRoomName] = useState<string>("");
 
     // useEffect(() => {
     //     const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
@@ -64,9 +66,16 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     useEffect(() => {
         getCBSInformation();
-        getClientsThatAreWaitingInTheWaitingRoom();
-        getAllClientsThatAreInARoom();
     }, []);
+
+    useEffect(() => {
+        if (roomID !== null)
+            {
+                getClientsThatAreWaitingInTheWaitingRoom();
+                getAllClientsThatAreInARoom();
+            }
+ 
+    }, [roomID]);
 
     const getCBSInformation = async () => {
         try {
@@ -89,12 +98,17 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             }
 
             const data = await response.json();
-            setRoomID(prev => data[0].cbsRoomID);
+            setRoomID(data[0].cbsRoomID);
+            setRoomName(data[0].cbsRoomName);
+            setLocationID(data[0].cbsLocationID);
 
+            console.log("data[0].cbsLocationID = ", data[0].cbsLocationID);
         } catch (error) {
             alert("Useffect 1 - Error fetching data:" + error);
         }
     };
+
+    
 
     const getClientsThatAreWaitingInTheWaitingRoom = async () => {
         try {
@@ -132,7 +146,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 throw new Error("Token not found in localStorage");
             }
 
-            const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${10}`;
+            const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`;
 
             const response = await fetch(url, {
                 method: "GET",
@@ -243,7 +257,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 >
 
                     <div>
-                        <h2>Parrot</h2>
+                        <h2>{roomName}</h2>
                         <div className="card-body">
 
                             <h2>Ins</h2>
@@ -280,8 +294,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
 
             </div>
-            {clientID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID} locationID={locationID} clientID={clientID} />
+            {clientID !== null && roomID !== null && (
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID.toString()} locationID={locationID} clientID={clientID} />
             )}
         </>
     );

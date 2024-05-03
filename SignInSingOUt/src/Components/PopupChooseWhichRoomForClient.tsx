@@ -70,6 +70,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                         replace: true,
                     });
                 }
+                console.log(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`);
                 const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
                     method: "GET",
                     headers: {
@@ -79,7 +80,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                 });
 
                 if (!response.ok) {
-                    alert("Couldn't Find Pin Number");
+                    alert("Error getting room names");
                     return;
                 }
                 const data = await response.json();
