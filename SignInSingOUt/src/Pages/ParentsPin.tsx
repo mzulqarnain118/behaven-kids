@@ -5,6 +5,7 @@ import "../App.css";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
+import ParentPinFialedAttemptsPopup from "../Components/PopupParentPinFailedAttemts";
 
 const ParentSignIn: React.FC = () => {
   const location = useLocation();
@@ -21,6 +22,8 @@ const ParentSignIn: React.FC = () => {
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessagText, setErrorMessageText] = useState<string>("");
+  const [howManyFailedAttemps, setHowManyFailedAttemps] = useState<number>(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -53,6 +56,13 @@ const ParentSignIn: React.FC = () => {
 
           if (!response.ok) {
             ShowErrorMessageToUser("Couldn't Find Pin Number");
+            setHowManyFailedAttemps((prev => prev + 1));
+            console.log("howManyFailedAttemps = " + howManyFailedAttemps);
+            if (howManyFailedAttemps == 2)
+              {
+                setShowModal(true);
+                return;
+              }
             return;
           }
           console.log("response.ok" + response.ok);
@@ -140,7 +150,7 @@ const ParentSignIn: React.FC = () => {
               <button
                 key={number}
                 className="grid-item"
-                onClick={() => InsertPhoneNumber(number.toString())}
+                onTouchEnd={() => InsertPhoneNumber(number.toString())}
               >
                 {number}
               </button>
@@ -153,7 +163,7 @@ const ParentSignIn: React.FC = () => {
                 color: "goldenrod",
                 border: "1px solid black",
               }}
-              onClick={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}
             </button>
@@ -172,6 +182,7 @@ const ParentSignIn: React.FC = () => {
           </button>
         </div>
       </div>
+      <ParentPinFialedAttemptsPopup showModal={showModal} setShowModal={setShowModal} />
       {showErrorMessage && (
         <ErrorMessage message={errorMessagText} />
       )}

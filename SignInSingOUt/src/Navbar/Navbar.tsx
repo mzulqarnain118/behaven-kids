@@ -175,7 +175,11 @@ const Navbar: React.FC = () => {
       {showNavbar === true && role === "parent" && (
         <nav className="navbar bg-white fixed-top">
           <div className="container-fluid">
-            <a className="navbar-brand" href="#"></a>
+          
+
+            {(window.location.href.includes('ParentsPin') || window.location.href.includes('ChooseWhichChildren') || window.location.href.includes('ValidateEmailAddress') || window.location.href.includes('ValidateTemporaryPin') || window.location.href.includes('ResetPin')) ? (
+              <a className="navbar-brand" href="#" onClick={GoToPhoneNumberPage} style={{fontSize: "60px", color: "black"}}>{'\u2190'}</a>
+            ) : (<a className="navbar-brand" href="#" style={{fontSize: "60px"}}></a>)} 
             <button
               className="navbar-toggler"
               type="button"
@@ -185,11 +189,9 @@ const Navbar: React.FC = () => {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
-            {(window.location.href.includes('ParentsPin') || window.location.href.includes('ChooseWhichChildren') || window.location.href.includes('ValidateEmailAddress') || window.location.href.includes('ValidateTemporaryPin') || window.location.href.includes('ResetPin')) && (
-            <div style={{ position: 'absolute', top:-25, left: 0}}>
-              <button onClick={GoToPhoneNumberPage} style={{background: 'none', border: 'none', fontSize: "75px", width: "100px", marginBottom: "50px"}}>{'\u2190'}</button>
-            </div>
-            )}
+
+            
+
             <div
               className={`offcanvas offcanvas-end ${isOffcanvasOpen ? "show" : ""
                 }`}

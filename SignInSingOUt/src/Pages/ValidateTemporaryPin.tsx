@@ -116,7 +116,7 @@ console.log("testing " + parentTemporaryFiveDigitPin);
               <button
                 key={number}
                 className="grid-item"
-                onClick={() => InsertPhoneNumber(number.toString())}
+                onTouchEnd={() => InsertPhoneNumber(number.toString())}
               >
                 {number}
               </button>
@@ -129,7 +129,7 @@ console.log("testing " + parentTemporaryFiveDigitPin);
                 color: "goldenrod",
                 border: "1px solid black",
               }}
-              onClick={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}
             </button>

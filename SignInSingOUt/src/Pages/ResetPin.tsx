@@ -175,7 +175,7 @@ console.log(`${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${p
               <button
                 key={number}
                 className="grid-item"
-                onClick={() =>
+                onTouchEnd={() =>
                   canUserResetPin === false
                     ? InsertParentPersonalPin(number.toString())
                     : ReInsertParentPersonalPin(number.toString())
@@ -192,7 +192,7 @@ console.log(`${backEndCodeURLLocation}SignIn/UpdateParentsPinNumber?parentID=${p
                 color: "goldenrod",
                 border: "1px solid black",
               }}
-              onClick={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}
             </button>

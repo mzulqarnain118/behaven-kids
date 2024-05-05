@@ -76,6 +76,9 @@ const ParentSignIn: React.FC = () => {
         ShowErrorMessageToUser("Error: " + error);
       }
     }
+    else{
+      return;
+    }
   };
 
 
@@ -132,7 +135,7 @@ const ParentSignIn: React.FC = () => {
               <button
                 key={number}
                 className="grid-item"
-                onClick={() => InsertPhoneNumber(number.toString())}
+                onTouchEnd={() => InsertPhoneNumber(number.toString())}
               >
                 {number}
               </button>
@@ -145,7 +148,7 @@ const ParentSignIn: React.FC = () => {
                 color: "goldenrod",
                 border: "1px solid black",
               }}
-              onClick={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}
             </button>

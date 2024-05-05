@@ -14,11 +14,6 @@ interface CbsAddOrTransferClientsToRooms {
     clientID: number;
 }
 
-interface ParentInfo {
-    parentFirstName: string;
-    parentLastName: string;
-}
-
 interface RoomInfoDTO {
     roomID: number;
     roomName: string;

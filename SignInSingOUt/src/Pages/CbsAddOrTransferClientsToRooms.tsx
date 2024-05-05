@@ -4,7 +4,6 @@ import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
 import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
-import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 interface ChildInfo {
@@ -27,13 +26,13 @@ interface DecodedToken {
     Location: string;
 }
 
-interface CbsInfo {
-    cbsStaffFirstName: string;
-    cbsStaffLastName: string;
-    cbsRoomID: number;
-    cbsRoomName: string;
-    cbsLocationID: string;
-}
+// interface CbsInfo {
+//     cbsStaffFirstName: string;
+//     cbsStaffLastName: string;
+//     cbsRoomID: number;
+//     cbsRoomName: string;
+//     cbsLocationID: string;
+// }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 

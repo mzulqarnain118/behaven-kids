@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import "./CSS/ChooseWhichChildren.css";
-import ClientsCheckinCheckoutPopup from "../Components/PopupClientsCheckinCheckout"
+import ClientsCheckinCheckoutPopup from "../Components/PopupCheckInOutSuccess"
 
 interface ClientInfo {
   clientID: number;
@@ -93,16 +93,7 @@ const ChooseWhichChildren: React.FC = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    };
-    setTimeout(() => {
-      setShowModel(false);
-      setBlurAmount(0);
-    }, 5000);
-
-    setShowModel(true);
-    setBlurAmount(10);
-
-    
+    };    
     fetchData();
   }, []);
 
@@ -356,11 +347,16 @@ const ChooseWhichChildren: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+   
+
     setIsSubmitting(true);
+    
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("Token not found in localStorage");
+        alert("Token not found in localStorage");
+        navigate("/", { replace: true });
+        return;
       }
       for (const child of childrenInfo.filter((child) => child.isChecked)) {
         if (
@@ -368,15 +364,15 @@ const ChooseWhichChildren: React.FC = () => {
           child.signInTimeData === undefined
         ) {
           await signInClient(child.childId, token);
-          console.log("All sign-ins submitted successfully");
         } else {
           await signOutClient(child.childId, token);
-          console.log("All sign-outs submitted successfully");
         }
       }
-      navigate("/", { replace: true });
+      setBlurAmount(20);
+      setShowModel(true);
+      
     } catch (error) {
-      console.error("Error submitting sign-ins:", error);
+      alert("Error submitting.");
     } finally {
       setIsSubmitting(false);
     }
@@ -448,7 +444,7 @@ const ChooseWhichChildren: React.FC = () => {
       }}
 
     >
-      <br/>
+      <br/><br/><br/>
       <img
         src={BehavenLogo}
         alt="Behaven Logo"
@@ -528,14 +524,18 @@ const ChooseWhichChildren: React.FC = () => {
                     <div key={index}>
                       {clockInOutInfo.signInTime !== null && (
                         <span style={{ color: "green", fontSize: "20px" }}>
-                          &#x1F550; ({clockInOutInfo.signInTime})
+                          &#x1F550; ({clockInOutInfo.signInTime}) {" "}
                         </span>
                       )}
-                      {clockInOutInfo.signOutTime !== "" && (
+                      {clockInOutInfo.signOutTime !== "" ? (
                         <span style={{ color: "red", fontSize: "20px" }}>
-                          -({clockInOutInfo.signOutTime})
+                           - ({clockInOutInfo.signOutTime})
                         </span>
-                      )}
+                      ) :  
+                      <span style={{ color: "red", fontSize: "20px" }}>
+                      - ( -- : -- )
+                    </span>
+                    }
                       <br />
                     </div>
                   ))
@@ -547,11 +547,11 @@ const ChooseWhichChildren: React.FC = () => {
         </div>
       ))}
 </div>
-<ClientsCheckinCheckoutPopup showModel={showModel} setShowModel={setShowModel} clientFirstName="hello" clientLastName="testing" isCheckIn={false}/>
+<ClientsCheckinCheckoutPopup showModel={showModel} setShowModel={setShowModel} />
 <br/>
       <button
         className="btn btn-primary btn-lg"
-        style={{ width: "150px", height: "75px", backgroundColor: "#ffc107", color: "black", fontWeight: "bold", fontSize: "25px"}}
+        style={{ width: "200px", height: "75px", backgroundColor: "#ffc107", color: "black", fontWeight: "bold", fontSize: "25px"}}
         onClick={handleSubmit}
         disabled={didUserCheckAClient}
       >
