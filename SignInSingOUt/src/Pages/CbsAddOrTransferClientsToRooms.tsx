@@ -26,13 +26,13 @@ interface DecodedToken {
     Location: string;
 }
 
-// interface CbsInfo {
-//     cbsStaffFirstName: string;
-//     cbsStaffLastName: string;
-//     cbsRoomID: number;
-//     cbsRoomName: string;
-//     cbsLocationID: string;
-// }
+interface CbsInfo {
+    cbsStaffFirstName: string;
+    cbsStaffLastName: string;
+    cbsRoomID: number;
+    cbsRoomName: string;
+    cbsLocationID: string;
+}
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
@@ -40,11 +40,24 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
-    const [roomID, setRoomID] = useState<number| null>(null);;
+    const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, setLocationID] = useState<string>("");
     const [clientID, setClientID] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
+    const [cbsFullName, setCbsFullName] = useState<string>("");
+    const [currentTime, setCurrentTime] = useState(new Date());
 
+    useEffect(() => {
+        const timerID = setInterval(() => tick(), 1000);
+
+        return function cleanup() {
+            clearInterval(timerID);
+        };
+    });
+
+    function tick() {
+        setCurrentTime(new Date());
+    }
     // useEffect(() => {
     //     const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
 
@@ -68,12 +81,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (roomID !== null)
-            {
-                getClientsThatAreWaitingInTheWaitingRoom();
-                getAllClientsThatAreInARoom();
-            }
- 
+        if (roomID !== null) {
+            getClientsThatAreWaitingInTheWaitingRoom();
+            getAllClientsThatAreInARoom();
+        }
     }, [roomID]);
 
     const getCBSInformation = async () => {
@@ -100,14 +111,13 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setRoomID(data[0].cbsRoomID);
             setRoomName(data[0].cbsRoomName);
             setLocationID(data[0].cbsLocationID);
+            setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
 
             console.log("data[0].cbsLocationID = ", data[0].cbsLocationID);
         } catch (error) {
             alert("Useffect 1 - Error fetching data:" + error);
         }
     };
-
-    
 
     const getClientsThatAreWaitingInTheWaitingRoom = async () => {
         try {
@@ -239,12 +249,23 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     return (
         <>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
+                    <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+                    <h4 className="round-button" style={{ backgroundColor: "lightgreen", marginTop: "15px"}}>{roomName}</h4>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px"  }}>
+                    <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
+                    <h4 style={{ marginTop: "15px"}}>CBS: {cbsFullName}</h4>
+                </div>
+            </div>
             <div
                 style={{
                     display: "flex",
                     justifyContent: "center",
                 }}
             >
+
                 <div
                     className="card"
                     style={{
@@ -255,10 +276,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     }}
                 >
 
-                    <div>
-                        <h2>{roomName}</h2>
-                        <div className="card-body">
 
+                    <div>
+                        <div className="card-body">
                             <h2>Ins</h2>
                             {clientsWhoAreCurrentlyInARoom.map((info,) => (
                                 <div>
@@ -267,7 +287,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-
                     </div>
 
                     <div className="card-body">
@@ -278,8 +297,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="btn btn-warning" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                             </div>
                         ))}
-
                     </div>
+
                     <div className="card-body">
                         <h2>Absent</h2>
                         {childInfo.map((info,) => (
@@ -288,7 +307,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <button className="btn btn-secondary" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                             </div>
                         ))}
-
                     </div>
                 </div>
 
