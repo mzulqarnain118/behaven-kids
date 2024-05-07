@@ -2,9 +2,14 @@ import { useState, useEffect } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
-import "./CSS/AddParentChildInfo.css";
+// import "./CSS/AddParentChildInfo.css";
 import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
 import { jwtDecode } from "jwt-decode";
+import Horse from '../../src/assets/horse.png';
+import Bee from '../../src/assets/bee.png';
+import Apple from '../../src/assets/apple.png';
+import Bird from '../../src/assets/bird.png';
+import Parrot from '../../src/assets/parrot.png';
 
 interface ChildInfo {
     id: number
@@ -26,13 +31,13 @@ interface DecodedToken {
     Location: string;
 }
 
-interface CbsInfo {
-    cbsStaffFirstName: string;
-    cbsStaffLastName: string;
-    cbsRoomID: number;
-    cbsRoomName: string;
-    cbsLocationID: string;
-}
+// interface CbsInfo {
+//     cbsStaffFirstName: string;
+//     cbsStaffLastName: string;
+//     cbsRoomID: number;
+//     cbsRoomName: string;
+//     cbsLocationID: string;
+// }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
@@ -45,7 +50,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientID, setClientID] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
     const [cbsFullName, setCbsFullName] = useState<string>("");
-    const [currentTime, setCurrentTime] = useState(new Date());
+    const [, setCurrentTime] = useState(new Date());
+    const [roomImgSrc, setRoomImgSrc] = useState<string>("");
 
     useEffect(() => {
         const timerID = setInterval(() => tick(), 1000);
@@ -86,6 +92,24 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             getAllClientsThatAreInARoom();
         }
     }, [roomID]);
+
+    useEffect(() => {
+        // Check the value of roomName and set the appropriate image source
+        if (roomName === 'Horse') {
+            setRoomImgSrc(Horse);
+        } else if (roomName === 'Bee') {
+            setRoomImgSrc(Bee);
+        } else if (roomName === 'Apple') {
+            setRoomImgSrc(Apple);
+        }else if (roomName === 'Bird') {
+            setRoomImgSrc(Bird);
+        }else if (roomName === 'Parrot') {
+            setRoomImgSrc(Parrot);
+        }  else {
+          // Default case if roomName doesn't match any predefined value
+          setRoomImgSrc(""); // or you can provide a default image
+        }
+      }, [roomName]);
 
     const getCBSInformation = async () => {
         try {
@@ -251,7 +275,11 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
                     <h4>&#128198; {new Date().toLocaleDateString()}</h4>
-                    <h4 className="round-button-for-class" style={{ backgroundColor: "lightgreen", marginTop: "15px" }}>{roomName}</h4>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        <img src={roomImgSrc} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px"}}>{roomName}</h4>
+                    </div>
+
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
@@ -278,7 +306,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     <div className="card-body">
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
                             <div className="card-body">
-                                <h2>Ins</h2>
+                                <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => (
                                         <button onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
@@ -293,7 +321,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     <div className="card-body">
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
                             <div className="card-body">
-                                <h2>Needs assigning</h2>
+                                <h2>Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
                                         <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
@@ -307,11 +335,11 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     <div className="card-body">
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
                             <div className="card-body">
-                                <h2>Absent</h2>
+                                <h2>Not In</h2>
                                 <div className="grid-container-For-CBS-page">
-                                {childInfo.map((info,) => (
+                                    {childInfo.map((info,) => (
                                         <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgrey" }} >{info.clientFirstName + " " + info.clientLastName}</button>
-                                ))}
+                                    ))}
                                 </div>
                             </div>
                         </div>
