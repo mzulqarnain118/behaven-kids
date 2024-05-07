@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./CSS/AddParentChildInfo.css";
+import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/AddParentChildInfo.css";
@@ -113,7 +113,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setLocationID(data[0].cbsLocationID);
             setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
 
-            console.log("data[0].cbsLocationID = ", data[0].cbsLocationID);
         } catch (error) {
             alert("Useffect 1 - Error fetching data:" + error);
         }
@@ -155,9 +154,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 throw new Error("Token not found in localStorage");
             }
 
-            const url = `${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`;
-
-            const response = await fetch(url, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -228,9 +225,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
-            const url = `${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`;
 
-            const response = await fetch(url, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -241,7 +237,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             if (!response.ok) {
                 alert(`Failed to fetch data. Response status: ${response.status}`)
             }
-            window.location.reload();
+
+            getAllClientsThatAreInARoom();
+            getClientsThatAreWaitingInTheWaitingRoom();
+            // window.location.reload();
         } catch (error) {
             alert("Error fetching data:" + error);
         }
@@ -252,11 +251,11 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
                     <h4>&#128198; {new Date().toLocaleDateString()}</h4>
-                    <h4 className="round-button" style={{ backgroundColor: "lightgreen", marginTop: "15px"}}>{roomName}</h4>
+                    <h4 className="round-button-for-class" style={{ backgroundColor: "lightgreen", marginTop: "15px" }}>{roomName}</h4>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px"  }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
-                    <h4 style={{ marginTop: "15px"}}>CBS: {cbsFullName}</h4>
+                    <h4 style={{ marginTop: "15px" }}>CBS: {cbsFullName}</h4>
                 </div>
             </div>
             <div
@@ -276,37 +275,46 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     }}
                 >
 
-
-                    <div>
-                        <div className="card-body">
-                            <h2>Ins</h2>
-                            {clientsWhoAreCurrentlyInARoom.map((info,) => (
-                                <div>
-                                    <br />
-                                    <button onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="btn btn-success" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                    <div className="card-body">
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                            <div className="card-body">
+                                <h2>Ins</h2>
+                                <div className="grid-container-For-CBS-page">
+                                    {clientsWhoAreCurrentlyInARoom.map((info,) => (
+                                        <button onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div className="card-body">
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                            <div className="card-body">
+                                <h2>Needs assigning</h2>
+                                <div className="grid-container-For-CBS-page">
+                                    {clientsWhoAreSignedIn.map((info,) => (
+                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div className="card-body">
-                        <h2>Needs assigning</h2>
-                        {clientsWhoAreSignedIn.map((info,) => (
-                            <div>
-                                <br />
-                                <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="btn btn-warning" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                            <div className="card-body">
+                                <h2>Absent</h2>
+                                <div className="grid-container-For-CBS-page">
+                                {childInfo.map((info,) => (
+                                        <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgrey" }} >{info.clientFirstName + " " + info.clientLastName}</button>
+                                ))}
+                                </div>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="card-body">
-                        <h2>Absent</h2>
-                        {childInfo.map((info,) => (
-                            <div>
-                                <br />
-                                <button className="btn btn-secondary" style={{ width: "250px" }}>{info.clientFirstName + " " + info.clientLastName}</button>
-                            </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
 
