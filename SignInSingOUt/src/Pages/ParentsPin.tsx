@@ -163,7 +163,7 @@ const ParentSignIn: React.FC = () => {
                 color: "goldenrod",
                 border: "1px solid black",
               }}
-              onClick={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}
             </button>
@@ -176,7 +176,7 @@ const ParentSignIn: React.FC = () => {
               color: "goldenrod",
               fontSize: "24px",
             }}
-            onClick={GoToForgotPinPage}
+            onTouchEnd={GoToForgotPinPage}
           >
             Forgot Pin?
           </button>

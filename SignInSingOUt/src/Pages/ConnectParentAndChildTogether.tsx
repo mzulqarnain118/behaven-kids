@@ -31,6 +31,7 @@ const AddParentInfo: React.FC = () => {
     value: parent.parentID,
     label: `${parent.parentFirstName} ${parent.parentLastName}`,
   }));
+  
   const [selectedParent2, setSelectedParent2] = useState<{
     value: number;
     label: string;

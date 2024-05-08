@@ -18,7 +18,7 @@ interface PopupTemporaryPin {
 
 const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel }) => {
 
-    const [selectManualSignInTime, setSelectManualSignInTime] = useState<Dayjs | null>(null);
+    const [selectManualDate, setSelectManualDate] = useState<Dayjs | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [didUserCheckAClient, setDidUserCheckAClient] = useState(false);
 
@@ -35,7 +35,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             e.preventDefault();
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualSignInTime}`,
+                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}`,
                 {
                     responseType: "blob", // Specify response type as blob
                     headers: {
@@ -79,7 +79,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
                             <form onSubmit={DownloadPDF} style={{ display: 'flex' }}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']} >
-                                        <DatePicker  value={selectManualSignInTime} onChange={(newValue) => setSelectManualSignInTime(newValue)} slotProps={{textField: {required: true}}}/>
+                                        <DatePicker  value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{textField: {required: true}}}/>
                                     </DemoContainer>
                                 </LocalizationProvider>
                                 <button className="btn btn-primary" type="submit" style={{marginLeft: "15px", marginTop: "8px", height: "55px", width: "125px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>

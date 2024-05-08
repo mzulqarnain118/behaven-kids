@@ -10,7 +10,7 @@ import Bee from '../../src/assets/bee.png';
 import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
-import { useFetcher } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface ChildInfo {
     id: number
@@ -59,6 +59,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [, setCurrentTime] = useState(new Date());
     const [roomImgSrc, setRoomImgSrc] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const timerID = setInterval(() => tick(), 1000);
@@ -126,7 +127,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                alert("Failed To Fetch Token");
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
             }
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
                 method: "GET",
@@ -155,7 +158,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                throw new Error("Token not found in localStorage");
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
             }
             const decoded = jwtDecode(token) as DecodedToken;
             const staffID = decoded.StaffID;
@@ -186,7 +191,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                throw new Error("Token not found in localStorage");
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
             }
             console.log("roomID = " + roomID)
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
@@ -215,7 +222,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                throw new Error("Token not found in localStorage");
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
             }
 
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
@@ -287,7 +296,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             const token = localStorage.getItem("token");
 
             if (!token) {
-                throw new Error("Token not found in localStorage");
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
             }
 
             const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {

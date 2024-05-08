@@ -46,3 +46,15 @@
     color: white;
   }
   
+  .grid-container-select-date-and-location {
+    display: grid;
+    grid-template-columns: 350px 350px 450px;
+    grid-gap: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .grid-item-select-date-and-location {
+    padding: 15px;
+  }
+  
