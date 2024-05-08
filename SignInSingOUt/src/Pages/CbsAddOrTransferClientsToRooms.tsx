@@ -10,6 +10,7 @@ import Bee from '../../src/assets/bee.png';
 import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
+import { useFetcher } from "react-router-dom";
 
 interface ChildInfo {
     id: number
@@ -29,6 +30,11 @@ interface ClientInfoResponse {
 interface DecodedToken {
     StaffID: string;
     Location: string;
+}
+
+interface RoomInfoDTO {
+    roomID: number;
+    roomName: string;
 }
 
 // interface CbsInfo {
@@ -52,6 +58,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [cbsFullName, setCbsFullName] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());
     const [roomImgSrc, setRoomImgSrc] = useState<string>("");
+    const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
 
     useEffect(() => {
         const timerID = setInterval(() => tick(), 1000);
@@ -94,22 +101,55 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     }, [roomID]);
 
     useEffect(() => {
-        // Check the value of roomName and set the appropriate image source
         if (roomName === 'Horse') {
             setRoomImgSrc(Horse);
         } else if (roomName === 'Bee') {
             setRoomImgSrc(Bee);
         } else if (roomName === 'Apple') {
             setRoomImgSrc(Apple);
-        }else if (roomName === 'Bird') {
+        } else if (roomName === 'Bird') {
             setRoomImgSrc(Bird);
-        }else if (roomName === 'Parrot') {
+        } else if (roomName === 'Parrot') {
             setRoomImgSrc(Parrot);
-        }  else {
-          // Default case if roomName doesn't match any predefined value
-          setRoomImgSrc(""); // or you can provide a default image
+        } else {
+            setRoomImgSrc("");
         }
-      }, [roomName]);
+    }, [roomName]);
+
+    useEffect(() => {
+        if (locationID !== null && roomID !== null) {
+            getRoomInfoWhereClientsCanGoTo();
+        }
+    }, [locationID]);
+
+    const getRoomInfoWhereClientsCanGoTo = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Failed To Fetch Token");
+            }
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                alert("Error getting room names");
+                return;
+            }
+            const data = await response.json();
+            setRoomInfo(data);
+            console.log("getRoomInfoWhereClientsCanGoTo", data);
+
+        } catch (error) {
+
+            alert("error" + error);
+        }
+
+    };
 
     const getCBSInformation = async () => {
         try {
@@ -277,7 +317,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     <h4>&#128198; {new Date().toLocaleDateString()}</h4>
                     <div style={{ display: "flex", flexDirection: "row" }}>
                         <img src={roomImgSrc} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        <h4 style={{ marginTop: "15px", marginLeft: "10px"}}>{roomName}</h4>
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomName}</h4>
                     </div>
 
                 </div>
@@ -309,12 +349,11 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => (
-                                        <button onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                        <button key={info.clientID} onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
 
@@ -348,7 +387,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
             </div>
             {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomID={roomID.toString()} locationID={locationID} clientID={clientID} />
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} />
             )}
         </>
     );

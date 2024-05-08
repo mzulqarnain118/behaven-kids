@@ -9,8 +9,7 @@ import { backEndCodeURLLocation } from "../config";
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
-    roomID: string;
-    locationID: string;
+    roomInfo: RoomInfoDTO[];
     clientID: number;
 }
 
@@ -19,10 +18,9 @@ interface RoomInfoDTO {
     roomName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomID, locationID, clientID }) => {
+    const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID }) => {
     if (!open) return null;
     const navigate = useNavigate();
-    const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
 
     const handleClose = () => {
         navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
@@ -56,43 +54,6 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
         setShowModel(false)
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    navigate("/", {
-                        replace: true,
-                    });
-                }
-                const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                if (!response.ok) {
-                    alert("Error getting room names");
-                    return;
-                }
-                const data = await response.json();
-                setRoomInfo(data);
-                console.log("data", data);
-
-            } catch (error) {
-
-                alert("error" + error);
-            }
-
-        };
-
-        if (showModel) {
-            fetchData();
-        }
-    }, [showModel]);
-
     return (
         <>
             <div>
@@ -107,20 +68,12 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                     
                                     <button
                                         key={info.roomID}
-                                        className="grid-item"
+                                        className="round-button-for-class grid-item-container-For-CBS-page" 
                                         onClick={() => transferToAnotherRoom(info.roomID)}
                                     >
                                         {info.roomName}
                                     </button>
                                 ))}
-                                {/* <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Bee</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Apple</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Bird</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Terappy</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Horse</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Playground</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px" }}>Time Out Upstairs</button>
-                                <button className="btn btn-secondary" style={{ width: "200px", marginTop: "15px", marginLeft: "15px" }}>Time Out Downstairs</button> */}
                             </div>
                         </div>
                     </BootstrapModal.Body>
