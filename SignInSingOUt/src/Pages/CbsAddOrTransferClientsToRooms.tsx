@@ -25,6 +25,7 @@ interface ChildInfo {
 interface ClientInfoResponse {
     distinctClientSignInOutInfo: ChildInfo[];
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
+    clientsWhoAreCurrentlyInARoom: ChildInfo[];
 }
 
 interface DecodedToken {
@@ -56,6 +57,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientID, setClientID] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
     const [cbsFullName, setCbsFullName] = useState<string>("");
+    const [clientFullName, setClientFullName] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());
     const [roomImgSrc, setRoomImgSrc] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
@@ -73,26 +75,39 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         setCurrentTime(new Date());
     }
     useEffect(() => {
+        Testing();
+      }, [roomID]);
+
+      const Testing = async () => {
         if (roomID === null){
             return;
         }
         const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
-          const newData = JSON.parse(event.data);
-          console.log("roomID = " + roomID)
-          console.log ("newData", newData);
+
+        const data: ClientInfoResponse = JSON.parse(event.data);
+        
+         setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+
+         setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+
+         setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
+
         };
 
+        const reconnect = () => {
+            eventSource.close();
+            setTimeout(Testing, 1000);
+        };
+    
         eventSource.onerror = (error) => {
-          console.error('EventSource failed:', error);
-          eventSource.close();
+            reconnect();
         };
-
         return () => {
           eventSource.close();
         };
-      }, [roomID]);
+      }
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -107,9 +122,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
         }
-
-        // Proceed with component logic if user role is "floor"
-        // Fetch data, set state, etc.
     }, []);
 
     useEffect(() => {
@@ -270,46 +282,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const token = localStorage.getItem("token");
-    //             if (!token) {
-    //                 throw new Error("Token not found in localStorage");
-    //             }
-    //             const decoded = jwtDecode(token) as DecodedToken;
-    //              const staffID = decoded.StaffID;
 
-    //             setRoomID("staffID = " + staffID);
-
-    //             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${staffID}`, {
-    //                 method: "GET",
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                     "Content-Type": "application/json",
-    //                 },
-    //             });
-    //             if (!response.ok) {
-    //                 alert(`Failed to fetch data. Response status: ${response.status}`)
-    //             }
-
-    //             const data: ClientInfoResponse = await response.json();
-
-    //             setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
-
-    //             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
-
-    //         } catch (error) {
-    //             alert("Useffect 1 - Error fetching data:" + error);
-    //         }
-    //     };
-
-    //     fetchData();
-    // }, []);
-
-
-    const WhichRoomWillClientGoTo = async (clientID: number) => {
+    const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string) => {
         setClientID(clientID);
+        setClientFullName(clientFullName);
         setShowModel(true);
     };
 
@@ -377,12 +353,12 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 >
 
                     <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
                                 <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => (
-                                        <button key={info.clientID} onClick={() => WhichRoomWillClientGoTo(info.clientID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                        <button key={info.clientID} onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>
@@ -391,7 +367,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
 
                     <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
                                 <h2>Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
@@ -405,7 +381,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     </div>
 
                     <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "250px" }}>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
                                 <h2>Not In</h2>
                                 <div className="grid-container-For-CBS-page">
@@ -416,11 +392,16 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-
+                    <div className="square">
+  <h5>Some text</h5>
+</div>
+                    <button className="add-button-class">+ ADD</button>
+                    <br/>
+                </div>    
             </div>
+            
             {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} />
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} />
             )}
         </>
     );

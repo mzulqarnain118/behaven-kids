@@ -10,6 +10,7 @@ interface CbsAddOrTransferClientsToRooms {
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
     roomInfo: RoomInfoDTO[];
     clientID: number;
+    clientFullName: string;
 }
 
 interface RoomInfoDTO {
@@ -17,7 +18,7 @@ interface RoomInfoDTO {
     roomName: string;
 }
 
-    const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID }) => {
+    const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName }) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -46,7 +47,6 @@ interface RoomInfoDTO {
             if (!response.ok) {
                 alert(`Failed to fetch data. Response status: ${response.status}`)
             }
-            window.location.reload();
         } catch (error) {
             alert("Error fetching data:" + error);
         }
@@ -58,10 +58,12 @@ interface RoomInfoDTO {
             <div>
                 <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
                     <BootstrapModal.Header closeButton>
-                        <BootstrapModal.Title style={{ fontSize: "30px" }}>Choose A Room</BootstrapModal.Title>
+                        <BootstrapModal.Title className="ms-auto" style={{ fontSize: "30px"}}>Client Transfer</BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         <div style={{ textAlign: "center" }}>
+                            <h4>{clientFullName}</h4>
+                            <br/>
                             <div style={{ textAlign: "center" }}>
                                 {roomInfo.map((info) => (
                                     
