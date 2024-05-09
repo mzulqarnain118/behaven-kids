@@ -5,11 +5,6 @@ import "./CSS/EditChildTime.css";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import PopupDatePicker from "../Components/PopupDatePicker";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 interface SignInSignOut {
   id: number;
@@ -45,11 +40,6 @@ interface Option {
   label: any;
 }
 
-interface LocationInfo {
-  locationID: string;
-  locationName: string;
-}
-
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
@@ -67,25 +57,7 @@ const EditChildTime: React.FC = () => {
   const [selectedDropOutParentID, setSelectedDropOutParentID] = useState<number | null>(null);
   const [didUserChoseASignOutTime, setDidUserChoseASignOutTime] = useState<boolean>(false);
   const [showModel, setShowModel] = useState<boolean>(false);
-
-  const [selectManualDate, setSelectManualDate] = useState<Dayjs | null>(dayjs());
   const animatedComponents = makeAnimated();
-
-  const locationInfo = [
-    { locationID: 'LAVI', locationName: 'LaVista- WRTS' },
-    { locationID: 'LIET', locationName: 'Lincoln - East' },
-    { locationID: 'LIHG', locationName: 'Lincoln - High St' },
-    { locationID: 'OHCU', locationName: 'Omaha - Cuming St' },
-    // Add more objects as needed
-  ];
-  const options = locationInfo.map((info) => ({
-    value: info.locationID,
-    label: `${info.locationName}`,
-  }));
-  const [allProgramLocation, setAllProgramLocation] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
 
   const clientNameOptions = childInfo.map((client) => ({
     value: client.clientID,
@@ -557,7 +529,9 @@ const EditChildTime: React.FC = () => {
           />
         </div>
       </div> */}
-       <div className="grid-container-select-date-and-location">
+
+
+       {/* <div className="grid-container-select-date-and-location">
        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
         <h4>Date: </h4>
         <h4 style={{marginLeft: "20px"}}>&#128198; {new Date().toLocaleDateString()}</h4>
@@ -567,7 +541,9 @@ const EditChildTime: React.FC = () => {
         <h4>Location: </h4>
         <h4 style={{marginLeft: "20px"}}>Omaha - Cumming Street</h4>
         </div>
-        </div>
+        </div> */}
+
+
       <table>
 
         <thead>

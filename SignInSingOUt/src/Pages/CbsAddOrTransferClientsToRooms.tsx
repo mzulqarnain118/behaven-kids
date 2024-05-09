@@ -72,23 +72,45 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     function tick() {
         setCurrentTime(new Date());
     }
-    // useEffect(() => {
-    //     const eventSource = new EventSource('https://localhost:7021/Cbs/RealTimeUpdates');
+    useEffect(() => {
+        if (roomID === null){
+            return;
+        }
+        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
-    //     eventSource.onmessage = (event) => {
-    //       const newData = JSON.parse(event.data);
-    //       console.log ("newData", newData);
-    //     };
+        eventSource.onmessage = (event) => {
+          const newData = JSON.parse(event.data);
+          console.log("roomID = " + roomID)
+          console.log ("newData", newData);
+        };
 
-    //     eventSource.onerror = (error) => {
-    //       console.error('EventSource failed:', error);
-    //       eventSource.close();
-    //     };
+        eventSource.onerror = (error) => {
+          console.error('EventSource failed:', error);
+          eventSource.close();
+        };
 
-    //     return () => {
-    //       eventSource.close();
-    //     };
-    //   }, []);
+        return () => {
+          eventSource.close();
+        };
+      }, [roomID]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/"); // Redirect to login page if token is not present
+            return;
+        }
+
+        const decoded = jwtDecode(token);
+        const userRole = (decoded as any).role; 
+        if (userRole !== "floor") {
+            navigate("/"); // Redirect to login page if user role is not "floor"
+            return;
+        }
+
+        // Proceed with component logic if user role is "floor"
+        // Fetch data, set state, etc.
+    }, []);
 
     useEffect(() => {
         getCBSInformation();
@@ -183,7 +205,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
 
         } catch (error) {
-            alert("Useffect 1 - Error fetching data:" + error);
+            alert("Error fetching data:" + error);
         }
     };
 
