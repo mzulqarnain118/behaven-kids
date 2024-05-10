@@ -1,5 +1,4 @@
 //const backEndWebApi = 'http://192.168.0.9:7012/';
-// const backEndWebApi = 'http://localhost:7021/';
 const backEndWebApi = 'http://localhost:5025/';
 
 const frontEndWebApi = 'http://localhost:5173/';

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
-import "react-international-phone/style.css";
 import { backEndCodeURLLocation } from "../config";
-// import "./CSS/AddParentChildInfo.css";
 import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
 import { jwtDecode } from "jwt-decode";
 import Horse from '../../src/assets/horse.png';
@@ -76,38 +74,42 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     }
     useEffect(() => {
         Testing();
-      }, [roomID]);
+    }, [roomID]);
 
-      const Testing = async () => {
-        if (roomID === null){
+    const Testing = async () => {
+        if (roomID === null) {
             return;
         }
         const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        // const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
-        const data: ClientInfoResponse = JSON.parse(event.data);
-        
-         setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+            const data: ClientInfoResponse = JSON.parse(event.data);
 
-         setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+            setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
 
-         setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
+            setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+
+            setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
 
         };
 
-        const reconnect = () => {
-            eventSource.close();
-            setTimeout(Testing, 1000);
-        };
-    
-        eventSource.onerror = (error) => {
-            reconnect();
+
+        // const reconnect = () => {
+        //     eventSource.close();
+            
+        // };
+
+        eventSource.onerror = () => {
+            window.location.reload();
+            // setTimeout(Testing, 3000);
+            // reconnect();
         };
         return () => {
-          eventSource.close();
+            eventSource.close();
         };
-      }
+    }
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -117,7 +119,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
 
         const decoded = jwtDecode(token);
-        const userRole = (decoded as any).role; 
+        const userRole = (decoded as any).role;
         if (userRole !== "floor") {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
@@ -182,8 +184,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             console.log("getRoomInfoWhereClientsCanGoTo", data);
 
         } catch (error) {
-
-            alert("error" + error);
+            window.location.reload();
+            // alert("error" + error);
         }
 
     };
@@ -217,7 +219,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
 
         } catch (error) {
-            alert("Error fetching data:" + error);
+            window.location.reload();
+            // alert("Error fetching data:" + error);
         }
     };
 
@@ -248,7 +251,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
 
         } catch (error) {
-            alert("Useffect 1 - Error fetching data:" + error);
+            window.location.reload();
+            // alert("Useffect 1 - Error fetching data:" + error);
         }
     };
 
@@ -278,7 +282,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setClientsWhoAreCurrentlyInARoom(data);
 
         } catch (error) {
-            alert("Useffect 2 - Error fetching data:" + error);
+            window.location.reload();
+            // alert("Useffect 2 - Error fetching data:" + error);
         }
     };
 
@@ -332,7 +337,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
-                    <h4 style={{ marginTop: "15px" }}>CBS: {cbsFullName}</h4>
+                    <h4 style={{ marginTop: "15px" }}>{cbsFullName}</h4>
                 </div>
             </div>
             <div
@@ -358,7 +363,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => (
-                                        <button key={info.clientID} onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgreen" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                        <button key={info.clientID} onClick={() => 
+                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>
@@ -386,20 +392,17 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Not In</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {childInfo.map((info,) => (
-                                        <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightgrey" }} >{info.clientFirstName + " " + info.clientLastName}</button>
+                                        <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #eaeaea, lightgrey)', color: "black",  boxShadow: '-3px -3px 6px 1px rgba(128, 128, 128, 0.5)', border: '1px solid lightgrey'}} >{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="square">
-  <h5>Some text</h5>
-</div>
                     <button className="add-button-class">+ ADD</button>
-                    <br/>
-                </div>    
+                    <br />
+                </div>
             </div>
-            
+
             {clientID !== null && roomID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} />
             )}

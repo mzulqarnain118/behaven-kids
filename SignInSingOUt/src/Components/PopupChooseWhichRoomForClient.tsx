@@ -64,11 +64,12 @@ interface RoomInfoDTO {
                         <div style={{ textAlign: "center" }}>
                             <h4>{clientFullName}</h4>
                             <br/>
-                            <div style={{ textAlign: "center" }}>
+                            <div style={{ textAlign: "center" }} className="grid-container-For-CBS-page">
                                 {roomInfo.map((info) => (
                                     
                                     <button
                                         key={info.roomID}
+                                        style={{width: "150px"}}
                                         className="round-button-for-class grid-item-container-For-CBS-page" 
                                         onClick={() => transferToAnotherRoom(info.roomID)}
                                     >
