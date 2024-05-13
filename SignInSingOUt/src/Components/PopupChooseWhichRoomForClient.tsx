@@ -18,7 +18,7 @@ interface RoomInfoDTO {
     roomName: string;
 }
 
-    const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName }) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -58,24 +58,39 @@ interface RoomInfoDTO {
             <div>
                 <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
                     <BootstrapModal.Header closeButton>
-                        <BootstrapModal.Title className="ms-auto" style={{ fontSize: "30px"}}>Client Transfer</BootstrapModal.Title>
+                        <BootstrapModal.Title className="ms-auto" style={{ fontSize: "30px" }}>Client Transfer</BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         <div style={{ textAlign: "center" }}>
                             <h4>{clientFullName}</h4>
-                            <br/>
-                            <div style={{ textAlign: "center" }} className="grid-container-For-CBS-page">
-                                {roomInfo.map((info) => (
-                                    
+                            <br />
+                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                {roomInfo.filter(info => !info.roomName.includes("ABA") && info.roomName !== "None").map((info) => (
+
                                     <button
                                         key={info.roomID}
-                                        style={{width: "150px"}}
-                                        className="round-button-for-class grid-item-container-For-CBS-page" 
+                                        style={{ width: "150px" }}
+                                        className="round-button-for-class grid-item-container-for-room-selection"
                                         onClick={() => transferToAnotherRoom(info.roomID)}
                                     >
                                         {info.roomName}
                                     </button>
                                 ))}
+                            </div>
+                            <hr />
+                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                {roomInfo
+                                    .filter(info => info.roomName === "ABA") // Filter out items where roomName is "aba"
+                                    .map(info => (
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-class grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            {info.roomName}
+                                        </button>
+                                    ))}
                             </div>
                         </div>
                     </BootstrapModal.Body>

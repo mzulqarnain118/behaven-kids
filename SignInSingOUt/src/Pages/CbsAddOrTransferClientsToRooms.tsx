@@ -8,7 +8,9 @@ import Bee from '../../src/assets/bee.png';
 import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
+import Person from '../../src/assets/person.png';
 import { useNavigate } from "react-router-dom";
+import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 
 interface ChildInfo {
     id: number
@@ -50,6 +52,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
+    const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, setLocationID] = useState<string>("");
     const [clientID, setClientID] = useState<number | null>(null);
@@ -80,8 +83,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         if (roomID === null) {
             return;
         }
-        //const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        // const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -294,6 +297,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         setShowModel(true);
     };
 
+    const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
+        setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
+    };
+
     const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
         try {
             const token = localStorage.getItem("token");
@@ -304,7 +311,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 return;
             }
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInDefaultRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -314,6 +321,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
             if (!response.ok) {
                 alert(`Failed to fetch data. Response status: ${response.status}`)
+                return;
             }
 
             getAllClientsThatAreInARoom();
@@ -337,7 +345,11 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
-                    <h4 style={{ marginTop: "15px" }}>{cbsFullName}</h4>
+                    
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        <img src={Person} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{cbsFullName}</h4>
+                    </div>
                 </div>
             </div>
             <div
@@ -362,9 +374,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             <div className="card-body">
                                 <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
-                                    {clientsWhoAreCurrentlyInARoom.map((info,) => (
+                                    {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
                                         <button key={info.clientID} onClick={() => 
-                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
@@ -398,7 +411,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <button className="add-button-class">+ ADD</button>
+                    <button className="add-button-class" onClick={() => CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom()}>+ ADD</button>
                     <br />
                 </div>
             </div>
@@ -406,6 +419,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             {clientID !== null && roomID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} />
             )}
+            {roomID !== null && (
+                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID}/>
+            )} 
         </>
     );
 };

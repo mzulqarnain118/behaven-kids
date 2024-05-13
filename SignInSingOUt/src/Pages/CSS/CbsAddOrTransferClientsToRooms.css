@@ -25,6 +25,32 @@
     padding: 10px;
   }
 
+
+  .grid-container-for-room-selection {
+    display: grid;
+    grid-template-columns: minmax(100px, auto) minmax(100px, auto);
+    grid-gap:15px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .grid-item-container-for-room-selection  {
+    padding: 10px;
+  }
+
+  .grid-container-for-clients-that-are-unasigned {
+    display: grid;
+    grid-template-columns: minmax(200px, auto) minmax(200px, auto) minmax(200px, auto);
+    grid-gap:15px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .grid-item-container-clients-that-are-unasigned  {
+    padding: 10px;
+  }
+
+
   .componentWrapper {
     border: solid cadetblue;
     border-radius: 40px;
@@ -57,3 +83,8 @@
     text-decoration:none;
     text-shadow:0px 1px 0px #283966;
   }
+
+  .custom-modal-for-getting-a-client-that-is-unassigned {
+    max-width: 700px; /* Adjust this value as per your requirement */
+    width: 100%; /* You can use percentage or pixels */
+}
