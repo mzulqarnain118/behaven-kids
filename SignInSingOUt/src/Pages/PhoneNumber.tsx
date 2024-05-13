@@ -135,7 +135,8 @@ const ParentSignIn: React.FC = () => {
               <button
                 key={number}
                 className="grid-item"
-                onTouchEnd={() => InsertPhoneNumber(number.toString())}
+                 onTouchEnd={() => InsertPhoneNumber(number.toString())}
+                //onClick={() => InsertPhoneNumber(number.toString())}
               >
                 {number}
               </button>
@@ -148,6 +149,7 @@ const ParentSignIn: React.FC = () => {
                 color: "goldenrod",
                 border: "1px solid black",
               }}
+              // onClick={() => DeletePhoneNumber()}
               onTouchEnd={() => DeletePhoneNumber()}
             >
               {"\u232B"}

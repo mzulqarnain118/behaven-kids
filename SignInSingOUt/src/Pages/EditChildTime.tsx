@@ -42,7 +42,7 @@ interface Option {
 
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
-  const [selectSignOutTime, setSelectSignOutTime] = useState<string>("");
+  const [, setSelectSignOutTime] = useState<string>("");
   const [selectManualSignInTime, setSelectManualSignInTime] = useState<string>("");
   const [selectManualParent, setSelectedManualParent] = useState<Option | null>(null);
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
@@ -143,35 +143,39 @@ const EditChildTime: React.FC = () => {
       const currentTimeInMinutes = currentHours * 60 + currentMinutes;
       const newValueInMinutes = newHours * 60 + newMinutes;
 
-      console.log("New value = " + newValue);
-      console.log("Current time = " + newValueInMinutes);
+
       if (newValueInMinutes > currentTimeInMinutes) {
         alert("Choose a time [not greater] than the current time.");
-
         return;
       }
 
-      if (field === "signInTime") {
-        const [newSignInHours, newSignInMinutes] = newValue
-          .split(":")
-          .map(Number);
+      if (field === "signInTime") 
+      {
+        const signOutTimeItem = schedule.find((item) => item.id === id);
 
-        const newSignInTime = newSignInHours * 60 + newSignInMinutes;
-
-        const [signOutHours, signOutMinutes] = selectSignOutTime
-          .split(":")
-          .map(Number);
-
-        const currentSignOutTime = signOutHours * 60 + signOutMinutes;
-
-        if (newSignInTime > currentSignOutTime) {
-          alert("[Sign In Time] Greater Than [Sign Out Time]");
-
-          return;
+        if (signOutTimeItem) {
+          const [signOutHours, signOutMinutes] = signOutTimeItem.signOutTime.split(":").map(Number);
+          const signOutTimeInMinutes = signOutHours * 60 + signOutMinutes;
+          if (newValueInMinutes > signOutTimeInMinutes) {
+            alert("Sign-in time cannot be after sign-out time.");
+            return;
+          }
         }
       }
 
-      if (field === "signOutTime") {
+      if (field === "signOutTime") 
+      {
+        const signInTimeItem = schedule.find((item) => item.id === id);
+
+        if (signInTimeItem) {
+          const [signInHours, signInMinutes] = signInTimeItem.signInTime.split(":").map(Number);
+          const signInTimeInMinutes = signInHours * 60 + signInMinutes;
+          if (newValueInMinutes < signInTimeInMinutes) {
+            alert("Sign-out time cannot be before sign-in time.");
+            return;
+          }
+        }
+
         setSelectSignOutTime(() => newValue);
         setDidUserChoseASignOutTime(true);
       }
@@ -259,6 +263,12 @@ const EditChildTime: React.FC = () => {
     setSelectedDropInParentID(null);
     setSelectedDropOutParentID(null);
     fetchSchedule();
+  };
+
+  const CancelManualAddingClientSignInTime = () => {
+    setSelectedChildOptions(null);
+    setSelectManualSignInTime("");
+    setSelectedManualParent(null);
   };
 
   const OpenShowDialogForChoosingADateForExcelToPDF = async () => {
@@ -531,7 +541,7 @@ const EditChildTime: React.FC = () => {
       </div> */}
 
 
-       {/* <div className="grid-container-select-date-and-location">
+      {/* <div className="grid-container-select-date-and-location">
        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
         <h4>Date: </h4>
         <h4 style={{marginLeft: "20px"}}>&#128198; {new Date().toLocaleDateString()}</h4>
@@ -785,6 +795,9 @@ const EditChildTime: React.FC = () => {
                   <span>
                     <button type="submit" className="btn btn-update" >
                       Add
+                    </button>
+                    <button type="button" className="btn btn-danger" style={{marginLeft: "15px"}} onClick={() => CancelManualAddingClientSignInTime()}>
+                      Cancel
                     </button>
                   </span>
                 </td>

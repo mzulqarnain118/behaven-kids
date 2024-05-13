@@ -70,9 +70,9 @@ const ClientInOutNoShow: React.FC = () => {
             );
             if (response.ok) {
                 const data = await response.json();
-                data.forEach((item: ClientSignInInfo) => {
-                    item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
-                });
+                // data.forEach((item: ClientSignInInfo) => {
+                //     item.signInTime = moment(item.signInTime, "HH:mm").format("hh:mm A");
+                // });
                 setClientsWhoAreNotSignInAndSignOut(data);
                 console.log("data", data);
             } else {
