@@ -9,6 +9,7 @@ import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import Person from '../../src/assets/person.png';
+import RBT from '../../src/assets/rbt.png'
 import { useNavigate } from "react-router-dom";
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 
@@ -20,6 +21,7 @@ interface ChildInfo {
     signInTime: string;
     signOutTime: string;
     defaultRoomID: number;
+    program: string;
 }
 
 interface ClientInfoResponse {
@@ -38,14 +40,6 @@ interface RoomInfoDTO {
     roomName: string;
 }
 
-// interface CbsInfo {
-//     cbsStaffFirstName: string;
-//     cbsStaffLastName: string;
-//     cbsRoomID: number;
-//     cbsRoomName: string;
-//     cbsLocationID: string;
-// }
-
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
@@ -61,6 +55,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientFullName, setClientFullName] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());
     const [roomImgSrc, setRoomImgSrc] = useState<string>("");
+    const [clientProgram, setClientProgram] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
     const navigate = useNavigate();
 
@@ -84,7 +79,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             return;
         }
         const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        // const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -99,15 +94,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         };
 
 
-        // const reconnect = () => {
-        //     eventSource.close();
-            
-        // };
-
         eventSource.onerror = () => {
             window.location.reload();
-            // setTimeout(Testing, 3000);
-            // reconnect();
         };
         return () => {
             eventSource.close();
@@ -151,6 +139,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setRoomImgSrc(Bird);
         } else if (roomName === 'Parrot') {
             setRoomImgSrc(Parrot);
+        } else if (roomName === 'ABA') {
+            setRoomImgSrc(RBT);
         } else {
             setRoomImgSrc("");
         }
@@ -291,9 +281,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     };
 
 
-    const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string) => {
+    const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
         setClientID(clientID);
         setClientFullName(clientFullName);
+        setClientProgram(clientProgram);
         setShowModel(true);
     };
 
@@ -332,7 +323,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
     };
 
-    return (
+    return ( 
         <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
@@ -376,7 +367,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
                                         <button key={info.clientID} onClick={() => 
-                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}
+                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}
                                         </button>
                                     ))}
                                 </div>
@@ -417,7 +408,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             </div>
 
             {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} />
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram}/>
             )}
             {roomID !== null && (
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID}/>

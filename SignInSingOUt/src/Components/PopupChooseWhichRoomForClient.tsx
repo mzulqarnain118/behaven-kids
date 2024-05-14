@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
+import { useEffect } from "react";
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -11,6 +12,7 @@ interface CbsAddOrTransferClientsToRooms {
     roomInfo: RoomInfoDTO[];
     clientID: number;
     clientFullName: string;
+    clientProgram: string;
 }
 
 interface RoomInfoDTO {
@@ -18,7 +20,7 @@ interface RoomInfoDTO {
     roomName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram }) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -61,6 +63,46 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                         <BootstrapModal.Title className="ms-auto" style={{ fontSize: "30px" }}>Client Transfer</BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
+                        {clientProgram === "ABA" && (
+                        <div style={{ textAlign: "center" }}>
+
+                            <h4>{clientFullName} - {clientProgram}</h4>
+                            <br />
+                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                {roomInfo
+                                    .filter(info => info.roomName === "ABA") // Filter out items where roomName is "aba"
+                                    .map(info => (
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-class grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}>
+                                            {info.roomName} -here
+                                        </button>
+                                ))}
+                            </div>
+                        </div>
+                        )}
+                        {clientProgram === "SDP" && (
+                        <div style={{ textAlign: "center" }}>
+                            <h4>{clientFullName}</h4>
+                            <br />
+                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                {roomInfo.filter(info => !info.roomName.includes("ABA") && info.roomName !== "None").map((info) => (
+
+                                    <button
+                                        key={info.roomID}
+                                        style={{ width: "150px" }}
+                                        className="round-button-for-class grid-item-container-for-room-selection"
+                                        onClick={() => transferToAnotherRoom(info.roomID)}
+                                    >
+                                        {info.roomName}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        )}
+                         {clientProgram === "Both" && (
                         <div style={{ textAlign: "center" }}>
                             <h4>{clientFullName}</h4>
                             <br />
@@ -90,9 +132,10 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         >
                                             {info.roomName}
                                         </button>
-                                    ))}
+                                ))}
                             </div>
                         </div>
+                        )}
                     </BootstrapModal.Body>
                     <BootstrapModal.Footer>
                         <Button variant="primary" onClick={handleClose}>
