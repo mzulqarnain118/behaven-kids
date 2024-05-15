@@ -78,8 +78,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         if (roomID === null) {
             return;
         }
-        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        //const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -139,7 +139,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setRoomImgSrc(Bird);
         } else if (roomName === 'Parrot') {
             setRoomImgSrc(Parrot);
-        } else if (roomName === 'ABA') {
+        } else if (roomName.includes('RBT')) {
             setRoomImgSrc(RBT);
         } else {
             setRoomImgSrc("");
@@ -189,7 +189,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             if (!token) {
                 alert("Please Login");
                 navigate("/", { replace: true });
-                return;
+                return; 
             }
             const decoded = jwtDecode(token) as DecodedToken;
             const staffID = decoded.StaffID;
@@ -225,7 +225,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 navigate("/", { replace: true });
                 return;
             }
-            console.log("roomID = " + roomID)
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
                 method: "GET",
                 headers: {
@@ -245,7 +244,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
         } catch (error) {
             window.location.reload();
-            // alert("Useffect 1 - Error fetching data:" + error);
         }
     };
 
@@ -367,7 +365,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
                                         <button key={info.clientID} onClick={() => 
-                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName}
+                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName }
                                         </button>
                                     ))}
                                 </div>
@@ -382,7 +380,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
-                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+   
+                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName }</button>
 
                                     ))}
                                 </div>

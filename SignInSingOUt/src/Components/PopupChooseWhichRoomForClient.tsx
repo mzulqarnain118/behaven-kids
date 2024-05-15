@@ -4,7 +4,6 @@ import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
-import { useEffect } from "react";
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -70,14 +69,14 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                             <br />
                             <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                 {roomInfo
-                                    .filter(info => info.roomName === "ABA") // Filter out items where roomName is "aba"
+                                    .filter(info => info.roomName.includes("RBT")) // Filter out items where roomName is "aba"
                                     .map(info => (
                                         <button
                                             key={info.roomID}
                                             style={{ width: "150px" }}
                                             className="round-button-for-class grid-item-container-for-room-selection"
                                             onClick={() => transferToAnotherRoom(info.roomID)}>
-                                            {info.roomName} -here
+                                            {info.roomName} 
                                         </button>
                                 ))}
                             </div>
@@ -88,7 +87,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                             <h4>{clientFullName}</h4>
                             <br />
                             <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo.filter(info => !info.roomName.includes("ABA") && info.roomName !== "None").map((info) => (
+                                {roomInfo.filter(info => !info.roomName.includes("RBT") && info.roomName !== "None").map((info) => (
 
                                     <button
                                         key={info.roomID}
@@ -107,7 +106,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                             <h4>{clientFullName}</h4>
                             <br />
                             <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo.filter(info => !info.roomName.includes("ABA") && info.roomName !== "None").map((info) => (
+                                {roomInfo.filter(info => !info.roomName.includes("RBT") && info.roomName !== "None").map((info) => (
 
                                     <button
                                         key={info.roomID}
@@ -122,7 +121,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                             <hr />
                             <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                 {roomInfo
-                                    .filter(info => info.roomName === "ABA") // Filter out items where roomName is "aba"
+                                    .filter(info => info.roomName.includes("RBT")) 
                                     .map(info => (
                                         <button
                                             key={info.roomID}
