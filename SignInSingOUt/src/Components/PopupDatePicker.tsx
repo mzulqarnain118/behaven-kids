@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
@@ -21,12 +21,17 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
     const [selectManualDate, setSelectManualDate] = useState<Dayjs | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [didUserCheckAClient, setDidUserCheckAClient] = useState(false);
+    const [excelOrPDF, setExcelOrPDF] = useState<string>("");
 
     if (!open) return null;
 
     const handleClose = () => {
         setShowModel(false)
     };
+
+    useEffect(() => {
+
+    }, [excelOrPDF]);
 
     const DownloadPDF = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
@@ -35,7 +40,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             e.preventDefault();
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}`,
+                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}&whichFileType=${excelOrPDF}`,
                 {
                     responseType: "blob", // Specify response type as blob
                     headers: {
@@ -50,7 +55,15 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             // Create an anchor element to trigger the download
             const a = document.createElement("a");
             a.href = url;
-            a.download = "converted.pdf";
+
+            if (excelOrPDF === "Excel")
+            {
+                a.download = "converted.xlsx";
+            }
+            else
+            {
+                a.download = "converted.pdf";
+            }
 
             // Append the anchor element to the body and click it
             document.body.appendChild(a);
@@ -79,10 +92,22 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
                             <form onSubmit={DownloadPDF} style={{ display: 'flex' }}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']} >
-                                        <DatePicker  value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{textField: {required: true}}}/>
+                                        <DatePicker value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{ textField: { required: true } }} />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <button className="btn btn-primary" type="submit" style={{marginLeft: "15px", marginTop: "8px", height: "55px", width: "125px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>
+                                <div style={{ marginTop: "10px", marginLeft: "10px" }}>
+                                    <fieldset >
+                                        <div>
+                                            <input type="radio" id="PDF" name="format" value="PDF" required onClick={() => setExcelOrPDF(_prev => _prev = "PDF")}/>
+                                            <label htmlFor="PDF" style={{ marginLeft: "3px" }} >PDF</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" id="Excel" name="format" value="Excel" required onClick={() => setExcelOrPDF(_prev => _prev ="Excel")}/>
+                                            <label htmlFor="Excel" style={{ marginLeft: "3px" }} >Excel</label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <button className="btn btn-primary" type="submit" style={{ marginLeft: "15px", marginTop: "8px", height: "55px", width: "125px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>
                             </form>
                         </div>
                     </BootstrapModal.Body>
