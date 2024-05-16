@@ -38,6 +38,8 @@ interface DecodedToken {
 interface RoomInfoDTO {
     roomID: number;
     roomName: string;
+    staffFirstName: string;
+    staffLastName: string;
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC = () => {
@@ -56,6 +58,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [, setCurrentTime] = useState(new Date());
     const [roomImgSrc, setRoomImgSrc] = useState<string>("");
     const [clientProgram, setClientProgram] = useState<string>("");
+    const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
     const navigate = useNavigate();
 
@@ -210,6 +213,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setRoomName(data[0].cbsRoomName);
             setLocationID(data[0].cbsLocationID);
             setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
+            setCbsProgramType(data[0].cbsProgramType)
 
         } catch (error) {
             window.location.reload();
@@ -409,8 +413,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             {clientID !== null && roomID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram}/>
             )}
-            {roomID !== null && (
-                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID}/>
+            {roomID !== null && locationID !== null && cbsProgramType !== null &&(
+                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>
             )} 
         </>
     );

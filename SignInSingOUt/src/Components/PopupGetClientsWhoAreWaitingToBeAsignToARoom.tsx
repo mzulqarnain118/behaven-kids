@@ -10,6 +10,8 @@ interface CbsAddOrTransferClientsToRooms {
     showGetClientsAreWaitingToBeAsignToARoomModel: boolean;
     setShowGetClientsAreWaitingToBeAsignToARoomModel: React.Dispatch<React.SetStateAction<any>>;
     roomID: number;
+    locationID: string;
+    cbsProgramType: string;
 }
 
 interface ClientInfo {
@@ -19,7 +21,7 @@ interface ClientInfo {
     clientLastName: string;
 }
 
-const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferClientsToRooms> = ({ showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel, roomID}) => {
+const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferClientsToRooms> = ({ showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel, roomID, locationID, cbsProgramType}) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
 
     useEffect(() => {
         getAllClientsThatAreWaitingToBeAssignToARoom();
-    }, []);
+    }, [showGetClientsAreWaitingToBeAsignToARoomModel]);
 
     const getAllClientsThatAreWaitingToBeAssignToARoom = async () => {
         try {
@@ -42,7 +44,7 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
                 throw new Error("Token not found in localStorage");
             }
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreNotCurrentlyInaARoom`, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreNotCurrentlyInaARoom?locationID=${locationID}&programType=${cbsProgramType}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -56,7 +58,6 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
             }
 
             const data = await response.json();
-            console.log("data = ", data);
             setAllClientInfo(data);
 
         } catch (error) {
@@ -103,7 +104,9 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
                         <BootstrapModal.Title className="ms-auto" style={{ fontSize: "30px" }}>Client Transfer</BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center" >
-                        <div style={{ textAlign: "center" }}>
+                        {allClientInfo !== null &&
+                        
+                            <div style={{ textAlign: "center" }}>
                             <br />
                             <div style={{ textAlign: "center" }} className="grid-container-for-clients-that-are-unasigned">
                                 {allClientInfo.map((info) => (
@@ -119,6 +122,8 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
                                 ))}
                             </div>
                         </div>
+                        }
+                        
                     </BootstrapModal.Body>
                     <BootstrapModal.Footer>
                         <Button variant="primary" onClick={handleClose}>

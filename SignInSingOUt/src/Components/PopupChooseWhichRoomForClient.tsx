@@ -17,6 +17,8 @@ interface CbsAddOrTransferClientsToRooms {
 interface RoomInfoDTO {
     roomID: number;
     roomName: string;
+    staffFirstName: string;
+    staffLastName: string;
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram }) => {
@@ -76,7 +78,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             style={{ width: "150px" }}
                                             className="round-button-for-class grid-item-container-for-room-selection"
                                             onClick={() => transferToAnotherRoom(info.roomID)}>
-                                            {info.roomName} 
+                                            {info.staffFirstName} {info.staffLastName}
                                         </button>
                                 ))}
                             </div>
@@ -129,7 +131,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             className="round-button-for-class grid-item-container-for-room-selection"
                                             onClick={() => transferToAnotherRoom(info.roomID)}
                                         >
-                                            {info.roomName}
+                                            {info.staffFirstName} {info.staffLastName}
                                         </button>
                                 ))}
                             </div>
