@@ -14,12 +14,16 @@ import Person from '../../src/assets/person.png';
 import RBT from '../../src/assets/rbt.png';
 import "./CSS/SdpAttendanceStatusOverview.css";
 
-
+interface RoomInfo {
+  roomID: number
+  roomName: string;
+}
 
 const EditChildTime: React.FC = () => {
 
   const [roomImgSrc, setRoomImgSrc] = useState<string>("");
   const [roomName, setRoomName] = useState<string>("");
+  const [allRoomNames, setAllRoomNames] = useState<RoomInfo[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +33,7 @@ const EditChildTime: React.FC = () => {
           throw new Error("Token not found in localStorage");
         }
 
-        const url = `${backEndCodeURLLocation}SignIn/GetAllClientsThatAreActive`;
+        const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=OHCU`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -47,7 +51,7 @@ const EditChildTime: React.FC = () => {
 
         const data = await response.json();
 
-        console.log(data);
+        setAllRoomNames(data);
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -78,23 +82,17 @@ const EditChildTime: React.FC = () => {
 
   return (
     <>
-      <div>
-        <div className="card" style={{ width: "60%", marginLeft: "20px" }}>
-          <div className="card-body grid-container-For-CBS-Rooms" >
-            <div className="card" style={{ padding: "10px" }} >
-              <h5 className="card-title">Horse</h5>
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div className="card" style={{ padding: "10px"}} >
-              <h5 className="card-title">Horse</h5>
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            
-          </div>
-        </div>
 
-      </div>
-
+<div className="card" style={{ width: "60%", marginLeft: "20px" }}>
+    <div className="card-body grid-container-For-CBS-Rooms">
+        {allRoomNames.map((info, index) => (
+            <div key={index} className="card" style={{ padding: "10px" }}>
+                <h5 className="card-title">{info.roomName}</h5>
+                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        ))}
+    </div>
+</div>
     </>
   );
 };
