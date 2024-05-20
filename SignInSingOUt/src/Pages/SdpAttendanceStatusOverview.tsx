@@ -11,20 +11,29 @@ import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import RBT from '../../src/assets/rbt.png';
+import Therapy from '../../src/assets/therapy.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
 
-interface RoomInfo {
+
+interface SdpRoomInfo {
   roomID: number
-  roomName: string;
+  sdpRoomName: string;
   clientFirstName: string;
-  clinetLastName: string;
+  clientLastName: string;
   whichRoomClientCurrentlyIn: number;
   whichWaitingRoomIsClientIn: number;
 }
 
+interface ThrRoomInfo {
+  roomID: number
+  thrRoomName: string;
+  thrRoomDetail: string;
+}
+
 interface ClientInfoResponse {
-  roomNames: RoomInfo[];
-  clientInfo: RoomInfo[];
+  sdpRoomNames: SdpRoomInfo[];
+  clientInfo: SdpRoomInfo[];
+  thrRoomNames: ThrRoomInfo[];
 }
 
 const images: { [key: string]: string } = {
@@ -33,14 +42,16 @@ const images: { [key: string]: string } = {
   Apple: Apple,
   Bird: Bird,
   Parrot: Parrot,
+  Therapy: Therapy,
 };
 
 const EditChildTime: React.FC = () => {
 
   const [roomImgSrc, setRoomImgSrc] = useState<string>("");
   const [roomName, setRoomName] = useState<string>("");
-  const [allRoomNames, setAllRoomNames] = useState<RoomInfo[]>([]);
-  const [allClientsInfo, setAllClientsInfo] = useState<RoomInfo[]>([]);
+  const [allSdpRoomNames, setAllSdpRoomNames] = useState<SdpRoomInfo[]>([]);
+  const [allThrRoomNames, setAllThrRoomNames] = useState<ThrRoomInfo[]>([]);
+  const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
 
 
   useEffect(() => {
@@ -70,7 +81,9 @@ const EditChildTime: React.FC = () => {
         const data: ClientInfoResponse = await response.json();
         console.log(data);
 
-        setAllRoomNames(data.roomNames);
+        setAllSdpRoomNames(data.sdpRoomNames);
+        setAllThrRoomNames(data.thrRoomNames);
+        
         setAllClientsInfo(data.clientInfo);
 
       } catch (error) {
@@ -83,72 +96,101 @@ const EditChildTime: React.FC = () => {
 
   useEffect(() => {
     Testing();
-}, [allClientsInfo]);
+  }, [allClientsInfo]);
 
-const Testing = async () => {
+  const Testing = async () => {
     if (allClientsInfo === null) {
-        return;
+      return;
     }
     const eventSource = new EventSource(`http://localhost:5025/PcApc/RealTimeUpdates?locationID=OHCU`);
     //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
     eventSource.onmessage = (event) => {
 
-        const data: ClientInfoResponse = JSON.parse(event.data);
+      const data: ClientInfoResponse = JSON.parse(event.data);
 
-        setAllClientsInfo(data.clientInfo);
+      setAllClientsInfo(data.clientInfo);
 
     };
 
 
     eventSource.onerror = () => {
-        window.location.reload();
+      window.location.reload();
     };
     return () => {
-        eventSource.close();
+      eventSource.close();
     };
-}
+  }
 
 
 
   return (
     <>
-      <div className="card" style={{ width: "60%", marginLeft: "20px" }}>
+      <div className="card" style={{ width: "97%", marginLeft: "20px", marginBottom: "20px", minHeight: "150px" }}>
         <div className="card-body grid-container-For-CBS-Rooms">
-        {allRoomNames.map((allRoomName, index) => (
-          <div>
-            <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgrey"}}>
-              <img src={images[allRoomName.roomName]} style={{width: "22px", height: "22px", marginRight: "10px"}}></img>
-              <h5 className="card-title">{allRoomName.roomName}</h5>
-            </div>
           <div className="card" style={{ padding: "10px" }}>
-            
-            {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
-              <button className="card-text">{clientsInfo.clientFirstName}</button>
-            ))}
-            {/* <hr/>
-            {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
-              <button className="card-text">{clientsInfo.clientFirstName}</button>
-            ))} */}
-          </div>
-          </div>
-          
-        ))}
-        </div>
-      </div>
-      <div className="card" style={{ width: "60%", marginLeft: "20px" }}>
-        <div className="card-body grid-container-For-CBS-Rooms">
-
-          <div>
-          <div className="card" style={{ padding: "10px" }}>
-
             {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
               <button className="card-text">{clientsInfo.clientFirstName}</button>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex" }}>
+        <div className="card" style={{ width: "80%", marginLeft: "20px" }}>
+          <div className="card-body grid-container-For-CBS-Rooms" >
+            {allSdpRoomNames.map((allRoomName, index) => (
+              <div>
+                <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
+                  <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                  <h5 className="card-title">{allRoomName.sdpRoomName} </h5>
+                </div>
+
+                <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "100px", borderTopLeftRadius: "0", borderTopRightRadius: "0"}}>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
+                    <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                  ))}
+                </div>
+              </div>
+
+            ))}
+          </div>
+        </div>
+
+        <div className="card" style={{ width: "16%", marginLeft: "20px" }}>
+          <div className="card-body grid-container-for-other-rooms">
+              {allThrRoomNames.map((allRoomName, index) => (
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
+                      <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                      <h5 className="card-title">{allRoomName.thrRoomName} - {allRoomName.thrRoomDetail}</h5>
+                    </div>
+
+                    <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0"}}>
+                      {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
+                        <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                      ))}
+                    </div> 
+                  </div>
+                ))}
+                
+                <div>
+                    <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgreen" }}>
+                      <img src={RBT} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                      <h5 className="card-title">ABA</h5>
+                    </div>
+
+                    <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0"}}>
+                      {allClientsInfo.filter(clientsInfo => clientsInfo.sdpRoomName === "RBT" && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
+                        <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                      ))}
+                    </div> 
+                </div>
           </div>
         </div>
       </div>
+
+
     </>
   );
 };
