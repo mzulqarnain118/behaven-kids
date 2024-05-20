@@ -33,6 +33,7 @@ interface ThrRoomInfo {
 interface ClientInfoResponse {
   sdpRoomNames: SdpRoomInfo[];
   clientInfo: SdpRoomInfo[];
+  bothProgramClientsWhoAreCurrentlyInABA: SdpRoomInfo[];
   thrRoomNames: ThrRoomInfo[];
 }
 
@@ -52,6 +53,7 @@ const EditChildTime: React.FC = () => {
   const [allSdpRoomNames, setAllSdpRoomNames] = useState<SdpRoomInfo[]>([]);
   const [allThrRoomNames, setAllThrRoomNames] = useState<ThrRoomInfo[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
+  const [clientsInBothProgramsCurrentlyInABA, setClientsInBothProgramsCurrentlyInABA] = useState<SdpRoomInfo[]>([]);
 
 
   useEffect(() => {
@@ -79,11 +81,11 @@ const EditChildTime: React.FC = () => {
         }
 
         const data: ClientInfoResponse = await response.json();
-        console.log(data);
+        console.log(data.bothProgramClientsWhoAreCurrentlyInABA);
 
         setAllSdpRoomNames(data.sdpRoomNames);
         setAllThrRoomNames(data.thrRoomNames);
-        
+        setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
         setAllClientsInfo(data.clientInfo);
 
       } catch (error) {
@@ -110,6 +112,7 @@ const EditChildTime: React.FC = () => {
       const data: ClientInfoResponse = JSON.parse(event.data);
 
       setAllClientsInfo(data.clientInfo);
+      setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
 
     };
 
@@ -126,19 +129,19 @@ const EditChildTime: React.FC = () => {
 
   return (
     <>
-      <div className="card" style={{ width: "97%", marginLeft: "20px", marginBottom: "20px", minHeight: "150px" }}>
+      {/* <div className="card" style={{ width: "97%", marginLeft: "20px", marginBottom: "20px", minHeight: "150px" }}>
         <div className="card-body grid-container-For-CBS-Rooms">
-          <div className="card" style={{ padding: "10px" }}>
+          
             {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
-              <button className="card-text">{clientsInfo.clientFirstName}</button>
+              <button className="card-text">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
             ))}
-          </div>
+          
         </div>
-      </div>
+      </div> */}
 
       <div style={{ display: "flex" }}>
-        <div className="card" style={{ width: "80%", marginLeft: "20px" }}>
-          <div className="card-body grid-container-For-CBS-Rooms" >
+        <div className="card" style={{ width: "60%", marginLeft: "20px" }}>
+          <div className="card-body grid-container-For-CBS-Rooms">
             {allSdpRoomNames.map((allRoomName, index) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
@@ -150,6 +153,9 @@ const EditChildTime: React.FC = () => {
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
                     <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                   ))}
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
+                    <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                  ))}
                 </div>
               </div>
 
@@ -157,7 +163,7 @@ const EditChildTime: React.FC = () => {
           </div>
         </div>
 
-        <div className="card" style={{ width: "16%", marginLeft: "20px" }}>
+        <div className="card" style={{ width: "36%", marginLeft: "20px" }}>
           <div className="card-body grid-container-for-other-rooms">
               {allThrRoomNames.map((allRoomName, index) => (
                   <div>
@@ -170,6 +176,9 @@ const EditChildTime: React.FC = () => {
                       {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
                         <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                       ))}
+                      {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
+                        <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                      ))}
                     </div> 
                   </div>
                 ))}
@@ -181,8 +190,11 @@ const EditChildTime: React.FC = () => {
                     </div>
 
                     <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0"}}>
-                      {allClientsInfo.filter(clientsInfo => clientsInfo.sdpRoomName === "RBT" && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
-                        <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                      {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2, index) => (
+                        <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
+                      ))}
+                      {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2, index) => (
+                        <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
                       ))}
                     </div> 
                 </div>

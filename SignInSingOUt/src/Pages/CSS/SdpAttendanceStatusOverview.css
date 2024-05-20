@@ -1,6 +1,6 @@
 .grid-container-For-CBS-Rooms {
     display: grid;
-    grid-template-columns: minmax(100px, auto) minmax(100px, auto) minmax(100px, auto) minmax(100px, auto);
+    grid-template-columns: minmax(100px, auto) minmax(100px, auto) minmax(100px, auto);
     grid-gap: 20px;
     padding: 10px;
     text-align: center;
@@ -41,3 +41,19 @@
     height: 45px;
     text-shadow:0px 0px 0px #810e05;
   }
+
+  .round-button-for-unassigned-clients {
+    box-shadow: -3px -3px 6px 1px #8a2a21;
+    background:linear-gradient(to bottom, #c62d1f 5%, #f24437 100%);
+    background-color:#c62d1f;
+    border-radius:29px;
+    border:1px solid #d02718;
+    display:inline-block;
+    cursor:pointer;
+    color: white;
+    font-family:Arial;
+    font-size:14px;
+    text-decoration:none;
+    height: 45px;
+    text-shadow:0px 0px 0px #810e05;
+}
