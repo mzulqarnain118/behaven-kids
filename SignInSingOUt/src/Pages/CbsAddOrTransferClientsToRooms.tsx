@@ -10,6 +10,8 @@ import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import Person from '../../src/assets/person.png';
 import RBT from '../../src/assets/rbt.png'
+import Therapy from '../../src/assets/therapy.png'
+import Gs from '../../src/assets/gs.png'
 import { useNavigate } from "react-router-dom";
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 
@@ -144,6 +146,10 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setRoomImgSrc(Parrot);
         } else if (roomName.includes('RBT')) {
             setRoomImgSrc(RBT);
+        } else if (roomName.includes('THR')) {
+            setRoomImgSrc(Therapy);
+        } else if (roomName.includes('GS')) {
+            setRoomImgSrc(Gs);
         } else {
             setRoomImgSrc("");
         }
@@ -392,7 +398,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
+                    {!roomName.includes('THR') && !roomName.includes('GS') && (
                     <div className="card-body">
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
@@ -405,6 +411,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    )}
                     <button className="add-button-class" onClick={() => CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom()}>+ ADD</button>
                     <br />
                 </div>

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { backEndCodeURLLocation } from "../config";
-import moment from "moment";
 import "./CSS/EditChildTime.css";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
-import PopupDatePicker from "../Components/PopupDatePicker";
 import Horse from '../../src/assets/horse.png';
 import Bee from '../../src/assets/bee.png';
 import Apple from '../../src/assets/apple.png';
@@ -13,6 +9,7 @@ import Parrot from '../../src/assets/parrot.png';
 import RBT from '../../src/assets/rbt.png';
 import Therapy from '../../src/assets/therapy.png'
 import Timer from '../../src/assets/timer.png'
+import Gs from '../../src/assets/gs.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
 
 
@@ -25,7 +22,7 @@ interface SdpRoomInfo {
   whichWaitingRoomIsClientIn: number;
 }
 
-interface ThrRoomInfo {
+interface NonSDPRoomsDTO {
   roomID: number
   thrRoomName: string;
   thrRoomDetail: string;
@@ -35,7 +32,8 @@ interface ClientInfoResponse {
   sdpRoomNames: SdpRoomInfo[];
   clientInfo: SdpRoomInfo[];
   bothProgramClientsWhoAreCurrentlyInABA: SdpRoomInfo[];
-  thrRoomNames: ThrRoomInfo[];
+  thrRoomNames: NonSDPRoomsDTO[];
+  gsRoomNames: NonSDPRoomsDTO[];
 }
 
 const images: { [key: string]: string } = {
@@ -47,12 +45,11 @@ const images: { [key: string]: string } = {
   Therapy: Therapy,
 };
 
-const EditChildTime: React.FC = () => {
+const SdpPanel: React.FC = () => {
 
-  const [roomImgSrc, setRoomImgSrc] = useState<string>("");
-  const [roomName, setRoomName] = useState<string>("");
   const [allSdpRoomNames, setAllSdpRoomNames] = useState<SdpRoomInfo[]>([]);
-  const [allThrRoomNames, setAllThrRoomNames] = useState<ThrRoomInfo[]>([]);
+  const [thrRoomNames, setThrRoomNames] = useState<NonSDPRoomsDTO[]>([]);
+  const [gsRoomNames, setGsRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
   const [clientsInBothProgramsCurrentlyInABA, setClientsInBothProgramsCurrentlyInABA] = useState<SdpRoomInfo[]>([]);
 
@@ -85,7 +82,8 @@ const EditChildTime: React.FC = () => {
         console.log(data.bothProgramClientsWhoAreCurrentlyInABA);
 
         setAllSdpRoomNames(data.sdpRoomNames);
-        setAllThrRoomNames(data.thrRoomNames);
+        setThrRoomNames(data.thrRoomNames);
+        setGsRoomNames(data.gsRoomNames);
         setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
         setAllClientsInfo(data.clientInfo);
 
@@ -106,7 +104,7 @@ const EditChildTime: React.FC = () => {
       return;
     }
     const eventSource = new EventSource(`http://localhost:5025/PcApc/RealTimeUpdates?locationID=OHCU`);
-    //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+    //const eventSource = new EventSource(`http://192.168.0.9:7012/PcApc/RealTimeUpdates?locationID=OHCU`);
 
     eventSource.onmessage = (event) => {
 
@@ -133,30 +131,29 @@ const EditChildTime: React.FC = () => {
       <div style={{ display: "flex" }}>
         <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
           <div className="card-body grid-container-For-CBS-Rooms">
-            {allSdpRoomNames.map((allRoomName, index) => (
+            {allSdpRoomNames.map((allRoomName, ) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
                   <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
                   <h5 className="card-title">{allRoomName.sdpRoomName} </h5>
                 </div>
 
-                <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
+                <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
                     <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                   ))}
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
                     <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                   ))}
                 </div>
               </div>
-
             ))}
           </div>
         </div>
 
-        <div className="card" style={{ width: "30%", marginLeft: "20px" }}>
-          <div className="card-body grid-container-for-other-rooms">
-            {allThrRoomNames.map((allRoomName, index) => (
+        <div className="card" style={{ width: "30%", marginLeft: "20px", display: "flex", flexDirection: "row" }}>
+          <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
+            {thrRoomNames.map((allRoomName, ) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
                   <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
@@ -164,32 +161,36 @@ const EditChildTime: React.FC = () => {
                 </div>
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, index) => (
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
                     <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                   ))}
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, index) => (
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
                     <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
                   ))}
                 </div>
               </div>
             ))}
-
-            <div style={{ marginTop: "20px" }}>
-              <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgreen" }}>
-                <img src={RBT} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
-                <h5 className="card-title">ABA</h5>
-              </div>
-
-              <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2, index) => (
-                  <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
-                ))}
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2, index) => (
-                  <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
-                ))}
-              </div>
-            </div>
           </div>
+          <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
+              {gsRoomNames.map((allRoomName, ) => (
+                <div>
+                  <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#FFDEAD" }}>
+                    <img src={Gs} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                    <h5 className="card-title">{allRoomName.thrRoomName} - {allRoomName.thrRoomDetail}</h5>
+                  </div>
+
+                  <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
+                    {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
+                      <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                    ))}
+                    {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
+                      <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName}</button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+          
         </div>
       </div>
       <div style={{ display: "flex", marginTop: "20px" }}>
@@ -228,10 +229,10 @@ const EditChildTime: React.FC = () => {
               </div>
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2, index) => (
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2, ) => (
                   <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
                 ))}
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2, index) => (
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2, ) => (
                   <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName}</button>
                 ))}
               </div>
@@ -245,4 +246,4 @@ const EditChildTime: React.FC = () => {
   );
 };
 
-export default EditChildTime;
+export default SdpPanel;

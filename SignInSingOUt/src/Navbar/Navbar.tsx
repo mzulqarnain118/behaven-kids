@@ -111,6 +111,10 @@ const Navbar: React.FC = () => {
     navigate("/ReceptionistGivesTemporaryPinToParent", { replace: true });
   };
 
+  const GoToSDPPanel = () => {
+    navigate("/SdpAttendanceStatusOverview", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -354,6 +358,18 @@ const Navbar: React.FC = () => {
                         onClick={GoToClientInOutNoShow}
                       >
                         <span style={{ fontSize: "20px" }}>Client In/Out/No show</span>
+                      </a>
+                    </li>
+                  )}
+                  {role === "admin" && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={GoToSDPPanel}
+                      >
+                        <span style={{ fontSize: "20px" }}>SDP Panel</span>
                       </a>
                     </li>
                   )}
