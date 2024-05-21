@@ -65,77 +65,87 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         {clientProgram === "ABA" && (
-                        <div style={{ textAlign: "center" }}>
+                            <div style={{ textAlign: "center" }}>
 
-                            <h4>{clientFullName} - {clientProgram}</h4>
-                            <br />
-                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo
-                                    .filter(info => info.roomName.includes("RBT")) // Filter out items where roomName is "aba"
-                                    .map(info => (
-                                        <button
-                                            key={info.roomID}
-                                            style={{ width: "150px" }}
-                                            className="round-button-for-class grid-item-container-for-room-selection"
-                                            onClick={() => transferToAnotherRoom(info.roomID)}>
-                                            {info.staffFirstName} {info.staffLastName}
-                                        </button>
-                                ))}
+                                <h4>{clientFullName} - {clientProgram}</h4>
+                                <br />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo
+                                        .filter(info => info.roomName.includes("RBT")) // Filter out items where roomName is "aba"
+                                        .map(info => (
+                                            <button
+                                                key={info.roomID}
+                                                style={{ width: "150px" }}
+                                                className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                                onClick={() => transferToAnotherRoom(info.roomID)}>
+                                                {info.staffFirstName} {info.staffLastName.charAt(0)}.
+                                            </button>
+                                     ))}
+                                </div>
                             </div>
-                        </div>
                         )}
                         {clientProgram === "SDP" && (
-                        <div style={{ textAlign: "center" }}>
-                            <h4>{clientFullName}</h4>
-                            <br />
-                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo.filter(info => !info.roomName.includes("RBT") && info.roomName !== "None").map((info) => (
+                            <div style={{ textAlign: "center" }}>
+                                <h4>{clientFullName}</h4>
+                                <br />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") &&  info.roomName !== "None").map((info) => (
 
-                                    <button
-                                        key={info.roomID}
-                                        style={{ width: "150px" }}
-                                        className="round-button-for-class grid-item-container-for-room-selection"
-                                        onClick={() => transferToAnotherRoom(info.roomID)}
-                                    >
-                                        {info.roomName}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        )}
-                         {clientProgram === "Both" && (
-                        <div style={{ textAlign: "center" }}>
-                            <h4>{clientFullName}</h4>
-                            <br />
-                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo.filter(info => !info.roomName.includes("RBT") && info.roomName !== "None").map((info) => (
-
-                                    <button
-                                        key={info.roomID}
-                                        style={{ width: "150px" }}
-                                        className="round-button-for-class grid-item-container-for-room-selection"
-                                        onClick={() => transferToAnotherRoom(info.roomID)}
-                                    >
-                                        {info.roomName}
-                                    </button>
-                                ))}
-                            </div>
-                            <hr />
-                            <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                {roomInfo
-                                    .filter(info => info.roomName.includes("RBT")) 
-                                    .map(info => (
                                         <button
                                             key={info.roomID}
                                             style={{ width: "150px" }}
-                                            className="round-button-for-class grid-item-container-for-room-selection"
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
                                             onClick={() => transferToAnotherRoom(info.roomID)}
                                         >
-                                            {info.staffFirstName} {info.staffLastName}
+                                            {info.roomName}
                                         </button>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
+                        {clientProgram === "Both" && (
+                            <div style={{ textAlign: "center" }}>
+                                <h4>{clientFullName}</h4>
+                                <br />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") && info.roomName !== "None").map((info) => (
+
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            {info.roomName}
+                                        </button>
+                                    ))}
+                                    {roomInfo.filter(info => info.roomName.includes("THR")).map((info) => (
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            {info.staffFirstName} {info.staffLastName.charAt(0)}.
+                                        </button>
+                                    ))}
+                                </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo
+                                        .filter(info => info.roomName.includes("RBT"))
+                                        .map(info => (
+                                            <button
+                                                key={info.roomID}
+                                                style={{ width: "150px" }}
+                                                className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                                onClick={() => transferToAnotherRoom(info.roomID)}
+                                            >
+                                                {info.staffFirstName} {info.staffLastName.charAt(0)}.
+                                            </button>
+                                        ))}
+                                </div>
+                            </div>
                         )}
                     </BootstrapModal.Body>
                     <BootstrapModal.Footer>

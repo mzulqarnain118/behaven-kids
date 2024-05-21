@@ -6,10 +6,19 @@
     text-align: center;
   }
 
+  .grid-container-for-timeout-rooms {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+
   .grid-container-for-other-rooms {
     display: grid;
-    grid-template-columns: minmax(100px, auto);
+    grid-template-columns: minmax(100px, auto) minmax(100px, auto);
     grid-template-rows: 115px; 
+    grid-gap: 20px;
     padding: 10px;
     text-align: center;
   }
