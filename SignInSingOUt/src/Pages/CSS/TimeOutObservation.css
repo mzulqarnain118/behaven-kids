@@ -1,0 +1,7 @@
+.grid-container-For-behaviors {
+    display: grid;
+    grid-template-columns: minmax(250px, auto);
+    grid-gap: 20px;
+    padding: 10px;
+    text-align: center;
+  }

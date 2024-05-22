@@ -2,12 +2,18 @@ import { useEffect } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
 import TimeOutLogo from '../../src/assets/timer.png';
+import "./CSS/TimeOutObservation.css"
 
 const TimeOutObservation: React.FC = () => {
 
     useEffect(() => {
 
     });
+
+    const behaviors = ["Swearing", "Disrobing Clothes", "Vomiting", "Spitting", "Crying", "Screaming", "Urinating", "Defecating", "Climbing"];
+
+    const aggression = ["Hitting", "Kicking", "Biting", "Pinching", "Slapping", "Propery Destruction", "Self-harm"];
+
 
     return ( 
         <>
@@ -32,8 +38,19 @@ const TimeOutObservation: React.FC = () => {
 
             <div style={{display: "flex", justifyContent: "center"}}>
                 <div className="card" style={{width: "750px", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                    <div className="card-body" style={{ height: "100%"}}>
+                    <div className="card-body grid-container-For-behaviors" style={{ height: "100%"}}>
+                    <div className="card" style={{width: "45%"}}>
                         <h5>Behaviors Observed</h5>
+                            {behaviors.map((behavior) => (
+                                <button
+                                    key={behavior}
+                                    //onClick={() => InsertPhoneNumber(number.toString())}
+                                    // onTouchEnd={() => InsertPhoneNumber(number.toString())}
+                                >
+                                    {behavior}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
