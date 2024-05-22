@@ -89,7 +89,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 <h4>{clientFullName}</h4>
                                 <br />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") && !info.roomName.includes("GS") && !info.roomName.includes("TORU") && info.roomName !== "None").map((info) => (
+                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") && !info.roomName.includes("GS") && !info.roomName.includes("TOR") && info.roomName !== "None").map((info) => (
 
                                         <button
                                             key={info.roomID}
@@ -100,6 +100,9 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
+                                </div>
+                                <hr/>
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo.filter(info => info.roomName.includes("THR") || info.roomName.includes("GS")).map((info) => (
                                         <button
                                             key={info.roomID}
@@ -114,7 +117,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 </div>
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                    {roomInfo.filter(info => info.roomName.includes("TORU")).map((info) => (
+                                    {roomInfo.filter(info => info.roomName.includes("TOR")).map((info) => (
                                         <button
                                             key={info.roomID}
                                             style={{ width: "150px" }}
@@ -133,7 +136,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 <h4>{clientFullName}</h4>
                                 <br />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") && !info.roomName.includes("GS") && info.roomName !== "None").map((info) => (
+                                    {roomInfo.filter(info => !info.roomName.includes("RBT") && !info.roomName.includes("THR") && !info.roomName.includes("GS") && !info.roomName.includes("TOR") && info.roomName !== "None").map((info) => (
 
                                         <button
                                             key={info.roomID}
@@ -144,7 +147,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
-                                    {roomInfo.filter(info => info.roomName.includes("GS")).map((info) => (
+                                    {/* {roomInfo.filter(info => info.roomName.includes("GS")).map((info) => (
                                         <button
                                             key={info.roomID}
                                             style={{ width: "150px" }}
@@ -153,7 +156,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         >
                                             {info.staffFirstName} {info.staffLastName.charAt(0)}.
                                         </button>
-                                    ))}
+                                    ))} */}
 
                                 </div>
                                 <hr />

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
 import TimeOutLogo from '../../src/assets/timer.png';
