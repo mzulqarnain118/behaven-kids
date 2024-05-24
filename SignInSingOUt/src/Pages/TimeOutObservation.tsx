@@ -18,7 +18,7 @@ const TimeOutObservation: React.FC = () => {
         { id: 9, label: 'Climbing', counter: 0 },
       ]);
 
-      const [aggression, setAggression] = useState([
+      const [aggression, ] = useState([
         { id: 1, label: 'Hitting', counter: 0 },
         { id: 2, label: 'Kicking', counter: 0 },
         { id: 3, label: 'Biting', counter: 0 },

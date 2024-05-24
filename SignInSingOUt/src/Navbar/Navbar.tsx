@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
   };
 
   const GoToSDPPanel = () => {
-    navigate("/SdpAttendanceStatusOverview", { replace: true });
+    navigate("/SdpPanel", { replace: true });
   };
 
   useEffect(() => {

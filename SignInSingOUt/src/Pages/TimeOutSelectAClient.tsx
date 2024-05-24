@@ -7,7 +7,7 @@ import Person from '../../src/assets/person.png';
 import { useNavigate } from "react-router-dom";
 import TimeOutLogo from '../../src/assets/timer.png';
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
-import { BodyComponent } from "reactjs-human-body";
+// import { BodyComponent } from "reactjs-human-body";
 // import HumanBodyDiagram from './HumanBodyDiagram.tsx';
 
 
@@ -42,27 +42,26 @@ interface RoomInfoDTO {
 
 const TimeOUtSelectAClient: React.FC = () => {
 
-    const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+    const [, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
-    const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
+    const [, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, setLocationID] = useState<string>("");
-    const [clientID, setClientID] = useState<number | null>(null);
+    const [clientID, ] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
     const [cbsFullName, setCbsFullName] = useState<string>("");
-    const [clientFullName, setClientFullName] = useState<string>("");
+    const [clientFullName, ] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());
-    const [roomImgSrc, setRoomImgSrc] = useState<string>("");
-    const [clientProgram, setClientProgram] = useState<string>("");
+    const [clientProgram, ] = useState<string>("");
     const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
     const navigate = useNavigate();
-    const handleBodyPartClick = (part: string) => {
-        // Update state to reflect the clicked body part
-        alert(part);
-    };
+    // const handleBodyPartClick = (part: string) => {
+    //     // Update state to reflect the clicked body part
+    //     alert(part);
+    // };
 
     useEffect(() => {
         const timerID = setInterval(() => tick(), 1000);
@@ -107,10 +106,10 @@ const TimeOUtSelectAClient: React.FC = () => {
         };
     }
 
-    const handleBodyPartClick2 = (bodyPart: string) => {
-        console.log(`Clicked on: ${bodyPart}`);
-        // Add your logic here
-      };
+    // const handleBodyPartClick2 = (bodyPart: string) => {
+    //     console.log(`Clicked on: ${bodyPart}`);
+    //     // Add your logic here
+    //   };
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -272,16 +271,16 @@ const TimeOUtSelectAClient: React.FC = () => {
     };
 
 
-    const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
-        setClientID(clientID);
-        setClientFullName(clientFullName);
-        setClientProgram(clientProgram);
-        setShowModel(true);
-    };
+    // const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
+    //     setClientID(clientID);
+    //     setClientFullName(clientFullName);
+    //     setClientProgram(clientProgram);
+    //     setShowModel(true);
+    // };
 
-    const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
-        setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
-    };
+    // const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
+    //     setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
+    // };
 
     const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
         try {
