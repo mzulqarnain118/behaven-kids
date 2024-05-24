@@ -44,7 +44,6 @@ const TimeOUtSelectAClient: React.FC = () => {
 
     const [, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
-    const [, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);;
@@ -74,37 +73,37 @@ const TimeOUtSelectAClient: React.FC = () => {
     function tick() {
         setCurrentTime(new Date());
     }
-    useEffect(() => {
-        Testing();
-    }, [roomID]);
+    // useEffect(() => {
+    //     Testing();
+    // }, [roomID]);
 
-    const Testing = async () => {
-        if (roomID === null) {
-            return;
-        }
-        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+    // const Testing = async () => {
+    //     if (roomID === null) {
+    //         return;
+    //     }
+    //     const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+    //     //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
-        eventSource.onmessage = (event) => {
+    //     eventSource.onmessage = (event) => {
 
-            const data: ClientInfoResponse = JSON.parse(event.data);
+    //         const data: ClientInfoResponse = JSON.parse(event.data);
 
-            setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+    //         setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
 
-            setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+    //         setChildInfo(data.allClientsWhoAreDefaultedForARoom);
 
-            setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
+    //         setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
 
-        };
+    //     };
 
 
-        eventSource.onerror = () => {
-            window.location.reload();
-        };
-        return () => {
-            eventSource.close();
-        };
-    }
+    //     eventSource.onerror = () => {
+    //         window.location.reload();
+    //     };
+    //     return () => {
+    //         eventSource.close();
+    //     };
+    // }
 
     // const handleBodyPartClick2 = (bodyPart: string) => {
     //     console.log(`Clicked on: ${bodyPart}`);
@@ -120,94 +119,33 @@ const TimeOUtSelectAClient: React.FC = () => {
 
         const decoded = jwtDecode(token);
         const userRole = (decoded as any).role;
-        if (userRole !== "floor") {
+        if (!userRole.includes("tor")) {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
         }
+        if (userRole.includes("utoro"))
+            setRoomID(29);
+        else if (userRole.includes("dtoro"))
+            setRoomID(30);
+
     }, []);
 
-    useEffect(() => {
-        getCBSInformation();
-    }, []);
+    // useEffect(() => {
+    //     getCBSInformation();
+    // }, []);
 
     useEffect(() => {
         if (roomID !== null) {
             getClientsThatAreWaitingInTheWaitingRoom();
-            getAllClientsThatAreInARoom();
         }
     }, [roomID]);
 
     useEffect(() => {
         if (locationID !== null && roomID !== null) {
-            getRoomInfoWhereClientsCanGoTo();
+            // getRoomInfoWhereClientsCanGoTo();
         }
     }, [locationID]);
 
-    const getRoomInfoWhereClientsCanGoTo = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (!response.ok) {
-                alert("Error getting room names");
-                return;
-            }
-            const data = await response.json();
-            setRoomInfo(data);
-            console.log("getRoomInfoWhereClientsCanGoTo", data);
-
-        } catch (error) {
-            window.location.reload();
-            // alert("error" + error);
-        }
-
-    };
-
-    const getCBSInformation = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return; 
-            }
-            const decoded = jwtDecode(token) as DecodedToken;
-            const staffID = decoded.StaffID;
-
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetCbsInformation?staffID=${staffID}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
-            }
-
-            const data = await response.json();
-            setRoomID(data[0].cbsRoomID);
-            setRoomName(data[0].cbsRoomName);
-            setLocationID(data[0].cbsLocationID);
-            setCbsFullName(data[0].cbsStaffFirstName + " " + data[0].cbsStaffLastName);
-            setCbsProgramType(data[0].cbsProgramType)
-
-        } catch (error) {
-            window.location.reload();
-            // alert("Error fetching data:" + error);
-        }
-    };
 
     const getClientsThatAreWaitingInTheWaitingRoom = async () => {
         try {
@@ -217,6 +155,7 @@ const TimeOUtSelectAClient: React.FC = () => {
                 navigate("/", { replace: true });
                 return;
             }
+            console.log("hello");
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
                 method: "GET",
                 headers: {
@@ -239,36 +178,37 @@ const TimeOUtSelectAClient: React.FC = () => {
         }
     };
 
-    const getAllClientsThatAreInARoom = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
+    // const getRoomInfoWhereClientsCanGoTo = async () => {
+    //     try {
+    //         const token = localStorage.getItem("token");
+    //         if (!token) {
+    //             alert("Please Login");
+    //             navigate("/", { replace: true });
+    //             return;
+    //         }
+    //         const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
+    //             method: "GET",
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 "Content-Type": "application/json",
+    //             },
+    //         });
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+    //         if (!response.ok) {
+    //             alert("Error getting room names");
+    //             return;
+    //         }
+    //         const data = await response.json();
+    //         setRoomInfo(data);
+    //         console.log("getRoomInfoWhereClientsCanGoTo", data);
 
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
-            }
+    //     } catch (error) {
+    //         window.location.reload();
+    //         // alert("error" + error);
+    //     }
 
-            const data = await response.json();
+    // };
 
-            setClientsWhoAreCurrentlyInARoom(data);
-
-        } catch (error) {
-            window.location.reload();
-            // alert("Useffect 2 - Error fetching data:" + error);
-        }
-    };
 
 
     // const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
@@ -305,7 +245,6 @@ const TimeOUtSelectAClient: React.FC = () => {
                 return;
             }
 
-            getAllClientsThatAreInARoom();
             getClientsThatAreWaitingInTheWaitingRoom();
             // window.location.reload();
         } catch (error) {
@@ -368,12 +307,12 @@ const TimeOUtSelectAClient: React.FC = () => {
                 </div>
             </div>
 
-            {clientID !== null && roomID !== null && (
+            {/* {clientID !== null && roomID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram}/>
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null &&(
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>
-            )} 
+            )}  */}
         </>
     );
 };
