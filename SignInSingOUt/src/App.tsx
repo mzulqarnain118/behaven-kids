@@ -18,6 +18,7 @@ import CbsAddOrTransferClientsToRooms from './Pages/CbsAddOrTransferClientsToRoo
 import SdpPanel from './Pages/SdpPanel'
 import TimeOutObservation from './Pages/TimeOutObservation'
 import TimeOutSelectAClient from './Pages/TimeOutSelectAClient'
+import SsnPin from './Pages/SsnPin'
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,7 @@ const App: React.FC = () => {
       <Route path='/SdpPanel' element={<SdpPanel/>}></Route>
       <Route path='/TimeOutObservation' element={<TimeOutObservation/>}></Route>
       <Route path='/TimeOutSelectAClient' element={<TimeOutSelectAClient/>}></Route>
+      <Route path='/SsnPin' element={<SsnPin/>}></Route>
       </Routes>
     </>
   )

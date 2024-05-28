@@ -7,11 +7,17 @@ import BehavenLogo from "../assets/BehavenLogo.jpg";
 import ErrorMessage from "../Components/ErrorMessage";
 import ParentPinFialedAttemptsPopup from "../Components/PopupParentPinFailedAttemts";
 
-const ParentSignIn: React.FC = () => {
+const SsnPin: React.FC = () => {
+  
   const location = useLocation();
+  const { clientID, lastRoomID, clientFullName } = location.state || {};
+  console.log("Client ID:", clientID);
+    console.log("Last Room ID:", lastRoomID);
+    console.log("Client Full Name:", clientFullName);
   const navigate = useNavigate();
 
-  const parentLastFourDigitPhoneNumber = location.state?.parentLastFourDigitPhoneNumber;
+  const parentLastFourDigitPhoneNumber =
+    location.state?.parentLastFourDigitPhoneNumber;
   console.log(parentLastFourDigitPhoneNumber);
 
 
@@ -30,9 +36,9 @@ const ParentSignIn: React.FC = () => {
       navigate("/", { replace: true });
     }
 
-    if (parentLastFourDigitPhoneNumber === undefined) {
-      navigate("/", { replace: true });
-    }
+    // if (parentLastFourDigitPhoneNumber === undefined) {
+    //   navigate("/", { replace: true });
+    // }
   });
 
   useEffect(() => {
@@ -54,7 +60,7 @@ const ParentSignIn: React.FC = () => {
           });
 
           if (!response.ok) {
-            ShowErrorMessageToUser("Couldn't Find Pin Number");
+            ShowErrorMessageToUser("Couldn't Find SSN Number");
             setHowManyFailedAttemps((prev => prev + 1));
             console.log("howManyFailedAttemps = " + howManyFailedAttemps);
             if (howManyFailedAttemps == 2)
@@ -112,15 +118,6 @@ const ParentSignIn: React.FC = () => {
     }
   };
 
-  const GoToForgotPinPage = () => {
-    navigate("/ValidateEmailAddress", {
-      replace: true,
-      state: {
-        parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber,
-      },
-    });
-  };
-
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
   return (
@@ -131,7 +128,7 @@ const ParentSignIn: React.FC = () => {
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
           <div>
-            <h3>Enter Last 4 digt Pin (🔒) </h3>
+            <h3>Enter the last 4 digits of your SSN </h3>
             <div style={{ marginTop: "15px" }}>
               {[...Array(4)].map((_, index) => (
                 <span
@@ -168,18 +165,6 @@ const ParentSignIn: React.FC = () => {
               {"\u232B"}
             </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-outline-dark"
-            style={{
-              backgroundColor: "white",
-              color: "goldenrod",
-              fontSize: "24px",
-            }}
-            onTouchEnd={GoToForgotPinPage}
-          >
-            Forgot Pin?
-          </button>
         </div>
       </div>
       <ParentPinFialedAttemptsPopup showModal={showModal} setShowModal={setShowModal} />
@@ -190,4 +175,4 @@ const ParentSignIn: React.FC = () => {
   );
 };
 
-export default ParentSignIn;
+export default SsnPin;

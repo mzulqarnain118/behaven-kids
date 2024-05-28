@@ -103,6 +103,12 @@ const Navbar: React.FC = () => {
     closeOffcanvas();
   };
 
+
+  const GoToTimeOutSelectAClient = () => {
+    navigate("/timeoutselectaclient", { replace: true });
+    closeOffcanvas();
+  };
+
   const AddNewClientAsCurrent = () => {
     navigate("/MakeClientCurrent", { replace: true });
   };
@@ -254,7 +260,94 @@ const Navbar: React.FC = () => {
           </div>
         </nav>
       )}
-      {showNavbar === true && role !== "parent" && (
+      {showNavbar === true && (role === "floor" || role.includes("tor")) && (
+        <nav className="navbar bg-white">
+          <div className="container-fluid">
+          
+
+            {(window.location.href.includes('ssnpin')) ? (
+              <a className="navbar-brand" href="#" onClick={GoToTimeOutSelectAClient} style={{fontSize: "60px", color: "black"}}>{'\u2190'}</a>
+            ) : (<a className="navbar-brand" href="#" style={{fontSize: "60px"}}></a>)} 
+            <button
+              className="navbar-toggler"
+              type="button"
+              onClick={handleToggleOffcanvas}
+              aria-controls="offcanvasNavbar"
+              style={{ marginTop: "15px", marginRight: "15px" }}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+            {!window.location.href.includes('ssnpin') && (
+            <img  src={BehavenLogo} alt="My Image" 
+                style={{ 
+                  height: "75px", 
+                  position: "fixed", 
+                  top: "5%", 
+                  left: "50%", 
+                  transform: "translate(-50%, -50%)" 
+                }} 
+              />
+            )}
+
+            <div className={`offcanvas offcanvas-end ${isOffcanvasOpen ? "show" : ""}`}
+              id="offcanvasNavbar"
+              aria-labelledby="offcanvasNavbarLabel"
+              style={{ width: "350px" }}
+            >
+              <div className="offcanvas-header">
+                <img
+                  src={BehavenLogo}
+                  alt="My Image"
+                  style={{ height: "60px" }}
+                />
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="offcanvas"
+                  aria-label="Close"
+                  style={{ marginRight: "5px" }}
+                  onClick={closeOffcanvas}
+                ></button>
+              </div>
+              
+              <div className="offcanvas-body">
+                <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={GoToPhoneNumberPage}
+                    >
+                      <span style={{ fontSize: "20px" }}>&#10227; Refresh</span>
+                    </a>
+                  </li>
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a
+                      className="nav-link active"
+                      aria-current="page"
+                      href="#"
+                      onClick={handleGoFullScreen}
+                    >
+                      <span style={{ fontSize: "20px" }}>
+                        &#10530; Full Screen
+                      </span>
+                    </a>
+                  </li>
+                  <li className="nav-item" style={{ height: "65px" }}>
+                    <a className="nav-link" href="#" onClick={handleSignOut}>
+                      <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign
+                      Out
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
+      {showNavbar === true && role !== "parent" && !role.includes("tor") && role !== "floor"  && (
         <nav className="navbar bg-white ">
           <div className="container-fluid">
             <button
@@ -376,8 +469,7 @@ const Navbar: React.FC = () => {
 
                   <li className="nav-item" style={{ height: "65px" }}>
                     <a className="nav-link" href="#" onClick={handleSignOut}>
-                      <span style={{ fontSize: "20px" }}></span> Sign
-                      Out
+                      <span style={{ fontSize: "20px" }}></span> Sign Out
                     </a>
                   </li>
                 </ul>

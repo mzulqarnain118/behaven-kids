@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
       else if (userRole === "admin" || userRole === "secretary")
         navigate("/EditChildTime");
       else if (userRole.includes("tor"))
-        navigate("/timeoutselectaclient")
+        navigate("/timeoutselectaclient") 
 
       // Refresh the page
       window.location.reload();

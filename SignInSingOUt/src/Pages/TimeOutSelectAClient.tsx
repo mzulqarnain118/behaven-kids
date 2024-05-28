@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import Person from '../../src/assets/person.png';
 import { useNavigate } from "react-router-dom";
 import TimeOutLogo from '../../src/assets/timer.png';
+import Location from '../../src/assets/location.png';
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 // import { BodyComponent } from "reactjs-human-body";
 // import HumanBodyDiagram from './HumanBodyDiagram.tsx';
@@ -40,22 +41,22 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
+interface TimeOutRoomInfo {
+    roomID: number;
+    timeOutRoomName: string;
+    timeOutRoomPosition: string;
+}
+
 const TimeOUtSelectAClient: React.FC = () => {
 
     const [, setChildInfo] = useState<ChildInfo[]>([]);
+    const [selectedClient, setSelectedClient] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
-    const [showModel, setShowModel] = useState<boolean>(false);
-    const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, setLocationID] = useState<string>("");
-    const [clientID, ] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
-    const [cbsFullName, setCbsFullName] = useState<string>("");
-    const [clientFullName, ] = useState<string>("");
+    const [roomPositionName, setRoomPositionName] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());
-    const [clientProgram, ] = useState<string>("");
-    const [cbsProgramType, setCbsProgramType] = useState<string>("");
-    const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
     const navigate = useNavigate();
     // const handleBodyPartClick = (part: string) => {
     //     // Update state to reflect the clicked body part
@@ -119,16 +120,46 @@ const TimeOUtSelectAClient: React.FC = () => {
 
         const decoded = jwtDecode(token);
         const userRole = (decoded as any).role;
+
         if (!userRole.includes("tor")) {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
         }
+        GetRoomInfo(userRole);
         if (userRole.includes("utoro"))
             setRoomID(29);
         else if (userRole.includes("dtoro"))
             setRoomID(30);
 
     }, []);
+
+    const GetRoomInfo = async (userName: string) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/"); 
+                return;
+            }
+            const response = await fetch(`${backEndCodeURLLocation}TimeOutRoom/GetTimeOutRoomInformation?userName=${userName}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                alert(`Failed to get room info.`)
+            }
+
+            const data: TimeOutRoomInfo = await response.json();
+
+            setRoomName(data.timeOutRoomName);
+            setRoomPositionName(data.timeOutRoomPosition);
+
+        } catch (error) {
+            window.location.reload();
+        }
+    };
 
     // useEffect(() => {
     //     getCBSInformation();
@@ -155,7 +186,6 @@ const TimeOUtSelectAClient: React.FC = () => {
                 navigate("/", { replace: true });
                 return;
             }
-            console.log("hello");
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
                 method: "GET",
                 headers: {
@@ -222,37 +252,39 @@ const TimeOUtSelectAClient: React.FC = () => {
     //     setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
     // };
 
-    const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
+    const GoToStaffSsnNumber = async (clientID: number, lastRoomID: number, clientFullName: string) => {
         try {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
-
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
+            navigate("/ssnpin", { 
+                replace: true, 
+                state: { clientID, lastRoomID, clientFullName } 
             });
+            // const token = localStorage.getItem("token");
 
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
-                return;
-            }
+            // if (!token) {
+            //     alert("Please Login");
+            //     navigate("/", { replace: true });
+            //     return;
+            // }
 
-            getClientsThatAreWaitingInTheWaitingRoom();
-            // window.location.reload();
+            // const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
+            //     method: "POST",
+            //     headers: {
+            //         Authorization: `Bearer ${token}`,
+            //         "Content-Type": "application/json",
+            //     },
+            // });
+
+            // if (!response.ok) {
+            //     alert(`Failed to fetch data. Response status: ${response.status}`)
+            //     return;
+            // }
+
         } catch (error) {
             alert("Error fetching data:" + error);
         }
     };
 
-    return ( 
+    return (
         <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
@@ -265,10 +297,10 @@ const TimeOUtSelectAClient: React.FC = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
-                    
+
                     <div style={{ display: "flex", flexDirection: "row" }}>
-                        <img src={Person} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{cbsFullName}</h4>
+                        <img src={Location} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomPositionName}</h4>
                     </div>
                 </div>
             </div>
@@ -294,25 +326,16 @@ const TimeOUtSelectAClient: React.FC = () => {
                                 <h2>Clients</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
-   
-                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName }</button>
-
+                                        <button onClick={() => GoToStaffSsnNumber(info.clientID, info.defaultRoomID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>
                         </div>
                         {/* <BodyComponent onClick={handleBodyPartClick} bodyModel=""/>  */}
                     </div>
-                   
+
                 </div>
             </div>
-
-            {/* {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram}/>
-            )}
-            {roomID !== null && locationID !== null && cbsProgramType !== null &&(
-                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>
-            )}  */}
         </>
     );
 };
