@@ -12,6 +12,7 @@ interface CbsAddOrTransferClientsToRooms {
     clientID: number;
     clientFullName: string;
     clientProgram: string;
+    previousRoomID: number;
 }
 
 interface RoomInfoDTO {
@@ -21,7 +22,7 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID }) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -37,19 +38,39 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
-            const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}`;
+            if (newRoomID === 29 || newRoomID === 30)
+            {
+                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
 
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                if (!response.ok) {
+                    alert(`Failed to transfer client to another room: ${response.status}`)
+                }
             }
+            else
+            {
+                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}`;
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                if (!response.ok) {
+                    alert(`Failed to transfer client to another room: ${response.status}`)
+                }
+            }
+            
         } catch (error) {
             alert("Error fetching data:" + error);
         }

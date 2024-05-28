@@ -10,18 +10,14 @@ import ParentPinFialedAttemptsPopup from "../Components/PopupParentPinFailedAtte
 const SsnPin: React.FC = () => {
   
   const location = useLocation();
-  const { clientID, lastRoomID, clientFullName } = location.state || {};
-  console.log("Client ID:", clientID);
-    console.log("Last Room ID:", lastRoomID);
-    console.log("Client Full Name:", clientFullName);
+  const { clientID, clientFullName, roomPositionName } = location.state || {};
+  console.log("Client ID: ", clientID);
+  console.log("Client Full Name: ", clientFullName);
+  console.log("roomPositionName: ", roomPositionName);
+
   const navigate = useNavigate();
 
-  const parentLastFourDigitPhoneNumber =
-    location.state?.parentLastFourDigitPhoneNumber;
-  console.log(parentLastFourDigitPhoneNumber);
-
-
-  const [parentFourDigitPin, setParentFourDigitPin] = useState<string>("");
+  const [staffFourDigitPin, setStaffFourDigitPin] = useState<string>("");
   const [, setParentName] = useState<string>("");
   const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
@@ -43,7 +39,7 @@ const SsnPin: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (parentFourDigitPin.length >= 4) {
+      if (staffFourDigitPin.length >= 4) {
         try {
           const token = localStorage.getItem("token");
           if (!token) {
@@ -51,7 +47,7 @@ const SsnPin: React.FC = () => {
               replace: true,
             });
           }
-          const response = await fetch(`${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`, {
+          const response = await fetch(`${backEndCodeURLLocation}TimeOutRoom/CheckStaffLastFourDigitSSNPin?staffSsnPin=${staffFourDigitPin}`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,11 +67,13 @@ const SsnPin: React.FC = () => {
             return;
           }
           const data = await response.json();
-          setParentName(data.parentFirstName);
+          console.log("data ", data);
+          const staffID = data.staffID;
+          const staffFullName = data.staffFirstName + " " + data.staffLastName;
           setShowErrorMessage(false);
-          navigate("/ChooseWhichChildren", {
+          navigate("/timeoutobservation", {
             replace: true,
-            state: { parentFourDigitPin: parentFourDigitPin, parentLastFourDigitPhoneNumber: parentLastFourDigitPhoneNumber, parentID: data.parentId },
+            state: { clientID, clientFullName, roomPositionName, staffID, staffFullName},
           });
           setShow(true);
           //   navigate("/", { replace: true });
@@ -87,11 +85,11 @@ const SsnPin: React.FC = () => {
     };
 
     fetchData();
-  }, [parentFourDigitPin]);
+  }, [staffFourDigitPin]);
 
   const ShowErrorMessageToUser = async (errorMessage: string) => {
     setErrorMessageText(errorMessage);
-    setParentFourDigitPin("");
+    setStaffFourDigitPin("");
     setShowErrorMessage(true);
     const timer = setTimeout(() => {
       setShowErrorMessage(false);
@@ -102,16 +100,16 @@ const SsnPin: React.FC = () => {
 
   }
 
-  const InsertPhoneNumber = async (value: string) => {
-    setParentFourDigitPin((prevValue) => prevValue + value);
+  const InsertPinNumber = async (value: string) => {
+    setStaffFourDigitPin((prevValue) => prevValue + value);
 
     if (dotsClicked < 4) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked + 1);
     }
   };
 
-  const DeletePhoneNumber = () => {
-    setParentFourDigitPin((prevValue) => prevValue.slice(0, -1));
+  const DeletePinNumber = () => {
+    setStaffFourDigitPin((prevValue) => prevValue.slice(0, -1));
 
     if (dotsClicked > 0) {
       setDotsClicked((prevDotsClicked) => prevDotsClicked - 1);
@@ -145,8 +143,8 @@ const SsnPin: React.FC = () => {
               <button
                 key={number}
                 className="grid-item"
-                //onClick={() => InsertPhoneNumber(number.toString())}
-                onTouchEnd={() => InsertPhoneNumber(number.toString())}
+                onClick={() => InsertPinNumber(number.toString())}
+                //onTouchEnd={() => InsertPhoneNumber(number.toString())}
               >
                 {number}
               </button>
@@ -160,7 +158,7 @@ const SsnPin: React.FC = () => {
                 border: "1px solid black",
               }}
               //onClick={() => DeletePhoneNumber()}
-              onTouchEnd={() => DeletePhoneNumber()}
+              onTouchEnd={() => DeletePinNumber()}
             >
               {"\u232B"}
             </button>

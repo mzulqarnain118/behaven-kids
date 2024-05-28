@@ -62,6 +62,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientProgram, setClientProgram] = useState<string>("");
     const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+    const [clientPreviousRoomID, setClientPreviousRoomID] = useState<number | null>(null);;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -374,8 +375,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Assigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
-                                        <button key={info.clientID} onClick={() => 
-                                            WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                        <button key={info.clientID} 
+                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program, )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
                                         </button>
                                     ))}
                                 </div>
@@ -418,7 +419,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             </div>
 
             {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram}/>
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID}/>
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null &&(
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>

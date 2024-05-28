@@ -252,11 +252,11 @@ const TimeOUtSelectAClient: React.FC = () => {
     //     setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
     // };
 
-    const GoToStaffSsnNumber = async (clientID: number, lastRoomID: number, clientFullName: string) => {
+    const GoToStaffSsnNumber = async (clientID: number, clientFullName: string) => {
         try {
             navigate("/ssnpin", { 
                 replace: true, 
-                state: { clientID, lastRoomID, clientFullName } 
+                state: { clientID, clientFullName, roomPositionName } 
             });
             // const token = localStorage.getItem("token");
 
@@ -326,7 +326,7 @@ const TimeOUtSelectAClient: React.FC = () => {
                                 <h2>Clients</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
-                                        <button onClick={() => GoToStaffSsnNumber(info.clientID, info.defaultRoomID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                        <button onClick={() => GoToStaffSsnNumber(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>

@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
-import TimeOutLogo from '../../src/assets/timer.png';
+import Location from '../../src/assets/location.png';
 import "./CSS/TimeOutObservation.css"
+import { useNavigate, useLocation } from "react-router-dom";
 
 const TimeOutObservation: React.FC = () => {
+  const location = useLocation();
+  const { clientID, clientFullName, roomPositionName, staffID, staffFullName } = location.state || {};
+  console.log("Client ID: ", clientID);
+  console.log("staffID: ", staffID);
+  console.log("Client Full Name: ", clientFullName);
+  console.log("roomPositionName: ", roomPositionName);
+  console.log("staffFullName: ", staffFullName);
 
     const [behaviors, setBehaviors] = useState([
         { id: 1, label: 'Swearing', counter: 0 },
@@ -76,8 +84,8 @@ const TimeOutObservation: React.FC = () => {
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
                     <h4>&#128198; {new Date().toLocaleDateString()}</h4>
                     <div style={{ display: "flex", flexDirection: "row" }}>
-                        <img src={TimeOutLogo} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>Time Out</h4>
+                        <img src={Location} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomPositionName}</h4>
                     </div>
 
                 </div>
@@ -86,7 +94,7 @@ const TimeOutObservation: React.FC = () => {
 
                     <div style={{ display: "flex", flexDirection: "row" }}>
                         <img src={Person} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>Staff Name</h4>
+                        <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{staffFullName}</h4>
                     </div>
                 </div>
             </div>
