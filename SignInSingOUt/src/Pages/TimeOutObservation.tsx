@@ -5,6 +5,8 @@ import Location from '../../src/assets/location.png';
 import "./CSS/TimeOutObservation.css"
 import { useNavigate, useLocation } from "react-router-dom";
 import Timer from '../../src/assets/timer.png';
+import Child from '../../src/assets/child.png'
+import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
 
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
@@ -39,6 +41,7 @@ const TimeOutObservation: React.FC = () => {
 
   const [timer, setTimer] = useState('00:00');
   const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const formatTime = (time: number) => {
     const hours = Math.floor(time / 3600);
@@ -145,6 +148,11 @@ const TimeOutObservation: React.FC = () => {
 
   const StartTime = () => {
     setDidUserClickStart(true);
+    
+  };
+
+  const StopTime = () => {
+    setShowModal(true);
   };
 
 
@@ -169,12 +177,15 @@ const TimeOutObservation: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ display: "flex", justifyContent: "center", }}>
         <div className="card" style={{ width: "750px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <div style={{ width: "500px", display: "flex", justifyContent: "space-between" }}>
-            <h4>{clientFullName}</h4>
+          <div style={{ width: "500px", display: "flex", justifyContent: "space-between", marginTop: "10px", marginBottom: "10px" }}>
+          <div style={{ display: "flex" }}>
+            <img src={Child} style={{ width: "25px", height: "25px" }} />
+            <h4 style={{ marginLeft: "1px" }}>{clientFullName}</h4>
+          </div>
             <div style={{ display: "flex" }}>
-              <img src={Timer} style={{ width: "30px", height: "30px" }} />
+              <img src={Timer} style={{ width: "25px", height: "25px" }} />
               <h4 style={{ marginLeft: "10px" }}>{timer} (min:sec)</h4>
             </div>
 
@@ -183,9 +194,9 @@ const TimeOutObservation: React.FC = () => {
 
           <div className="card" >
             <div className="card-body grid-container-For-behaviors" style={{ height: "100%" }}>
-              <div className="card" >
+              <div className="card" style={{border: "none"}}>
                 {behaviors.map((button) => (
-                  <div key={button.id} className="grid-container-For-buttons-and-counter">
+                  <div key={button.id} className="grid-container-For-behavior-buttons">
                     <button className="counter-buttons" onClick={() => behaviorButtonClick(button.id)}>
                       {button.label}
                     </button>
@@ -204,12 +215,9 @@ const TimeOutObservation: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className="card">
+              <div className="card" style={{border: "none"}}>
                 {aggression.map((button) => (
-                  <div key={button.id} className="grid-container-For-buttons-and-counter">
-                    <button className="counter-buttons" onClick={() => aggressionButtonClick(button.id)}>
-                      {button.label}
-                    </button>
+                  <div key={button.id} className="grid-container-For-aggression-buttons">
                     <p style={{
                       border: '2px solid black',
                       borderRadius: '50%',
@@ -222,16 +230,26 @@ const TimeOutObservation: React.FC = () => {
                     }}>
                       {button.counter}
                     </p>
+                    <button className="counter-buttons" onClick={() => aggressionButtonClick(button.id)}>
+                      {button.label}
+                    </button>
+                    
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <button onClick={StartTime}>Start</button>
+          <br/>
+          {!didUserClickStart ? (
+            <button onClick={StartTime} className="startButton">Start</button>
+              ) : (
+                <button onClick={StopTime} className="stopButton">Finish</button>
+              )}
+          <br/>
         </div>
         
       </div>
-      
+      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} />
     </>
   );
 };
