@@ -35,6 +35,13 @@
     text-align: center;
   }
 
+  .grid-container-For-timeout-clients {
+    display: grid;
+    grid-template-columns: minmax(125px, auto);
+    grid-gap: 10px;
+    text-align: center;
+  }
+
   .round-button-for-active-clients {
     box-shadow: -3px -3px 6px 1px rgba(57, 97, 45, 0.5);
     background: linear-gradient(to bottom, #a3d977 5%, #b7e184 100%);

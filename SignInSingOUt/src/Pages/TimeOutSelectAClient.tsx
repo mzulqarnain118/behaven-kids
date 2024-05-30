@@ -5,7 +5,7 @@ import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomFor
 import { jwtDecode } from "jwt-decode";
 import Person from '../../src/assets/person.png';
 import { useNavigate } from "react-router-dom";
-import TimeOutLogo from '../../src/assets/timer.png';
+import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 // import { BodyComponent } from "reactjs-human-body";

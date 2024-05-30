@@ -8,7 +8,7 @@ import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import RBT from '../../src/assets/rbt.png';
 import Therapy from '../../src/assets/therapy.png'
-import Timer from '../../src/assets/timer.png'
+import Timeout from '../../src/assets/timeout.png'
 import Gs from '../../src/assets/gs.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
 
@@ -20,7 +20,7 @@ interface SdpRoomInfo {
   clientLastName: string;
   whichRoomClientCurrentlyIn: number;
   whichWaitingRoomIsClientIn: number;
-  clientPreviousRoom: number;
+  clientPreviousRoomName: string;
 }
 
 interface NonSDPRoomsDTO {
@@ -129,61 +129,61 @@ const SdpPanel: React.FC = () => {
   }
 
  
-  useEffect(() => {
-    // Load timers from local storage if available
-    const storedTimers = localStorage.getItem("timers");
-    if (storedTimers) {
-      setTimers(JSON.parse(storedTimers));
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Load timers from local storage if available
+  //   const storedTimers = localStorage.getItem("timers");
+  //   if (storedTimers) {
+  //     setTimers(JSON.parse(storedTimers));
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    // Save timers to local storage whenever they change
-    localStorage.setItem("timers", JSON.stringify(timers));
-  }, [timers]);
+  // useEffect(() => {
+  //   // Save timers to local storage whenever they change
+  //   localStorage.setItem("timers", JSON.stringify(timers));
+  // }, [timers]);
 
-  const startTimer = (clientId: string) => {
-    const intervalId = setInterval(() => {
-      setTimers((prevTimers) => ({
-        ...prevTimers,
-        [clientId]: (prevTimers[clientId] || 0) + 1,
-      }));
-    }, 1000);
-    return intervalId;
-  };
+  // const startTimer = (clientId: string) => {
+  //   const intervalId = setInterval(() => {
+  //     setTimers((prevTimers) => ({
+  //       ...prevTimers,
+  //       [clientId]: (prevTimers[clientId] || 0) + 1,
+  //     }));
+  //   }, 1000);
+  //   return intervalId;
+  // };
 
-  const stopTimer = (intervalId: NodeJS.Timeout) => {
-    clearInterval(intervalId);
-  };
+  // const stopTimer = (intervalId: NodeJS.Timeout) => {
+  //   clearInterval(intervalId);
+  // };
 
-  useEffect(() => {
-    // Start or stop timers based on client data
-    const intervalIds: { [key: string]: NodeJS.Timeout } = {};
-    allClientsInfo.forEach((client) => {
-      const clientId = `${client.clientFirstName}-${client.clientLastName}-${client.clientPreviousRoom}`;
-      if (client.whichRoomClientCurrentlyIn === 30) {
-        intervalIds[clientId] = startTimer(clientId);
-      } else {
-        const intervalId = intervalIds[clientId];
-        if (intervalId) {
-          stopTimer(intervalId);
-          delete intervalIds[clientId];
-        }
-      }
-    });
+  // useEffect(() => {
+  //   // Start or stop timers based on client data
+  //   const intervalIds: { [key: string]: NodeJS.Timeout } = {};
+  //   allClientsInfo.forEach((client) => {
+  //     const clientId = `${client.clientFirstName}-${client.clientLastName}-${client.clientPreviousRoomName}`;
+  //     if (client.whichRoomClientCurrentlyIn === 30) {
+  //       intervalIds[clientId] = startTimer(clientId);
+  //     } else {
+  //       const intervalId = intervalIds[clientId];
+  //       if (intervalId) {
+  //         stopTimer(intervalId);
+  //         delete intervalIds[clientId];
+  //       }
+  //     }
+  //   });
 
-    // Cleanup intervals on unmount
-    return () => {
-      Object.values(intervalIds).forEach(stopTimer);
-    };
-  }, [allClientsInfo]);
+  //   // Cleanup intervals on unmount
+  //   return () => {
+  //     Object.values(intervalIds).forEach(stopTimer);
+  //   };
+  // }, [allClientsInfo]);
 
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (time: number) => {
+  //   const hours = Math.floor(time / 3600);
+  //   const minutes = Math.floor((time % 3600) / 60);
+  //   const seconds = time % 60;
+  //   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  // };
 
 
 
@@ -259,12 +259,11 @@ const SdpPanel: React.FC = () => {
           <div className="card-body grid-container-for-timeout-rooms">
             <div>
               <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#ce4343" }}>
-                <img src={Timer} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                <img src={Timeout} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
                 <h5 className="card-title">Time Out Upstairs </h5>
               </div>
 
-              <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-              {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client) => {
+              {/* {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client) => {
                 const clientId = `${client.clientFirstName}-${client.clientLastName}-${client.clientPreviousRoom}`;
                 const clientTimer = timers[clientId] || 0;
                 return (
@@ -272,20 +271,38 @@ const SdpPanel: React.FC = () => {
                     {client.clientFirstName} {client.clientLastName.charAt(0)}. {client.clientPreviousRoom} {formatTime(clientTimer)}
                   </button>
                 );
-              })}
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn !== null && clientsInfo.whichWaitingRoomIsClientIn === 30).map((clientsInfo, index) => (
-                    <button key={`unassigned-${index}`} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}. </button>
-                  ))}
+              })} */}
+
+              <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
+                {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 29).map((client, index) => (
+                  <button key={`assigned-${index}`} className="round-button-for-active-clients">
+                    {client.clientFirstName} {client.clientLastName.charAt(0)}. <img src={images[client.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {client.clientPreviousRoomName}
+                  </button>
+                ))}
+                {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 29).map((clientInfo, index) => (
+                  <button key={`unassigned-${index}`} className="round-button-for-unassigned-clients">
+                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
+                  </button>
+                ))}
               </div>
             </div>
             <div>
               <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#ce4343" }}>
-                <img src={Timer} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                <img src={Timeout} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
                 <h5 className="card-title">Time Out Downstairs </h5>
               </div>
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-
+              {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client, index) => (
+                  <button key={`assigned-${index}`} className="round-button-for-active-clients">
+                    {client.clientFirstName} {client.clientLastName.charAt(0)}. <img src={images[client.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {client.clientPreviousRoomName}
+                  </button>
+                ))}
+                {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 30).map((clientInfo, index) => (
+                  <button key={`unassigned-${index}`} className="round-button-for-unassigned-clients">
+                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
+                  </button>
+                ))}
               </div>
             </div>
 
