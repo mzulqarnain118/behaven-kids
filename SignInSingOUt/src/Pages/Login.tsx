@@ -14,6 +14,7 @@ interface DecodedToken {
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [didUserClickedOnTheLoginButton, setDidUserClickedOnTheLoginButton] = useState<boolean>(false);
   const navigate = useNavigate();
 
 
@@ -38,7 +39,7 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setDidUserClickedOnTheLoginButton(true);
     try {
       const response = await fetch(
         `${backEndCodeURLLocation}UserAuthentication/SignIn?userName=${username}&password=${password}`,
@@ -68,15 +69,14 @@ const LoginPage: React.FC = () => {
       else if (userRole.includes("tor"))
         navigate("/timeoutselectaclient") 
 
-      // Refresh the page
       window.location.reload();
     } catch (error: any) {
       if (error.message === "Failed to fetch") {
         alert("Connection lost. Please check your internet connection.");
-        // Handle the lost connection error appropriately, such as showing a message to the user.
+        window.location.reload();
       } else {
         alert("Login failed:" + error.message);
-        // Handle other types of errors
+        window.location.reload();
       }
     }
   };
@@ -163,6 +163,7 @@ const LoginPage: React.FC = () => {
                 type="submit"
                 className="btn btn-primary btn-lg"
                 style={{ marginTop: "30px", width: "100%" }}
+                disabled={didUserClickedOnTheLoginButton}
               >
                 Login
               </button>

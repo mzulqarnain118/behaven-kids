@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Timer from '../../src/assets/timer.png';
 import Child from '../../src/assets/child.png'
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
+import { backEndCodeURLLocation } from "../config";
 
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
@@ -43,16 +44,11 @@ const TimeOutObservation: React.FC = () => {
   const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   useEffect(() => {
     let interval: any; // Declare interval variable outside of useEffect scope
     let currentTimer = timer;
+
+    setDidUserClickStart(true);
 
     if (didUserClickStart) {
       const token = localStorage.getItem("token");
@@ -114,7 +110,61 @@ const TimeOutObservation: React.FC = () => {
 
     // Clean up the interval on component unmount
     return () => clearInterval(interval);
-  }, [didUserClickStart, clientID, timer]);
+  });
+
+  useEffect(() => {
+    AddNewClientLevelTwoToFiveTimeout();
+  }, [showModal]);
+
+  const AddNewClientLevelTwoToFiveTimeout = async () => {
+    const token = localStorage.getItem("token");
+
+    const behaviorsDTO = {
+      Swearing: (behaviors.find(b => b.label === 'Swearing') || { counter: 0 }).counter,
+      DisrobingClothes: (behaviors.find(b => b.label === 'Disrobing Clothes') || { counter: 0 }).counter,
+      Vomiting: (behaviors.find(b => b.label === 'Vomiting') || { counter: 0 }).counter,
+      Spitting: (behaviors.find(b => b.label === 'Spitting') || { counter: 0 }).counter,
+      Crying: (behaviors.find(b => b.label === 'Crying') || { counter: 0 }).counter,
+      Screaming: (behaviors.find(b => b.label === 'Screaming') || { counter: 0 }).counter,
+      Urinating: (behaviors.find(b => b.label === 'Urinating') || { counter: 0 }).counter,
+      Defecating: (behaviors.find(b => b.label === 'Defecating') || { counter: 0 }).counter,
+      Climbing: (behaviors.find(b => b.label === 'Climbing') || { counter: 0 }).counter,
+    };
+
+    const aggressionDTO = {
+      Hitting: (aggression.find(a => a.label === 'Hitting') || { counter: 0 }).counter,
+      Kicking: (aggression.find(a => a.label === 'Kicking') || { counter: 0 }).counter,
+      Biting: (aggression.find(a => a.label === 'Biting') || { counter: 0 }).counter,
+      Pinching: (aggression.find(a => a.label === 'Pinching') || { counter: 0 }).counter,
+      Slapping: (aggression.find(a => a.label === 'Slapping') || { counter: 0 }).counter,
+      PropertyDestruction: (aggression.find(a => a.label === 'Property Destruction') || { counter: 0 }).counter,
+      SelfHarm: (aggression.find(a => a.label === 'Self-harm') || { counter: 0 }).counter,
+    };
+
+    const combinedDTO = {
+      behaviors: behaviorsDTO,
+      aggression: aggressionDTO
+    };
+    
+    try {
+      const response = await fetch(`${backEndCodeURLLocation}Cbs/AddClientLevelTwoToFive`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([combinedDTO]),
+        }
+      );
+      if (!response.ok) {
+        console.error(response.statusText);
+      }
+      // navigate("/ConnectParentAndChildTogeter");
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const behaviorButtonClick = async (id: number) => {
     setBehaviors(prevButtons =>
@@ -144,11 +194,6 @@ const TimeOutObservation: React.FC = () => {
     } catch (error) {
       console.error('Error updating the database', error);
     }
-  };
-
-  const StartTime = () => {
-    setDidUserClickStart(true);
-    
   };
 
   const StopTime = () => {
@@ -240,11 +285,7 @@ const TimeOutObservation: React.FC = () => {
             </div>
           </div>
           <br/>
-          {!didUserClickStart ? (
-            <button onClick={StartTime} className="startButton">Start</button>
-              ) : (
-                <button onClick={StopTime} className="stopButton">Finish</button>
-              )}
+            <button onClick={StopTime} className="stopButton">Finish</button>
           <br/>
         </div>
         

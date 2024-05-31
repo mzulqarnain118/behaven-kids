@@ -7,6 +7,9 @@ import { frontEndURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import "./Navbar.css";
 import { jwtDecode } from "jwt-decode";
+import LogoutLogo from "../assets/logout.png";
+import FullScreenLogo from "../assets/expand.png";
+import Refresh from "../assets/refresh.png";
 
 interface DecodedToken {
   role: string;
@@ -233,7 +236,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={GoToPhoneNumberPage}
                     >
-                      <span style={{ fontSize: "20px" }}>&#10227; Refresh</span>
+                      <span style={{ fontSize: "20px" }}><img src={Refresh} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Refresh </span> 
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
@@ -243,15 +246,12 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={handleGoFullScreen}
                     >
-                      <span style={{ fontSize: "20px" }}>
-                        &#10530; Full Screen
-                      </span>
+                      <span style={{ fontSize: "20px" }}><img src={FullScreenLogo} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Full Screen </span> 
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
                     <a className="nav-link" href="#" onClick={handleSignOut}>
-                      <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign
-                      Out
+                      <span style={{ fontSize: "20px" }}><img src={LogoutLogo} style={{ width: "25px", height: "25px", marginRight: "5px", marginBottom: "3px" }}></img> Sign Out</span> 
                     </a>
                   </li>
                 </ul>
@@ -320,7 +320,7 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={GoToPhoneNumberPage}
                     >
-                      <span style={{ fontSize: "20px" }}>&#10227; Refresh</span>
+                      <span style={{ fontSize: "20px" }}><img src={Refresh} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Refresh </span> 
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
@@ -330,15 +330,12 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={handleGoFullScreen}
                     >
-                      <span style={{ fontSize: "20px" }}>
-                        &#10530; Full Screen
-                      </span>
+                    <span style={{ fontSize: "20px" }}><img src={FullScreenLogo} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Full Screen </span> 
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
-                    <a className="nav-link" href="#" onClick={handleSignOut}>
-                      <span style={{ fontSize: "20px" }}>&#x23FB;</span> Sign
-                      Out
+                    <a className="nav-link" href="#" aria-current="page" onClick={handleSignOut}>
+                    <span style={{ fontSize: "20px" }}><img src={LogoutLogo} style={{ width: "25px", height: "25px", marginRight: "5px", marginBottom: "3px" }}></img> Sign Out</span> 
                     </a>
                   </li>
                 </ul>
