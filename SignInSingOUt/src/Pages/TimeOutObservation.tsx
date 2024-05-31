@@ -249,7 +249,7 @@ const TimeOutObservation: React.FC = () => {
         </div>
         
       </div>
-      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} />
+      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart}/>
     </>
   );
 };
