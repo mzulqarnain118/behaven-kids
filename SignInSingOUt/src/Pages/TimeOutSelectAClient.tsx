@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import { backEndCodeURLLocation } from "../config";
-import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
 import { jwtDecode } from "jwt-decode";
-import Person from '../../src/assets/person.png';
 import { useNavigate } from "react-router-dom";
 import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
-import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
 // import { BodyComponent } from "reactjs-human-body";
 // import HumanBodyDiagram from './HumanBodyDiagram.tsx';
 
@@ -29,18 +26,6 @@ interface ClientInfoResponse {
     clientsWhoAreCurrentlyInARoom: ChildInfo[];
 }
 
-interface DecodedToken {
-    StaffID: string;
-    Location: string;
-}
-
-interface RoomInfoDTO {
-    roomID: number;
-    roomName: string;
-    staffFirstName: string;
-    staffLastName: string;
-}
-
 interface TimeOutRoomInfo {
     roomID: number;
     timeOutRoomName: string;
@@ -50,10 +35,9 @@ interface TimeOutRoomInfo {
 const TimeOUtSelectAClient: React.FC = () => {
 
     const [, setChildInfo] = useState<ChildInfo[]>([]);
-    const [selectedClient, setSelectedClient] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [roomID, setRoomID] = useState<number | null>(null);;
-    const [locationID, setLocationID] = useState<string>("");
+    const [locationID, ] = useState<string>("");
     const [roomName, setRoomName] = useState<string>("");
     const [roomPositionName, setRoomPositionName] = useState<string>("");
     const [, setCurrentTime] = useState(new Date());

@@ -3,7 +3,7 @@ import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
 import Location from '../../src/assets/location.png';
 import "./CSS/TimeOutObservation.css"
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Timer from '../../src/assets/timer.png';
 import Child from '../../src/assets/child.png'
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
@@ -11,12 +11,7 @@ import { backEndCodeURLLocation } from "../config";
 
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
-  const { clientID, clientFullName, roomPositionName, staffID, staffFullName } = location.state || {};
-  // console.log("Client ID: ", clientID);
-  // console.log("staffID: ", staffID);
-  // console.log("Client Full Name: ", clientFullName);
-  // console.log("roomPositionName: ", roomPositionName);
-  // console.log("staffFullName: ", staffFullName);
+  const { clientFullName, roomPositionName, staffFullName } = location.state || {};
 
   const [behaviors, setBehaviors] = useState([
     { id: 1, label: 'Swearing', counter: 0 },
@@ -113,7 +108,11 @@ const TimeOutObservation: React.FC = () => {
   });
 
   useEffect(() => {
-    AddNewClientLevelTwoToFiveTimeout();
+    if (showModal === true)
+    {
+      AddNewClientLevelTwoToFiveTimeout();
+    }
+    
   }, [showModal]);
 
   const AddNewClientLevelTwoToFiveTimeout = async () => {
@@ -141,7 +140,7 @@ const TimeOutObservation: React.FC = () => {
       SelfHarm: (aggression.find(a => a.label === 'Self-harm') || { counter: 0 }).counter,
     };
 
-    const combinedDTO = {
+    const behaviorAndAggressionDTO = {
       behaviors: behaviorsDTO,
       aggression: aggressionDTO
     };
@@ -154,7 +153,7 @@ const TimeOutObservation: React.FC = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify([combinedDTO]),
+          body: JSON.stringify(behaviorAndAggressionDTO),
         }
       );
       if (!response.ok) {

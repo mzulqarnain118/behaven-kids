@@ -62,7 +62,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientProgram, setClientProgram] = useState<string>("");
     const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
-    const [clientPreviousRoomID, setClientPreviousRoomID] = useState<number | null>(null);;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -84,8 +83,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         if (roomID === null) {
             return;
         }
-        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        //const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 

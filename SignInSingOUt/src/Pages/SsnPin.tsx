@@ -18,7 +18,6 @@ const SsnPin: React.FC = () => {
   const navigate = useNavigate();
 
   const [staffFourDigitPin, setStaffFourDigitPin] = useState<string>("");
-  const [, setParentName] = useState<string>("");
   const [, setShow] = useState(false);
   const [dotsClicked, setDotsClicked] = useState<number>(0);
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
