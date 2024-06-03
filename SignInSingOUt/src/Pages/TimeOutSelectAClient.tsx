@@ -18,6 +18,7 @@ interface ChildInfo {
     signOutTime: string;
     defaultRoomID: number;
     program: string;
+    clientPreviousRoom: number;
 }
 
 interface ClientInfoResponse {
@@ -34,7 +35,7 @@ interface TimeOutRoomInfo {
 
 const TimeOUtSelectAClient: React.FC = () => {
 
-    const [, setChildInfo] = useState<ChildInfo[]>([]);
+    const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, ] = useState<string>("");
@@ -145,10 +146,6 @@ const TimeOUtSelectAClient: React.FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //     getCBSInformation();
-    // }, []);
-
     useEffect(() => {
         if (roomID !== null) {
             getClientsThatAreWaitingInTheWaitingRoom();
@@ -184,9 +181,7 @@ const TimeOUtSelectAClient: React.FC = () => {
             const data: ClientInfoResponse = await response.json();
 
             setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
-
             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
-
         } catch (error) {
             window.location.reload();
         }
@@ -236,32 +231,13 @@ const TimeOUtSelectAClient: React.FC = () => {
     //     setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
     // };
 
-    const GoToStaffSsnNumber = async (clientID: number, clientFullName: string) => {
+    const GoToStaffSsnNumber = async (clientID: number, clientFullName: string, clientPreviousRoom: string) => {
+        console.log("clientPreviousRoom = " + clientPreviousRoom);
         try {
             navigate("/ssnpin", { 
                 replace: true, 
-                state: { clientID, clientFullName, roomPositionName } 
+                state: { clientID, clientFullName, roomPositionName, roomID, clientPreviousRoom } 
             });
-            // const token = localStorage.getItem("token");
-
-            // if (!token) {
-            //     alert("Please Login");
-            //     navigate("/", { replace: true });
-            //     return;
-            // }
-
-            // const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
-            //     method: "POST",
-            //     headers: {
-            //         Authorization: `Bearer ${token}`,
-            //         "Content-Type": "application/json",
-            //     },
-            // });
-
-            // if (!response.ok) {
-            //     alert(`Failed to fetch data. Response status: ${response.status}`)
-            //     return;
-            // }
 
         } catch (error) {
             alert("Error fetching data:" + error);
@@ -309,8 +285,8 @@ const TimeOUtSelectAClient: React.FC = () => {
                             <div className="card-body">
                                 <h2>Clients</h2>
                                 <div className="grid-container-For-CBS-page">
-                                    {clientsWhoAreSignedIn.map((info,) => (
-                                        <button onClick={() => GoToStaffSsnNumber(info.clientID, info.clientFirstName + " " + info.clientLastName)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
+                                    {clientsWhoAreSignedIn.map((info,index) => (
+                                        <button key={index} onClick={() => GoToStaffSsnNumber(info.clientID, info.clientFirstName + " " + info.clientLastName.charAt(0), String(info.clientPreviousRoom))} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName}</button>
                                     ))}
                                 </div>
                             </div>

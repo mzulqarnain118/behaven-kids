@@ -103,8 +103,8 @@ const SdpPanel: React.FC = () => {
     if (allClientsInfo === null) {
       return;
     }
-    //const eventSource = new EventSource(`http://localhost:5025/PcApc/RealTimeUpdates?locationID=OHCU`);
-    const eventSource = new EventSource(`http://192.168.0.9:7012/PcApc/RealTimeUpdates?locationID=OHCU`);
+    const eventSource = new EventSource(`http://localhost:5025/PcApc/RealTimeUpdates?locationID=OHCU`);
+    //const eventSource = new EventSource(`http://192.168.0.9:7012/PcApc/RealTimeUpdates?locationID=OHCU`);
 
     eventSource.onmessage = (event) => {
 

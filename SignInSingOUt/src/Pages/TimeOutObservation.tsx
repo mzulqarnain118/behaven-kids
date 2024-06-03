@@ -11,7 +11,7 @@ import { backEndCodeURLLocation } from "../config";
 
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
-  const { clientFullName, roomPositionName, staffFullName } = location.state || {};
+  const { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom } = location.state || {};
 
   const [behaviors, setBehaviors] = useState([
     { id: 1, label: 'Swearing', counter: 0 },
@@ -38,6 +38,7 @@ const TimeOutObservation: React.FC = () => {
   const [timer, setTimer] = useState('00:00');
   const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
 
   useEffect(() => {
     let interval: any; // Declare interval variable outside of useEffect scope
@@ -76,7 +77,7 @@ const TimeOutObservation: React.FC = () => {
 
         // Update currentTimer with the updated time
         setTimer(updatedTimer);
-        console.log(timer);
+        // console.log(timer);
       };
 
 
@@ -108,12 +109,11 @@ const TimeOutObservation: React.FC = () => {
   });
 
   useEffect(() => {
-    if (showModal === true)
-    {
+    if (didUserClickYes === true) {
       AddNewClientLevelTwoToFiveTimeout();
     }
-    
-  }, [showModal]);
+
+  }, [didUserClickYes]);
 
   const AddNewClientLevelTwoToFiveTimeout = async () => {
     const token = localStorage.getItem("token");
@@ -141,10 +141,16 @@ const TimeOutObservation: React.FC = () => {
     };
 
     const behaviorAndAggressionDTO = {
-      behaviors: behaviorsDTO,
-      aggression: aggressionDTO
+      Behaviors: behaviorsDTO,
+      Aggression: aggressionDTO,
+      ClientID: String(clientID),
+      StaffID: String(staffID),
+      RoomID: String(roomID),
+      TimeoutRoomPosition: String(roomPositionName),
+      Time: String(timer),
+      ClientPreviousRoom: String(clientPreviousRoom)
     };
-    
+
     try {
       const response = await fetch(`${backEndCodeURLLocation}Cbs/AddClientLevelTwoToFive`,
         {
@@ -166,42 +172,39 @@ const TimeOutObservation: React.FC = () => {
   }
 
   const behaviorButtonClick = async (id: number) => {
-    setBehaviors(prevButtons =>
-      prevButtons.map(behaviors =>
-        behaviors.id === id ? { ...behaviors, counter: behaviors.counter + 1 } : behaviors
-      )
-    );
-    console.log("behaviors", behaviors);
 
     try {
-      console.log(`Button ${id} clicked`);
+      setBehaviors(prevButtons =>
+        prevButtons.map(behaviors =>
+          behaviors.id === id ? { ...behaviors, counter: behaviors.counter + 1 } : behaviors
+        )
+      );
     } catch (error) {
-      console.error('Error updating the database', error);
+      console.error('Error Adding Behavior Counter', error);
     }
   };
 
   const aggressionButtonClick = async (id: number) => {
-    setAggression(prevButtons =>
-      prevButtons.map(aggression =>
-        aggression.id === id ? { ...aggression, counter: aggression.counter + 1 } : aggression
-      )
-    );
-    console.log("behaviors", behaviors);
 
     try {
-      console.log(`Button ${id} clicked`);
+      setAggression(prevButtons =>
+        prevButtons.map(aggression =>
+          aggression.id === id ? { ...aggression, counter: aggression.counter + 1 } : aggression
+        )
+      );
     } catch (error) {
-      console.error('Error updating the database', error);
+      console.error('Error Adding Aggression Counter', error);
     }
   };
 
-  const StopTime = () => {
+  const CheckToSeeIfTimeoutIsFinished = () => {
     setShowModal(true);
   };
 
 
   return (
     <>
+
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
           <h4>&#128198; {new Date().toLocaleDateString()}</h4>
@@ -220,25 +223,24 @@ const TimeOutObservation: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <div style={{ display: "flex", justifyContent: "center", }}>
-        <div className="card" style={{ width: "750px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <div style={{ width: "500px", display: "flex", justifyContent: "space-between", marginTop: "10px", marginBottom: "10px" }}>
-          <div style={{ display: "flex" }}>
-            <img src={Child} style={{ width: "25px", height: "25px" }} />
-            <h4 style={{ marginLeft: "1px" }}>{clientFullName}</h4>
-          </div>
+      <br />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="card" style={{ width: "750px", display: "flex", justifyContent: "center", alignItems: "center", border: "solid gray" }}>
+          <div style={{ width: "500px", display: "flex", justifyContent: "space-between", marginTop: "15px", marginBottom: "10px" }}>
+            <div style={{ display: "flex" }}>
+              <img src={Child} style={{ width: "25px", height: "25px" }} />
+              <h4 style={{ marginLeft: "1px" }}>{clientFullName}</h4>
+            </div>
             <div style={{ display: "flex" }}>
               <img src={Timer} style={{ width: "25px", height: "25px" }} />
               <h4 style={{ marginLeft: "10px" }}>{timer} (min:sec)</h4>
             </div>
-
           </div>
 
 
           <div className="card" >
             <div className="card-body grid-container-For-behaviors" style={{ height: "100%" }}>
-              <div className="card" style={{border: "none"}}>
+              <div className="card" style={{ border: "none" }}>
                 {behaviors.map((button) => (
                   <div key={button.id} className="grid-container-For-behavior-buttons">
                     <button className="counter-buttons" onClick={() => behaviorButtonClick(button.id)}>
@@ -247,8 +249,8 @@ const TimeOutObservation: React.FC = () => {
                     <p style={{
                       border: '2px solid black',
                       borderRadius: '50%',
-                      width: '40px',
-                      height: '40px',
+                      width: '50px',
+                      height: '50px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -259,14 +261,14 @@ const TimeOutObservation: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className="card" style={{border: "none"}}>
+              <div className="card" style={{ border: "none" }}>
                 {aggression.map((button) => (
                   <div key={button.id} className="grid-container-For-aggression-buttons">
                     <p style={{
                       border: '2px solid black',
                       borderRadius: '50%',
-                      width: '40px',
-                      height: '40px',
+                      width: '50px',
+                      height: '50px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -277,19 +279,19 @@ const TimeOutObservation: React.FC = () => {
                     <button className="counter-buttons" onClick={() => aggressionButtonClick(button.id)}>
                       {button.label}
                     </button>
-                    
+
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <br/>
-            <button onClick={StopTime} className="stopButton">Finish</button>
-          <br/>
+          <br />
+          <button onClick={CheckToSeeIfTimeoutIsFinished} className="stopButton">Finish</button>
+          <br />
         </div>
-        
+
       </div>
-      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart}/>
+      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
     </>
   );
 };

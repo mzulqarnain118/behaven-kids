@@ -6,9 +6,10 @@ interface PopupTimeOutRoomSession {
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<any>>;
     setDidUserClickStart: React.Dispatch<React.SetStateAction<any>>;
+    setDidUserClickYes: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal, setShowModal, setDidUserClickStart}) => {
+const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal, setShowModal, setDidUserClickStart, setDidUserClickYes}) => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,6 +23,7 @@ const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal,
         setDidUserClickStart(false);
         setIsSubmitting(true);
         setShowModal(false);
+        setDidUserClickYes(true);
     };
 
     return (

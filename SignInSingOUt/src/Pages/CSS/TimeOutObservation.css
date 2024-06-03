@@ -10,33 +10,18 @@
     display: grid;
     grid-template-columns: minmax(150px, auto) minmax(50px, auto);
     grid-gap: 20px;
-    padding: 3px;
+    padding: 6px;
     justify-content: center;
+    margin-bottom: 8px;
   }
 
   .grid-container-For-aggression-buttons {
     display: grid;
     grid-template-columns: minmax(50px, auto) minmax(150px, auto);
     grid-gap: 20px;
-    padding: 3px;
+    padding: 6px;
     justify-content: center;
-  }
-
-  .startButton {
-    box-shadow: -5px -1px 8px 0px #3e7327;
-    background:linear-gradient(to bottom, #77b55a 5%, #72b352 100%);
-    background-color:#77b55a;
-    border-radius:5px;
-    border:1px solid #4b8f29;
-    display:inline-block;
-    cursor:pointer;
-    color:#ffffff;
-    font-family:Arial;
-    font-size:20px;
-    font-weight:bold;
-    padding:12px 44px;
-    text-decoration:none;
-    text-shadow:0px 1px 0px #5b8a3c;
+    margin-bottom: 8px;
   }
 
   .stopButton {
@@ -65,10 +50,10 @@
     cursor:pointer;
     color:#ffffff;
     font-family:Arial;
-    font-size:16px;
+    font-size:18px;
     font-weight:bold;
     text-decoration:none;
     text-shadow:0px 1px 0px #528ecc;
-    width: 160px;
-    height: 50px;
+    width: 190px;
+    height: 58px;
   }

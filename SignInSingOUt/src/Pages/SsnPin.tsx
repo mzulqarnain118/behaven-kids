@@ -10,10 +10,7 @@ import ParentPinFialedAttemptsPopup from "../Components/PopupParentPinFailedAtte
 const SsnPin: React.FC = () => {
   
   const location = useLocation();
-  const { clientID, clientFullName, roomPositionName } = location.state || {};
-  console.log("Client ID: ", clientID);
-  console.log("Client Full Name: ", clientFullName);
-  console.log("roomPositionName: ", roomPositionName);
+  const { roomID, clientID, clientFullName, roomPositionName, clientPreviousRoom } = location.state || {};
 
   const navigate = useNavigate();
 
@@ -72,7 +69,7 @@ const SsnPin: React.FC = () => {
           setShowErrorMessage(false);
           navigate("/timeoutobservation", {
             replace: true,
-            state: { clientID, clientFullName, roomPositionName, staffID, staffFullName},
+            state: { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom},
           });
           setShow(true);
           //   navigate("/", { replace: true });
