@@ -3,7 +3,7 @@ import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
 import Location from '../../src/assets/location.png';
 import "./CSS/TimeOutObservation.css"
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Timer from '../../src/assets/timer.png';
 import Child from '../../src/assets/child.png'
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
@@ -12,6 +12,8 @@ import { backEndCodeURLLocation } from "../config";
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
   const { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom } = location.state || {};
+
+  const navigate = useNavigate();
 
   const [behaviors, setBehaviors] = useState([
     { id: 1, label: 'Swearing', counter: 0 },
@@ -165,7 +167,9 @@ const TimeOutObservation: React.FC = () => {
       if (!response.ok) {
         console.error(response.statusText);
       }
-      // navigate("/ConnectParentAndChildTogeter");
+      navigate("/timeoutselectaclient", {
+        replace: true,
+      });
     } catch (error) {
       console.error(error);
     }

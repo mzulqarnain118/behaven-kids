@@ -35,7 +35,7 @@ interface TimeOutRoomInfo {
 
 const TimeOUtSelectAClient: React.FC = () => {
 
-    const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+    const [, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [roomID, setRoomID] = useState<number | null>(null);;
     const [locationID, ] = useState<string>("");
@@ -59,37 +59,36 @@ const TimeOUtSelectAClient: React.FC = () => {
     function tick() {
         setCurrentTime(new Date());
     }
-    // useEffect(() => {
-    //     Testing();
-    // }, [roomID]);
 
-    // const Testing = async () => {
-    //     if (roomID === null) {
-    //         return;
-    //     }
-    //     const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-    //     //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+    useEffect(() => {
+        Testing();
+    }, [roomID]);
 
-    //     eventSource.onmessage = (event) => {
+    const Testing = async () => {
+        if (roomID === null) {
+            return;
+        }
+        //const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
-    //         const data: ClientInfoResponse = JSON.parse(event.data);
+        eventSource.onmessage = (event) => {
 
-    //         setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
+            const data: ClientInfoResponse = JSON.parse(event.data);
 
-    //         setChildInfo(data.allClientsWhoAreDefaultedForARoom);
+            setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
 
-    //         setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
+            setChildInfo(data.allClientsWhoAreDefaultedForARoom);
 
-    //     };
+        };
 
 
-    //     eventSource.onerror = () => {
-    //         window.location.reload();
-    //     };
-    //     return () => {
-    //         eventSource.close();
-    //     };
-    // }
+        eventSource.onerror = () => {
+            window.location.reload();
+        };
+        return () => {
+            eventSource.close();
+        };
+    }
 
     // const handleBodyPartClick2 = (bodyPart: string) => {
     //     console.log(`Clicked on: ${bodyPart}`);

@@ -318,7 +318,7 @@ const Navbar: React.FC = () => {
                       className="nav-link active"
                       aria-current="page"
                       href="#"
-                      onClick={GoToPhoneNumberPage}
+                      onClick={GoToTimeOutSelectAClient}
                     >
                       <span style={{ fontSize: "20px" }}><img src={Refresh} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Refresh </span> 
                     </a>

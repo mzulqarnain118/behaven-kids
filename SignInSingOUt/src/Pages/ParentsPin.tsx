@@ -43,7 +43,7 @@ const ParentSignIn: React.FC = () => {
           if (!token) {
             navigate("/", {
               replace: true,
-            });
+            }); 
           }
           const response = await fetch(`${backEndCodeURLLocation}SignIn/VerifyIfParentPinAndPhoneNumberMatch?parentPinNumber=${parentFourDigitPin}&parentPhoneNumber=${parentLastFourDigitPhoneNumber}`, {
             method: "GET",
