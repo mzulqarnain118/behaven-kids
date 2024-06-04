@@ -69,7 +69,7 @@ const TimeOUtSelectAClient: React.FC = () => {
             return;
         }
         //const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
-        const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -110,9 +110,9 @@ const TimeOUtSelectAClient: React.FC = () => {
             return;
         }
         GetRoomInfo(userRole);
-        if (userRole.includes("utoro"))
+        if (userRole.includes("utor"))
             setRoomID(29);
-        else if (userRole.includes("dtoro"))
+        else if (userRole.includes("dtor"))
             setRoomID(30);
 
     }, []);

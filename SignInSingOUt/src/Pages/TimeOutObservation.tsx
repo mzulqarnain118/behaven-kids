@@ -44,7 +44,7 @@ const TimeOutObservation: React.FC = () => {
 
   useEffect(() => {
     let interval: any; // Declare interval variable outside of useEffect scope
-    let currentTimer = timer;
+    
 
     setDidUserClickStart(true);
 
@@ -56,31 +56,7 @@ const TimeOutObservation: React.FC = () => {
         return;
       }
 
-      const updateTimer = () => {
-        // Split the current timer value into hours, minutes, and seconds
-        const [minutes, seconds] = currentTimer.split(':').map(Number);
-
-        // Increment the seconds
-        let updatedSeconds = seconds + 1;
-        let updatedMinutes = minutes;
-
-        // Adjust the time if seconds exceeds 59
-        if (updatedSeconds >= 60) {
-          updatedSeconds = 0;
-          updatedMinutes++;
-        }
-        // Adjust the time if minutes exceeds 59
-        if (updatedMinutes >= 60) {
-          updatedMinutes = 0;
-        }
-
-        // Format the updated time as HH:MM:SS
-        const updatedTimer = `${String(updatedMinutes).padStart(2, '0')}:${String(updatedSeconds).padStart(2, '0')}`;
-
-        // Update currentTimer with the updated time
-        setTimer(updatedTimer);
-        // console.log(timer);
-      };
+      
 
 
       // const fetchTimer = () => {
@@ -109,6 +85,32 @@ const TimeOutObservation: React.FC = () => {
     // Clean up the interval on component unmount
     return () => clearInterval(interval);
   });
+
+  const updateTimer = () => {
+    let currentTimer = timer;
+    const [minutes, seconds] = currentTimer.split(':').map(Number);
+
+    // Increment the seconds
+    let updatedSeconds = seconds + 1;
+    let updatedMinutes = minutes;
+
+    // Adjust the time if seconds exceeds 59
+    if (updatedSeconds >= 60) {
+      updatedSeconds = 0;
+      updatedMinutes++;
+    }
+    // Adjust the time if minutes exceeds 59
+    if (updatedMinutes >= 60) {
+      updatedMinutes = 0;
+    }
+
+    // Format the updated time as HH:MM:SS
+    const updatedTimer = `${String(updatedMinutes).padStart(2, '0')}:${String(updatedSeconds).padStart(2, '0')}`;
+
+    // Update currentTimer with the updated time
+    setTimer(updatedTimer);
+    // console.log(timer);
+  };
 
   useEffect(() => {
     if (didUserClickYes === true) {
@@ -247,7 +249,7 @@ const TimeOutObservation: React.FC = () => {
               <div className="card" style={{ border: "none" }}>
                 {behaviors.map((button) => (
                   <div key={button.id} className="grid-container-For-behavior-buttons">
-                    <button className="counter-buttons" onClick={() => behaviorButtonClick(button.id)}>
+                    <button className="counter-buttons" onTouchEnd={() => behaviorButtonClick(button.id)}>
                       {button.label}
                     </button>
                     <p style={{
@@ -280,7 +282,7 @@ const TimeOutObservation: React.FC = () => {
                     }}>
                       {button.counter}
                     </p>
-                    <button className="counter-buttons" onClick={() => aggressionButtonClick(button.id)}>
+                    <button className="counter-buttons" onTouchEnd={() => aggressionButtonClick(button.id)}>
                       {button.label}
                     </button>
 

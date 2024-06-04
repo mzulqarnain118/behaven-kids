@@ -11,9 +11,7 @@ import Therapy from '../../src/assets/therapy.png'
 import Timeout from '../../src/assets/timeout.png'
 import Gs from '../../src/assets/gs.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
+
 
 interface SdpRoomInfo {
   roomID: number
@@ -39,18 +37,6 @@ interface ClientInfoResponse {
   gsRoomNames: NonSDPRoomsDTO[];
 }
 
-interface DecodedToken {
-  StaffID: string;
-  LocationID: string;
-}
-
-interface RoomInfoDTO {
-  roomID: number;
-  roomName: string;
-  staffFirstName: string;
-  staffLastName: string;
-}
-
 const images: { [key: string]: string } = {
   Horse: Horse,
   Bee: Bee,
@@ -60,20 +46,13 @@ const images: { [key: string]: string } = {
   Therapy: Therapy,
 };
 
-const SdpPanel: React.FC = () => {
+const AbaPanel: React.FC = () => {
 
   const [allSdpRoomNames, setAllSdpRoomNames] = useState<SdpRoomInfo[]>([]);
   const [thrRoomNames, setThrRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [gsRoomNames, setGsRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
   const [clientsInBothProgramsCurrentlyInABA, setClientsInBothProgramsCurrentlyInABA] = useState<SdpRoomInfo[]>([]);
-  const navigate = useNavigate();
-  const [locationID, setLocationID] = useState<string>("");
-  const [clientID, setClientID] = useState<number | null>(null);
-  const [clientFullName, setClientFullName] = useState<string>("");
-  const [clientProgram, setClientProgram] = useState<string>("");
-  const [showModel, setShowModel] = useState<boolean>(false);
-  const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,16 +61,6 @@ const SdpPanel: React.FC = () => {
         if (!token) {
           throw new Error("Token not found in localStorage");
         }
-
-        if (!token) {
-          alert("Please Login");
-          navigate("/", { replace: true });
-          return; 
-      }
-      const decoded = jwtDecode(token) as DecodedToken;
-      const getLocationID = decoded.LocationID;
-      setLocationID(getLocationID);
-console.log("getLocationID = " + getLocationID)
 
         const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=OHCU`;
 
@@ -127,18 +96,14 @@ console.log("getLocationID = " + getLocationID)
   }, []);
 
   useEffect(() => {
-    RealTimeUpdates();
+    Testing();
   }, [allClientsInfo]);
 
-  const RealTimeUpdates = async () => {
+  const Testing = async () => {
     if (allClientsInfo === null) {
       return;
     }
-
-if (locationID !== null)
-  {
-    const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=${locationID}`;
-
+    //const eventSource = new EventSource(`http://localhost:5025/PcApc/RealTimeUpdates?locationID=OHCU`);
     const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=OHCU`);
 
     eventSource.onmessage = (event) => {
@@ -158,43 +123,7 @@ if (locationID !== null)
       eventSource.close();
     };
   }
-    
-  }
 
-  
-  const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string, roomID: number) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-          alert("Please Login");
-          navigate("/", { replace: true });
-          return;
-      }
-      const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
-          method: "GET",
-          headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-          },
-      });
-
-      if (!response.ok) {
-          alert("Error getting room names");
-          return;
-      }
-      const data = await response.json();
-      setRoomInfo(data);
-
-  } catch (error) {
-      window.location.reload();
-      // alert("error" + error);
-  }
-
-    setClientID(clientID);
-    setClientFullName(clientFullName);
-    setClientProgram(clientProgram);
-    setShowModel(true);
-};
  
   // useEffect(() => {
   //   // Load timers from local storage if available
@@ -268,7 +197,7 @@ if (locationID !== null)
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", clientsInfo.roomID  )} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
                     <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
@@ -396,12 +325,10 @@ if (locationID !== null)
           </div>
         </div>
       </div>
-      {/* {clientID !== null && (
-          <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID}/>
-      )}  */}
+
 
     </>
   );
 };
 
-export default SdpPanel;
+export default AbaPanel;

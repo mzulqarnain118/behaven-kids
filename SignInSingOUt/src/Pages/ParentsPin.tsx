@@ -75,7 +75,7 @@ const ParentSignIn: React.FC = () => {
           //   navigate("/", { replace: true });
         } catch (error) {
 
-          ShowErrorMessageToUser("error" + error);
+          ShowErrorMessageToUser("error" + error); 
         }
       }
     };
@@ -87,7 +87,7 @@ const ParentSignIn: React.FC = () => {
     setErrorMessageText(errorMessage);
     setParentFourDigitPin("");
     setShowErrorMessage(true);
-    const timer = setTimeout(() => {
+    const timer = setTimeout(() => { 
       setShowErrorMessage(false);
     }, 3000);
     () => clearTimeout(timer);

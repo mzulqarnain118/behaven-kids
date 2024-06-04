@@ -51,7 +51,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
-    const [roomID, setRoomID] = useState<number | null>(null);;
+    const [roomID, setRoomID] = useState<number | null>(null);
     const [locationID, setLocationID] = useState<string>("");
     const [clientID, setClientID] = useState<number | null>(null);
     const [roomName, setRoomName] = useState<string>("");
@@ -83,7 +83,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         if (roomID === null) {
             return;
         }
-        const eventSource = new EventSource(`http://localhost:5025/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}`);
         //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
@@ -183,7 +183,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             }
             const data = await response.json();
             setRoomInfo(data);
-            console.log("getRoomInfoWhereClientsCanGoTo", data);
 
         } catch (error) {
             window.location.reload();
@@ -375,7 +374,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
                                         <button key={info.clientID} 
-                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program, )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
                                         </button>
                                     ))}
                                 </div>
