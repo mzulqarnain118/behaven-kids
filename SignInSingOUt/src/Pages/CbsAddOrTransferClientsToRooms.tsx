@@ -77,6 +77,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     }
     useEffect(() => {
         Testing();
+        console.log("apple");
     }, [roomID]);
 
     const Testing = async () => {

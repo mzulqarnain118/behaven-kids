@@ -74,128 +74,133 @@ const SdpPanel: React.FC = () => {
   const [clientProgram, setClientProgram] = useState<string>("");
   const [showModel, setShowModel] = useState<boolean>(false);
   const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+  const [startAutomaticUpdates, setStartAutomaticUpdates] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Token not found in localStorage");
+    if (startAutomaticUpdates === false) {
+      const fetchData = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("Token not found in localStorage");
+          }
+
+          if (!token) {
+            alert("Please Login");
+            navigate("/", { replace: true });
+            return;
+          }
+          const decoded = jwtDecode(token) as DecodedToken;
+          const getLocationID = decoded.LocationID;
+          setLocationID(getLocationID);
+
+          const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=${getLocationID}`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch data. Response status: ${response.status}`
+            );
+          }
+
+          const data: ClientInfoResponse = await response.json();
+          console.log(data.bothProgramClientsWhoAreCurrentlyInABA);
+
+          setAllSdpRoomNames(data.sdpRoomNames);
+          setThrRoomNames(data.thrRoomNames);
+          setGsRoomNames(data.gsRoomNames);
+          setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
+          setAllClientsInfo(data.clientInfo);
+          setStartAutomaticUpdates(true);
+
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
+      };
 
-        if (!token) {
-          alert("Please Login");
-          navigate("/", { replace: true });
-          return; 
-      }
-      const decoded = jwtDecode(token) as DecodedToken;
-      const getLocationID = decoded.LocationID;
-      setLocationID(getLocationID);
-console.log("getLocationID = " + getLocationID)
+      fetchData();
+    }
 
-        const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=OHCU`;
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch data. Response status: ${response.status}`
-          );
-        }
-
-        const data: ClientInfoResponse = await response.json();
-        console.log(data.bothProgramClientsWhoAreCurrentlyInABA);
-
-        setAllSdpRoomNames(data.sdpRoomNames);
-        setThrRoomNames(data.thrRoomNames);
-        setGsRoomNames(data.gsRoomNames);
-        setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
-        setAllClientsInfo(data.clientInfo);
-
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
   }, []);
 
   useEffect(() => {
     RealTimeUpdates();
-  }, [allClientsInfo]);
+    console.log("apple");
+  }, [startAutomaticUpdates]);
 
   const RealTimeUpdates = async () => {
     if (allClientsInfo === null) {
       return;
     }
 
-if (locationID !== null)
-  {
-    const url = `${backEndCodeURLLocation}PcApc/GetAllSDPClientsRoomInfo?locationID=${locationID}`;
+    if (locationID !== null) {
+      const testing = locationID;
 
-    const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=OHCU`);
+      const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=OHCU`);
+      console.log(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=${testing}`)
+      eventSource.onmessage = (event) => {
+        
+        const data: ClientInfoResponse = JSON.parse(event.data);
+        setAllClientsInfo(data.clientInfo);
+        setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
 
-    eventSource.onmessage = (event) => {
-
-      const data: ClientInfoResponse = JSON.parse(event.data);
-
-      setAllClientsInfo(data.clientInfo);
-      setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
-
-    };
+      };
 
 
-    eventSource.onerror = () => {
-      window.location.reload();
-    };
-    return () => {
-      eventSource.close();
-    };
-  }
-    
+      eventSource.onerror = () => {
+        window.location.reload();
+      };
+      return () => {
+        eventSource.close();
+      };
+    }
+
   }
 
-  
+
   const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string, roomID: number) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-          alert("Please Login");
-          navigate("/", { replace: true });
-          return;
+        alert("Please Login");
+        navigate("/", { replace: true });
+        return;
       }
+      console.log(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`);
       const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
-          method: "GET",
-          headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-          },
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
-          alert("Error getting room names");
-          return;
+        alert("Error getting room names");
+        return;
       }
       const data = await response.json();
+      console.log("data", data);
       setRoomInfo(data);
 
-  } catch (error) {
+    } catch (error) {
       window.location.reload();
       // alert("error" + error);
-  }
+    }
 
     setClientID(clientID);
     setClientFullName(clientFullName);
     setClientProgram(clientProgram);
     setShowModel(true);
-};
- 
+  };
+
   // useEffect(() => {
   //   // Load timers from local storage if available
   //   const storedTimers = localStorage.getItem("timers");
@@ -259,7 +264,7 @@ if (locationID !== null)
       <div style={{ display: "flex" }}>
         <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
           <div className="card-body grid-container-For-CBS-Rooms">
-            {allSdpRoomNames.map((allRoomName, ) => (
+            {allSdpRoomNames.map((allRoomName,) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
                   <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
@@ -267,11 +272,11 @@ if (locationID !== null)
                 </div>
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", clientsInfo.roomID  )} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
+                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
-                    <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
+                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                 </div>
               </div>
@@ -281,7 +286,7 @@ if (locationID !== null)
 
         <div className="card" style={{ width: "30%", marginLeft: "20px", display: "flex", flexDirection: "row" }}>
           <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
-            {thrRoomNames.map((allRoomName, ) => (
+            {thrRoomNames.map((allRoomName,) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
                   <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
@@ -289,10 +294,10 @@ if (locationID !== null)
                 </div>
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
                     <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
-                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
                     <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                 </div>
@@ -300,25 +305,25 @@ if (locationID !== null)
             ))}
           </div>
           <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
-              {gsRoomNames.map((allRoomName, ) => (
-                <div>
-                  <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#FFDEAD" }}>
-                    <img src={Gs} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
-                    <h5 className="card-title">{allRoomName.thrRoomName} - {allRoomName.thrRoomDetail}</h5>
-                  </div>
-
-                  <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
-                    {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo, ) => (
-                      <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
-                    ))}
-                    {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo, ) => (
-                      <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
-                    ))}
-                  </div>
+            {gsRoomNames.map((allRoomName,) => (
+              <div>
+                <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#FFDEAD" }}>
+                  <img src={Gs} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                  <h5 className="card-title">{allRoomName.thrRoomName} - {allRoomName.thrRoomDetail}</h5>
                 </div>
-              ))}
+
+                <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
+                    <button className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                  ))}
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
+                    <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-          
+
         </div>
       </div>
       <div style={{ display: "flex", marginTop: "20px" }}>
@@ -360,7 +365,7 @@ if (locationID !== null)
               </div>
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-              {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client, index) => (
+                {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client, index) => (
                   <button key={`assigned-${index}`} className="round-button-for-active-clients">
                     {client.clientFirstName} {client.clientLastName.charAt(0)}. <img src={images[client.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {client.clientPreviousRoomName}
                   </button>
@@ -385,10 +390,10 @@ if (locationID !== null)
               </div>
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2, ) => (
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2,) => (
                   <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
                 ))}
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2, ) => (
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2,) => (
                   <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
                 ))}
               </div>
