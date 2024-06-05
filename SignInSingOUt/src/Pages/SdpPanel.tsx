@@ -13,10 +13,11 @@ import Gs from '../../src/assets/gs.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import PopupChooseWhichRoomForClient from "../Components/PopupChooseWhichRoomForClient";
+import PopupPcApcChooseWhichRoomForClient from "../Components/PopupPcApcChooseWhichRoomForClient";
 
 interface SdpRoomInfo {
-  roomID: number
+  roomID: number;
+  clientID: number;
   sdpRoomName: string;
   clientFirstName: string;
   clientLastName: string;
@@ -67,7 +68,6 @@ const SdpPanel: React.FC = () => {
   const [gsRoomNames, setGsRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
   const [clientsInBothProgramsCurrentlyInABA, setClientsInBothProgramsCurrentlyInABA] = useState<SdpRoomInfo[]>([]);
-  const navigate = useNavigate();
   const [locationID, setLocationID] = useState<string>("");
   const [clientID, setClientID] = useState<number | null>(null);
   const [clientFullName, setClientFullName] = useState<string>("");
@@ -75,6 +75,9 @@ const SdpPanel: React.FC = () => {
   const [showModel, setShowModel] = useState<boolean>(false);
   const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
   const [startAutomaticUpdates, setStartAutomaticUpdates] = useState<boolean>(false);
+  const [clientCurrentRoomID, setClientCurrentRoomID] = useState<number>();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (startAutomaticUpdates === false) {
@@ -132,7 +135,6 @@ const SdpPanel: React.FC = () => {
 
   useEffect(() => {
     RealTimeUpdates();
-    console.log("apple");
   }, [startAutomaticUpdates]);
 
   const RealTimeUpdates = async () => {
@@ -146,20 +148,21 @@ const SdpPanel: React.FC = () => {
       const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=OHCU`);
       console.log(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=${testing}`)
       eventSource.onmessage = (event) => {
-        
+
         const data: ClientInfoResponse = JSON.parse(event.data);
         setAllClientsInfo(data.clientInfo);
         setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
 
-      };
+    };
 
 
-      eventSource.onerror = () => {
-        window.location.reload();
-      };
-      return () => {
-        eventSource.close();
-      };
+    eventSource.onerror = () => {
+      window.location.reload();
+    };
+    
+    return () => {
+      eventSource.close();
+    };
     }
 
   }
@@ -195,6 +198,7 @@ const SdpPanel: React.FC = () => {
       // alert("error" + error);
     }
 
+    setClientCurrentRoomID(roomID);
     setClientID(clientID);
     setClientFullName(clientFullName);
     setClientProgram(clientProgram);
@@ -273,10 +277,10 @@ const SdpPanel: React.FC = () => {
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(2, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                 </div>
               </div>
@@ -352,7 +356,7 @@ const SdpPanel: React.FC = () => {
                   </button>
                 ))}
                 {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 29).map((clientInfo, index) => (
-                  <button key={`unassigned-${index}`} className="round-button-for-unassigned-clients">
+                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, "SDP", 29)} className="round-button-for-unassigned-clients">
                     {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
                   </button>
                 ))}
@@ -371,13 +375,12 @@ const SdpPanel: React.FC = () => {
                   </button>
                 ))}
                 {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 30).map((clientInfo, index) => (
-                  <button key={`unassigned-${index}`} className="round-button-for-unassigned-clients">
+                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, "SDP", 30)} className="round-button-for-unassigned-clients">
                     {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
                   </button>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
 
@@ -401,9 +404,9 @@ const SdpPanel: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* {clientID !== null && (
-          <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID}/>
-      )}  */}
+      {clientID !== null && (
+        <PopupPcApcChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={clientCurrentRoomID} />
+      )}
 
     </>
   );

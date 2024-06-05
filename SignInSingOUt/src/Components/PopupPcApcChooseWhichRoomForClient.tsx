@@ -2,7 +2,6 @@
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 
 interface CbsAddOrTransferClientsToRooms {
@@ -39,7 +38,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                 throw new Error("Token not found in localStorage");
             }
             if (newRoomID === 29 || newRoomID === 30) {
-                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
+                const url = `${backEndCodeURLLocation}PcApc/PcApcMovesClientToAnotherRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
                 console.log(url);
                 const response = await fetch(url, {
                     method: "POST",
@@ -54,7 +53,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                 }
             }
             else {
-                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}`;
+                const url = `${backEndCodeURLLocation}PcApc/PcApcMovesClientToAnotherRoom?cliendID=${clientID}&roomID=${newRoomID}`;
                 console.log(url);
                 const response = await fetch(url, {
                     method: "POST",
@@ -166,17 +165,6 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
-                                    {/* {roomInfo.filter(info => info.roomName.includes("GS")).map((info) => (
-                                        <button
-                                            key={info.roomID}
-                                            style={{ width: "150px" }}
-                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            onClick={() => transferToAnotherRoom(info.roomID)}
-                                        >
-                                            {info.staffFirstName} {info.staffLastName.charAt(0)}.
-                                        </button>
-                                    ))} */}
-
                                 </div>
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
