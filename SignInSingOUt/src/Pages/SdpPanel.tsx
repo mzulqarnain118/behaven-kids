@@ -18,6 +18,7 @@ import PopupPcApcChooseWhichRoomForClient from "../Components/PopupPcApcChooseWh
 interface SdpRoomInfo {
   roomID: number;
   clientID: number;
+  programType: string;
   sdpRoomName: string;
   clientFirstName: string;
   clientLastName: string;
@@ -143,10 +144,15 @@ const SdpPanel: React.FC = () => {
     }
 
     if (locationID !== null) {
-      const testing = locationID;
+      const token = localStorage.getItem("token");
+      if (!token) {
+        return;
+      }
 
-      const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=OHCU`);
-      console.log(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=${testing}`)
+      const decoded = jwtDecode(token) as DecodedToken;
+      const getLocationID = decoded.LocationID;
+
+      const eventSource = new EventSource(`${backEndCodeURLLocation}PcApc/RealTimeUpdates?locationID=${getLocationID}`);
       eventSource.onmessage = (event) => {
 
         const data: ClientInfoResponse = JSON.parse(event.data);
@@ -176,7 +182,7 @@ const SdpPanel: React.FC = () => {
         navigate("/", { replace: true });
         return;
       }
-      console.log(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`);
+      
       const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
         method: "GET",
         headers: {
@@ -189,11 +195,13 @@ const SdpPanel: React.FC = () => {
         alert("Error getting room names");
         return;
       }
+      console.log("here");
       const data = await response.json();
       console.log("data", data);
       setRoomInfo(data);
 
     } catch (error) {
+      console.log("here 2");
       window.location.reload();
       // alert("error" + error);
     }
@@ -277,10 +285,10 @@ const SdpPanel: React.FC = () => {
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName, "SDP", allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                 </div>
               </div>

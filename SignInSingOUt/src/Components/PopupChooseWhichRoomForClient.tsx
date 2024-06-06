@@ -2,7 +2,7 @@
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 
 interface CbsAddOrTransferClientsToRooms {

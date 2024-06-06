@@ -43,7 +43,8 @@ const SsnPin: React.FC = () => {
               replace: true,
             });
           }
-          const response = await fetch(`${backEndCodeURLLocation}TimeOutRoom/CheckStaffLastFourDigitSSNPin?staffSsnPin=${staffFourDigitPin}`, {
+
+          const getStaffInfo = await fetch(`${backEndCodeURLLocation}TimeOutRoom/CheckStaffLastFourDigitSSNPin?staffSsnPin=${staffFourDigitPin}`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,7 +52,7 @@ const SsnPin: React.FC = () => {
             },
           });
 
-          if (!response.ok) {
+          if (!getStaffInfo.ok) {
             ShowErrorMessageToUser("Couldn't Find SSN Number");
             setHowManyFailedAttemps((prev => prev + 1));
             console.log("howManyFailedAttemps = " + howManyFailedAttemps);
@@ -62,11 +63,35 @@ const SsnPin: React.FC = () => {
               }
             return;
           }
-          const data = await response.json();
+
+          const makeClientActiveIntimeOutRoom = await fetch(`${backEndCodeURLLocation}TimeOutRoom/MakeClientsActiveInTimeOutRoom?cliendID=${clientID}&roomID=${roomID}`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!makeClientActiveIntimeOutRoom.ok) {
+            alert("Can't find child info [or] child has already been assigned");
+            
+            navigate("/", {
+              replace: true,
+            });
+            
+            return;
+          }
+
+
+
+          const data = await getStaffInfo.json();
           console.log("data ", data);
           const staffID = data.staffID;
           const staffFullName = data.staffFirstName + " " + data.staffLastName;
           setShowErrorMessage(false);
+
+
+
           navigate("/timeoutobservation", {
             replace: true,
             state: { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom},
@@ -121,8 +146,10 @@ const SsnPin: React.FC = () => {
         <div className="CommentDropDown_Grid">
           <img src={BehavenLogo} alt="My Image" style={{ height: "75px" }} />
           <br />
+          
           <div>
             <h3>Enter the last 4 digits of your SSN </h3>
+            
             <div style={{ marginTop: "15px" }}>
               {[...Array(4)].map((_, index) => (
                 <span
@@ -131,15 +158,16 @@ const SsnPin: React.FC = () => {
                 ></span>
               ))}
             </div>
+            <br />
+            <h1 style={{color: "red"}}>{clientFullName}</h1>
           </div>
-          <br />
           <br />
           <div className="PhoneNumber_Grid">
             {numbers.map((number) => (
               <button
                 key={number}
                 className="grid-item"
-                onClick={() => InsertPinNumber(number.toString())}
+                onTouchEnd={() => InsertPinNumber(number.toString())}
                 //onTouchEnd={() => InsertPhoneNumber(number.toString())}
               >
                 {number}

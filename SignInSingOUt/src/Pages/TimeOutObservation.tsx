@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./CSS/CbsAddOrTransferClientsToRooms.css";
 import Person from '../../src/assets/person.png';
 import Location from '../../src/assets/location.png';
@@ -41,82 +41,51 @@ const TimeOutObservation: React.FC = () => {
   const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
+  const [startTime, setStartTime] = useState("");
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    let interval: any; // Declare interval variable outside of useEffect scope
-    
-
-    setDidUserClickStart(true);
-
     if (didUserClickStart) {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please Login");
-
         return;
       }
+    }
+    setStartTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setTimer(prevTimer => {
+          const [minutes, seconds] = prevTimer.split(':').map(Number);
+          let updatedSeconds = seconds + 1;
+          let updatedMinutes = minutes;
 
-      
+          if (updatedSeconds >= 60) {
+            updatedSeconds = 0;
+            updatedMinutes++;
+          }
 
+          if (updatedMinutes >= 60) {
+            updatedMinutes = 0;
+          }
 
-      // const fetchTimer = () => {
-      //   fetch(`http://localhost:5025/PcApc/StartTimer?clientID=${clientID}&initialTime=${timer}`, {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   .catch(error => {
-      //     console.error('Error starting timer:', error);
-      //   });
-
-      //   updateTimer();
-      // };
-
-      // updateTimer();
-      // Call fetchTimer initially
-      // fetchTimer();
-
-
-      // Set interval to fetch timer value every second
-      interval = setInterval(updateTimer, 1000);
+          return `${String(updatedMinutes).padStart(2, '0')}:${String(updatedSeconds).padStart(2, '0')}`;
+        });
+      }, 1000);
     }
 
-    // Clean up the interval on component unmount
-    return () => clearInterval(interval);
-  });
-
-  const updateTimer = () => {
-    let currentTimer = timer;
-    const [minutes, seconds] = currentTimer.split(':').map(Number);
-
-    // Increment the seconds
-    let updatedSeconds = seconds + 1;
-    let updatedMinutes = minutes;
-
-    // Adjust the time if seconds exceeds 59
-    if (updatedSeconds >= 60) {
-      updatedSeconds = 0;
-      updatedMinutes++;
-    }
-    // Adjust the time if minutes exceeds 59
-    if (updatedMinutes >= 60) {
-      updatedMinutes = 0;
-    }
-
-    // Format the updated time as HH:MM:SS
-    const updatedTimer = `${String(updatedMinutes).padStart(2, '0')}:${String(updatedSeconds).padStart(2, '0')}`;
-
-    // Update currentTimer with the updated time
-    setTimer(updatedTimer);
-    // console.log(timer);
-  };
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [didUserClickStart]);
 
   useEffect(() => {
     if (didUserClickYes === true) {
       AddNewClientLevelTwoToFiveTimeout();
     }
-
   }, [didUserClickYes]);
 
   const AddNewClientLevelTwoToFiveTimeout = async () => {
@@ -151,7 +120,7 @@ const TimeOutObservation: React.FC = () => {
       StaffID: String(staffID),
       RoomID: String(roomID),
       TimeoutRoomPosition: String(roomPositionName),
-      Time: String(timer),
+      Time: String(startTime),
       ClientPreviousRoom: String(clientPreviousRoom)
     };
 
