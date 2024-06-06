@@ -5,6 +5,8 @@ import "./CSS/EditChildTime.css";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import PopupDatePicker from "../Components/PopupDatePicker";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 interface SignInSignOut {
   id: number;
@@ -40,6 +42,11 @@ interface Option {
   label: any;
 }
 
+interface DecodedToken {
+  StaffID: string;
+  LocationID: string;
+}
+
 const EditChildTime: React.FC = () => {
   const [schedule, setSchedule] = useState<SignInSignOut[]>([]);
   const [, setSelectSignOutTime] = useState<string>("");
@@ -58,6 +65,7 @@ const EditChildTime: React.FC = () => {
   const [didUserChoseASignOutTime, setDidUserChoseASignOutTime] = useState<boolean>(false);
   const [showModel, setShowModel] = useState<boolean>(false);
   const animatedComponents = makeAnimated();
+  const navigate = useNavigate();
 
   const clientNameOptions = childInfo.map((client) => ({
     value: client.clientID,
@@ -76,9 +84,10 @@ const EditChildTime: React.FC = () => {
           throw new Error("Token not found in localStorage");
         }
 
-        const url = `${backEndCodeURLLocation}SignIn/GetAllClientsThatAreActive`;
+        const decoded = jwtDecode(token) as DecodedToken;
+        const getLocationID = decoded.LocationID;
 
-        const response = await fetch(url, {
+        const response = await fetch(`${backEndCodeURLLocation}SignIn/GetAllClientsThatAreActive?locationID=${getLocationID}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -107,9 +116,25 @@ const EditChildTime: React.FC = () => {
 
   const fetchSchedule = async () => {
     try {
-      const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/GetAllSignInAndOutTimeOfTheDay`
-      );
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please Login");
+        navigate("/", { replace: true });
+        return;
+      }
+
+      const decoded = jwtDecode(token) as DecodedToken;
+      const getLocationID = decoded.LocationID;
+
+      const response = await fetch(`${backEndCodeURLLocation}SignIn/GetAllSignInAndOutTimeOfTheDay?locationID=${getLocationID}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       if (response.ok) {
         const data = await response.json();
         data.forEach((item: SignInSignOut) => {
@@ -496,66 +521,7 @@ const EditChildTime: React.FC = () => {
   return (
     <div className="time-schedule-editor">
       <h2>Attendance Times - Editor Mode</h2>
-      {/* <div className="grid-container-select-date-and-location">
-        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <h5>Date:</h5>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker']}>
-              <DatePicker
-                value={selectManualDate}
-                onChange={(newValue) => setSelectManualDate(newValue)}
-                slotProps={{ textField: { required: true } }}
-                
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-
-        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <h5 >Location:</h5>
-          <Select
-            options={options}
-            onChange={setAllProgramLocation}
-            isClearable={true}
-            required
-            styles={{
-              container: base => ({ ...base, width: '275px' }),
-              control: base => ({ ...base, minHeight: '56px' }),
-            }}
-          />
-        </div>
-
-        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <h5>Program:</h5>
-          <Select
-            options={options}
-            onChange={setAllProgramLocation}
-            isClearable={true}
-            required
-            styles={{
-              container: base => ({ ...base, width: '275px' }),
-              control: base => ({ ...base, minHeight: '56px' }),
-            }}
-          />
-        </div>
-      </div> */}
-
-
-      {/* <div className="grid-container-select-date-and-location">
-       <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
-        <h4>Date: </h4>
-        <h4 style={{marginLeft: "20px"}}>&#128198; {new Date().toLocaleDateString()}</h4>
-        </div>
-
-        <div className="grid-item-select-date-and-location" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
-        <h4>Location: </h4>
-        <h4 style={{marginLeft: "20px"}}>Omaha - Cumming Street</h4>
-        </div>
-        </div> */}
-
-
       <table>
-
         <thead>
           <tr>
             {/* <th>ID</th> */}
