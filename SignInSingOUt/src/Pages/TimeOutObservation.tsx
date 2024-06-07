@@ -15,26 +15,27 @@ const TimeOutObservation: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const [behaviors, setBehaviors] = useState([
-    { id: 1, label: 'Swearing', counter: 0 },
-    { id: 2, label: 'Disrobing Clothes', counter: 0 },
-    { id: 3, label: 'Vomiting', counter: 0 },
-    { id: 4, label: 'Spitting', counter: 0 },
+  const [behaviorsColumnOne, setBehaviorsColumnOne] = useState([
+    { id: 1, label: 'Mumbling', counter: 0 },
+    { id: 2, label: 'Wiggling', counter: 0 },
+    { id: 3, label: 'Talking Loud', counter: 0 },
+    { id: 4, label: 'Walking Around', counter: 0 },
     { id: 5, label: 'Crying', counter: 0 },
-    { id: 6, label: 'Screaming', counter: 0 },
-    { id: 7, label: 'Urinating', counter: 0 },
-    { id: 8, label: 'Defecating', counter: 0 },
-    { id: 9, label: 'Climbing', counter: 0 },
+    { id: 6, label: 'Swearing', counter: 0 },
+    { id: 7, label: 'Screaming', counter: 0 },
+    { id: 8, label: 'Aggression', counter: 0 },
+    { id: 9, label: 'Spitting', counter: 0 },
   ]);
 
-  const [aggression, setAggression] = useState([
-    { id: 1, label: 'Hitting', counter: 0 },
-    { id: 2, label: 'Kicking', counter: 0 },
-    { id: 3, label: 'Biting', counter: 0 },
-    { id: 4, label: 'Pinching', counter: 0 },
-    { id: 5, label: 'Slapping', counter: 0 },
-    { id: 6, label: 'Property Destruction', counter: 0 },
-    { id: 7, label: 'Self-harm', counter: 0 },
+  const [behaviorsColumnTwo, setBehaviorsColumnTwo] = useState([
+    { id: 1, label: 'Pushing', counter: 0 },
+    { id: 2, label: 'Disrobing', counter: 0 },
+    { id: 3, label: 'Attempt Escaping', counter: 0 },
+    { id: 4, label: 'Running', counter: 0 },
+    { id: 5, label: 'Body Functions', counter: 0 },
+    { id: 6, label: 'Physical Injury to Child', counter: 0 },
+    { id: 7, label: 'Physical Injury to Staff', counter: 0 },
+    { id: 8, label: 'Property Damage', counter: 0 },
   ]);
 
   const [timer, setTimer] = useState('00:00');
@@ -53,7 +54,7 @@ const TimeOutObservation: React.FC = () => {
         return;
       }
     }
-    setStartTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    setStartTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     if (!intervalRef.current) {
       intervalRef.current = setInterval(() => {
         setTimer(prevTimer => {
@@ -92,35 +93,32 @@ const TimeOutObservation: React.FC = () => {
     const token = localStorage.getItem("token");
 
     const behaviorsDTO = {
-      Swearing: (behaviors.find(b => b.label === 'Swearing') || { counter: 0 }).counter,
-      DisrobingClothes: (behaviors.find(b => b.label === 'Disrobing Clothes') || { counter: 0 }).counter,
-      Vomiting: (behaviors.find(b => b.label === 'Vomiting') || { counter: 0 }).counter,
-      Spitting: (behaviors.find(b => b.label === 'Spitting') || { counter: 0 }).counter,
-      Crying: (behaviors.find(b => b.label === 'Crying') || { counter: 0 }).counter,
-      Screaming: (behaviors.find(b => b.label === 'Screaming') || { counter: 0 }).counter,
-      Urinating: (behaviors.find(b => b.label === 'Urinating') || { counter: 0 }).counter,
-      Defecating: (behaviors.find(b => b.label === 'Defecating') || { counter: 0 }).counter,
-      Climbing: (behaviors.find(b => b.label === 'Climbing') || { counter: 0 }).counter,
-    };
-
-    const aggressionDTO = {
-      Hitting: (aggression.find(a => a.label === 'Hitting') || { counter: 0 }).counter,
-      Kicking: (aggression.find(a => a.label === 'Kicking') || { counter: 0 }).counter,
-      Biting: (aggression.find(a => a.label === 'Biting') || { counter: 0 }).counter,
-      Pinching: (aggression.find(a => a.label === 'Pinching') || { counter: 0 }).counter,
-      Slapping: (aggression.find(a => a.label === 'Slapping') || { counter: 0 }).counter,
-      PropertyDestruction: (aggression.find(a => a.label === 'Property Destruction') || { counter: 0 }).counter,
-      SelfHarm: (aggression.find(a => a.label === 'Self-harm') || { counter: 0 }).counter,
+      Mumbling: (behaviorsColumnOne.find(b => b.label === 'Mumbling') || { counter: 0 }).counter,
+      Wiggling: (behaviorsColumnOne.find(b => b.label === 'Wiggling') || { counter: 0 }).counter,
+      TalkingLoud: (behaviorsColumnOne.find(b => b.label === 'Talking Loud') || { counter: 0 }).counter,
+      WalkingAround: (behaviorsColumnOne.find(b => b.label === 'Walking Around') || { counter: 0 }).counter,
+      Crying: (behaviorsColumnOne.find(b => b.label === 'Crying') || { counter: 0 }).counter,
+      Swearing: (behaviorsColumnOne.find(b => b.label === 'Swearing') || { counter: 0 }).counter,
+      Screaming: (behaviorsColumnOne.find(b => b.label === 'Screaming') || { counter: 0 }).counter,
+      Aggression: (behaviorsColumnOne.find(b => b.label === 'Aggression') || { counter: 0 }).counter,
+      Spitting: (behaviorsColumnOne.find(b => b.label === 'Spitting') || { counter: 0 }).counter,
+      Pushing: (behaviorsColumnOne.find(b => b.label === 'Pushing') || { counter: 0 }).counter,
+      Disrobing: (behaviorsColumnOne.find(b => b.label === 'Disrobing') || { counter: 0 }).counter,
+      AttemptEscaping: (behaviorsColumnOne.find(b => b.label === 'Attempt Escaping') || { counter: 0 }).counter,
+      Running: (behaviorsColumnOne.find(b => b.label === 'Running') || { counter: 0 }).counter,
+      BodyFunctions: (behaviorsColumnOne.find(b => b.label === 'Body Functions') || { counter: 0 }).counter,
+      PhysicalInjuryToChild: (behaviorsColumnOne.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
+      PhysicalInjuryToStaff: (behaviorsColumnOne.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
+      PropertyDamage: (behaviorsColumnOne.find(b => b.label === 'Property Damag') || { counter: 0 }).counter,
     };
 
     const behaviorAndAggressionDTO = {
       Behaviors: behaviorsDTO,
-      Aggression: aggressionDTO,
       ClientID: String(clientID),
       StaffID: String(staffID),
       RoomID: String(roomID),
       TimeoutRoomPosition: String(roomPositionName),
-      Time: String(startTime),
+      StartTime: String(startTime),
       ClientPreviousRoom: String(clientPreviousRoom)
     };
 
@@ -146,23 +144,23 @@ const TimeOutObservation: React.FC = () => {
     }
   }
 
-  const behaviorButtonClick = async (id: number) => {
+  const behaviorButtonClickColumnOne = async (id: number) => {
 
     try {
-      setBehaviors(prevButtons =>
+      setBehaviorsColumnOne(prevButtons =>
         prevButtons.map(behaviors =>
           behaviors.id === id ? { ...behaviors, counter: behaviors.counter + 1 } : behaviors
         )
       );
     } catch (error) {
-      console.error('Error Adding Behavior Counter', error);
+      alert('Error Adding Behavior Counter ' + error);
     }
   };
 
-  const aggressionButtonClick = async (id: number) => {
+  const behaviorButtonClickColumnTwo = async (id: number) => {
 
     try {
-      setAggression(prevButtons =>
+      setBehaviorsColumnTwo(prevButtons =>
         prevButtons.map(aggression =>
           aggression.id === id ? { ...aggression, counter: aggression.counter + 1 } : aggression
         )
@@ -216,9 +214,9 @@ const TimeOutObservation: React.FC = () => {
           <div className="card" >
             <div className="card-body grid-container-For-behaviors" style={{ height: "100%" }}>
               <div className="card" style={{ border: "none" }}>
-                {behaviors.map((button) => (
+                {behaviorsColumnOne.map((button) => (
                   <div key={button.id} className="grid-container-For-behavior-buttons">
-                    <button className="counter-buttons" onTouchEnd={() => behaviorButtonClick(button.id)}>
+                    <button className="counter-buttons" onClick={() => behaviorButtonClickColumnOne(button.id)}>
                       {button.label}
                     </button>
                     <p style={{
@@ -237,7 +235,7 @@ const TimeOutObservation: React.FC = () => {
                 ))}
               </div>
               <div className="card" style={{ border: "none" }}>
-                {aggression.map((button) => (
+                {behaviorsColumnTwo.map((button) => (
                   <div key={button.id} className="grid-container-For-aggression-buttons">
                     <p style={{
                       border: '2px solid black',
@@ -251,7 +249,7 @@ const TimeOutObservation: React.FC = () => {
                     }}>
                       {button.counter}
                     </p>
-                    <button className="counter-buttons" onTouchEnd={() => aggressionButtonClick(button.id)}>
+                    <button className="counter-buttons" onClick={() => behaviorButtonClickColumnTwo(button.id)}>
                       {button.label}
                     </button>
 
