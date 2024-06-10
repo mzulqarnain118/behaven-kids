@@ -20,6 +20,7 @@ import TimeOutObservation from './Pages/TimeOutObservation'
 import TimeOutSelectAClient from './Pages/TimeOutSelectAClient'
 import SsnPin from './Pages/SsnPin'
 import AbaPanel from './Pages/AbaPanel'
+import HealthCheckSelectedRegion from './Pages/HealthCheckSelectedRegion'
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
       <Route path='/TimeOutSelectAClient' element={<TimeOutSelectAClient/>}></Route>
       <Route path='/SsnPin' element={<SsnPin/>}></Route>
       <Route path='/AbaPanel' element={<AbaPanel/>}></Route>
+      <Route path='/HealthCheckSelectedRegion' element={<HealthCheckSelectedRegion/>}></Route>
       </Routes>
     </>
   )

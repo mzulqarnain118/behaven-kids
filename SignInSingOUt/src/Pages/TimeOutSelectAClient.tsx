@@ -186,50 +186,6 @@ const TimeOUtSelectAClient: React.FC = () => {
         }
     };
 
-    // const getRoomInfoWhereClientsCanGoTo = async () => {
-    //     try {
-    //         const token = localStorage.getItem("token");
-    //         if (!token) {
-    //             alert("Please Login");
-    //             navigate("/", { replace: true });
-    //             return;
-    //         }
-    //         const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //                 "Content-Type": "application/json",
-    //             },
-    //         });
-
-    //         if (!response.ok) {
-    //             alert("Error getting room names");
-    //             return;
-    //         }
-    //         const data = await response.json();
-    //         setRoomInfo(data);
-    //         console.log("getRoomInfoWhereClientsCanGoTo", data);
-
-    //     } catch (error) {
-    //         window.location.reload();
-    //         // alert("error" + error);
-    //     }
-
-    // };
-
-
-
-    // const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
-    //     setClientID(clientID);
-    //     setClientFullName(clientFullName);
-    //     setClientProgram(clientProgram);
-    //     setShowModel(true);
-    // };
-
-    // const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
-    //     setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
-    // };
-
     const GoToStaffSsnNumber = async (clientID: number, clientFullName: string, clientPreviousRoom: string) => {
         console.log("clientPreviousRoom = " + clientPreviousRoom);
         try {
@@ -290,7 +246,6 @@ const TimeOUtSelectAClient: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* <BodyComponent onClick={handleBodyPartClick} bodyModel=""/>  */}
                     </div>
 
                 </div>

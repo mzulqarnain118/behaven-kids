@@ -375,7 +375,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
                                         <button key={info.clientID} 
-                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                            onTouchEnd={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
                                         </button>
                                     ))}
                                 </div>
@@ -391,7 +391,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
    
-                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
+                                        <button onTouchEnd={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
 
                                     ))}
                                 </div>

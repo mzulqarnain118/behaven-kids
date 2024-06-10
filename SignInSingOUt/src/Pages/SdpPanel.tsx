@@ -36,6 +36,7 @@ interface NonSDPRoomsDTO {
 interface ClientInfoResponse {
   sdpRoomNames: SdpRoomInfo[];
   clientInfo: SdpRoomInfo[];
+  clientsInTimeOutRoomInfo: SdpRoomInfo[];
   bothProgramClientsWhoAreCurrentlyInABA: SdpRoomInfo[];
   thrRoomNames: NonSDPRoomsDTO[];
   gsRoomNames: NonSDPRoomsDTO[];
@@ -68,6 +69,7 @@ const SdpPanel: React.FC = () => {
   const [thrRoomNames, setThrRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [gsRoomNames, setGsRoomNames] = useState<NonSDPRoomsDTO[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<SdpRoomInfo[]>([]);
+  const [clientsInTimeOutRoomInfo, setClientsInTimeOutRoomInfo] = useState<SdpRoomInfo[]>([]);
   const [clientsInBothProgramsCurrentlyInABA, setClientsInBothProgramsCurrentlyInABA] = useState<SdpRoomInfo[]>([]);
   const [locationID, setLocationID] = useState<string>("");
   const [clientID, setClientID] = useState<number | null>(null);
@@ -122,6 +124,7 @@ const SdpPanel: React.FC = () => {
           setGsRoomNames(data.gsRoomNames);
           setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
           setAllClientsInfo(data.clientInfo);
+          setClientsInTimeOutRoomInfo(data.clientsInTimeOutRoomInfo);
           setStartAutomaticUpdates(true);
 
         } catch (error) {
@@ -158,6 +161,7 @@ const SdpPanel: React.FC = () => {
         const data: ClientInfoResponse = JSON.parse(event.data);
         setAllClientsInfo(data.clientInfo);
         setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
+        setClientsInTimeOutRoomInfo(data.clientsInTimeOutRoomInfo);
 
     };
 
@@ -285,10 +289,14 @@ const SdpPanel: React.FC = () => {
 
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => 
+                      WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
+                    </button>
                   ))}
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
-                    <button onClick={() => WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                    <button onClick={() => 
+                      WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
+                    </button>
                   ))}
                 </div>
               </div>
@@ -358,14 +366,14 @@ const SdpPanel: React.FC = () => {
               })} */}
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 29).map((client, index) => (
+                {clientsInTimeOutRoomInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 29).map((client, index) => (
                   <button key={`assigned-${index}`} className="round-button-for-active-clients">
                     {client.clientFirstName} {client.clientLastName.charAt(0)}. <img src={images[client.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {client.clientPreviousRoomName}
                   </button>
                 ))}
-                {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 29).map((clientInfo, index) => (
-                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, "SDP", 29)} className="round-button-for-unassigned-clients">
-                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
+                {clientsInTimeOutRoomInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 29).map((clientInfo, index) => (
+                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, clientInfo.programType, 29)} className="round-button-for-unassigned-clients">
+                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.sdpRoomName}
                   </button>
                 ))}
               </div>
@@ -377,14 +385,14 @@ const SdpPanel: React.FC = () => {
               </div>
 
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "200px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client, index) => (
+                {clientsInTimeOutRoomInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === 30).map((client, index) => (
                   <button key={`assigned-${index}`} className="round-button-for-active-clients">
                     {client.clientFirstName} {client.clientLastName.charAt(0)}. <img src={images[client.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {client.clientPreviousRoomName}
                   </button>
                 ))}
-                {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 30).map((clientInfo, index) => (
-                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, "SDP", 30)} className="round-button-for-unassigned-clients">
-                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.clientPreviousRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.clientPreviousRoomName}
+                {clientsInTimeOutRoomInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 30).map((clientInfo, index) => (
+                  <button key={`unassigned-${index}`} onClick={() => WhichRoomWillClientGoTo(clientInfo.clientID, clientInfo.clientFirstName + " " + clientInfo.clientLastName, clientInfo.programType, 30)} className="round-button-for-unassigned-clients">
+                    {clientInfo.clientFirstName} {clientInfo.clientLastName.charAt(0)}. <img src={images[clientInfo.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "5px", marginLeft: "10px", marginBottom: "3px" }}></img> {clientInfo.sdpRoomName}
                   </button>
                 ))}
               </div>

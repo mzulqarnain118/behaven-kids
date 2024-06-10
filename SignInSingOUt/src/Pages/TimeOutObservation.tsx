@@ -102,14 +102,14 @@ const TimeOutObservation: React.FC = () => {
       Screaming: (behaviorsColumnOne.find(b => b.label === 'Screaming') || { counter: 0 }).counter,
       Aggression: (behaviorsColumnOne.find(b => b.label === 'Aggression') || { counter: 0 }).counter,
       Spitting: (behaviorsColumnOne.find(b => b.label === 'Spitting') || { counter: 0 }).counter,
-      Pushing: (behaviorsColumnOne.find(b => b.label === 'Pushing') || { counter: 0 }).counter,
-      Disrobing: (behaviorsColumnOne.find(b => b.label === 'Disrobing') || { counter: 0 }).counter,
-      AttemptEscaping: (behaviorsColumnOne.find(b => b.label === 'Attempt Escaping') || { counter: 0 }).counter,
-      Running: (behaviorsColumnOne.find(b => b.label === 'Running') || { counter: 0 }).counter,
-      BodyFunctions: (behaviorsColumnOne.find(b => b.label === 'Body Functions') || { counter: 0 }).counter,
-      PhysicalInjuryToChild: (behaviorsColumnOne.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
-      PhysicalInjuryToStaff: (behaviorsColumnOne.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
-      PropertyDamage: (behaviorsColumnOne.find(b => b.label === 'Property Damag') || { counter: 0 }).counter,
+      Pushing: (behaviorsColumnTwo.find(b => b.label === 'Pushing') || { counter: 0 }).counter,
+      Disrobing: (behaviorsColumnTwo.find(b => b.label === 'Disrobing') || { counter: 0 }).counter,
+      AttemptEscaping: (behaviorsColumnTwo.find(b => b.label === 'Attempt Escaping') || { counter: 0 }).counter,
+      Running: (behaviorsColumnTwo.find(b => b.label === 'Running') || { counter: 0 }).counter,
+      BodyFunctions: (behaviorsColumnTwo.find(b => b.label === 'Body Functions') || { counter: 0 }).counter,
+      PhysicalInjuryToChild: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
+      PhysicalInjuryToStaff: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Staff') || { counter: 0 }).counter,
+      PropertyDamage: (behaviorsColumnTwo.find(b => b.label === 'Property Damage') || { counter: 0 }).counter,
     };
 
     const behaviorAndAggressionDTO = {
@@ -216,7 +216,7 @@ const TimeOutObservation: React.FC = () => {
               <div className="card" style={{ border: "none" }}>
                 {behaviorsColumnOne.map((button) => (
                   <div key={button.id} className="grid-container-For-behavior-buttons">
-                    <button className="counter-buttons" onClick={() => behaviorButtonClickColumnOne(button.id)}>
+                    <button className="counter-buttons" onTouchEnd={() => behaviorButtonClickColumnOne(button.id)}>
                       {button.label}
                     </button>
                     <p style={{
@@ -249,7 +249,7 @@ const TimeOutObservation: React.FC = () => {
                     }}>
                       {button.counter}
                     </p>
-                    <button className="counter-buttons" onClick={() => behaviorButtonClickColumnTwo(button.id)}>
+                    <button className="counter-buttons" onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
                       {button.label}
                     </button>
 
