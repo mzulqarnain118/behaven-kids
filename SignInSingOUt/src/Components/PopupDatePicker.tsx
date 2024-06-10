@@ -9,12 +9,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from 'dayjs';
+import { jwtDecode } from "jwt-decode";
 
 
 interface PopupTemporaryPin {
     showModel: boolean;
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
 }
+
+interface DecodedToken {
+    StaffID: string;
+    LocationID: string;
+  }
 
 const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel }) => {
 
@@ -39,8 +45,14 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             setDidUserCheckAClient(true);
             e.preventDefault();
             const token = localStorage.getItem("token");
+            if (!token) {
+                return;
+            }
+            
+            const decoded = jwtDecode(token) as DecodedToken;
+            const getLocationID = decoded.LocationID;
             const response = await axios.get(
-                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}&whichFileType=${excelOrPDF}`,
+                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}&locationID=${getLocationID}&whichFileType=${excelOrPDF}`,
                 {
                     responseType: "blob", // Specify response type as blob
                     headers: {
