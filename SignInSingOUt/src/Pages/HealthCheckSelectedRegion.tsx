@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
 import './CSS/HealthCheck.css'
@@ -30,6 +30,10 @@ const HealthCheckSelectedRegion: React.FC = () => {
           .catch((error) => console.error("Error converting image:", error));
       }
     }
+  };
+
+  const videoConstraints = {
+    facingMode: { exact: "environment" }
   };
 
   return (
@@ -124,6 +128,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                     audio={false}
                     ref={webcamRef}
                     screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
                     style={{ width: "100%", height: "auto" }}
                   />
                   <button
