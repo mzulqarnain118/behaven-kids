@@ -3,6 +3,8 @@ import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
 import './CSS/HealthCheck.css'
 import Webcam from "react-webcam";
+import { backEndCodeURLLocation } from "../config";
+import axios from "axios";
 
 // Define the component
 const HealthCheckSelectedRegion: React.FC = () => {
@@ -36,111 +38,119 @@ const HealthCheckSelectedRegion: React.FC = () => {
     facingMode: { exact: "environment" }
   };
 
+  const uploadImage = () => {
+    if (!selectedImage) {
+      console.error("No image selected for upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", selectedImage);
+
+    axios.post(`${backEndCodeURLLocation}HealthCheck/testing`, formData)
+      .then(response => {
+        console.log("Success:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <>
-<div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
-                    <h4>&#128198; {new Date().toLocaleDateString()}</h4>
-                    <div style={{ display: "flex", flexDirection: "row" }}>
-                        <img src={TimeOutLogo} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        {/* <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomName}</h4> */}
-                    </div>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
+          <h4>&#128198; {new Date().toLocaleDateString()}</h4>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <img src={TimeOutLogo} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+            {/* <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomName}</h4> */}
+          </div>
 
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
-                    <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
+          <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
 
-                    <div style={{ display: "flex", flexDirection: "row" }}>
-                        <img src={Location} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-                        {/* <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomPositionName}</h4> */}
-                    </div>
-                </div>
-            </div>
-            <div style={{ display: "flex", justifyContent: "center"}}>
-                <div className="card"
-                    style={{
-                        width: "750px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <div className="card-body">
-                    <h3 style={{textAlign: "center"}}>Health Check</h3>
-                        <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
-                            <div className="card-body"> 
-                                <div>
-                                    <span>Temperature: <input type='text' style={{width: "100px"}}></input> F</span>
-                                    <form>
-                                        <div className='grid-container-For-selected'>
-                                            <div>
-                                                <input type="checkbox" name="Scratch" value="Scratch"/>
-                                                <label htmlFor="vehicle1"> Scratch</label>
-                                            </div>
-                                            <div>
-                                                <input type="checkbox" name="Dizziness" value="Dizziness"/>
-                                                <label htmlFor="Dizziness"> Dizziness</label>
-                                            </div>
-                                            <div>
-                                                <input type="checkbox" name="Bruise" value="Bruise"/>
-                                                <label htmlFor="Bruise">Bruise</label>
-                                            </div>
-                                        </div>
-                                        <textarea id="w3review" name="w3review" rows={4} cols={88}></textarea>
-                                        
-                                    </form>
-                                </div>
-                            </div> 
-                        </div>
-                    </div>
-
-                </div>
-
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <img src={Location} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
+            {/* <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomPositionName}</h4> */}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="card"
+          style={{
+            width: "750px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div className="card-body">
+            <h3 style={{ textAlign: "center" }}>Health Check</h3>
+            <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
+              <div className="card-body">
                 <div>
-                <label htmlFor="parentImage" style={{ fontSize: "20px" }}>Choose an image from file computer: </label>
-                <input
-                  style={{ fontSize: "20px" }}
-                  type="file"
-                  accept="image/*"
-                  id="parentImage"
-                  onChange={handleImageSelect}
-                />
-              </div>
-              {selectedImage && (
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Selected"
-                  style={{ width: "200px", height: "auto" }}
-                />
-              )}
-  
-              <button
-                type="button"
-                className="btn btn-primary btn-lg"
-                onClick={() => setCameraActive(!cameraActive)}
-              >
-                {cameraActive ? "Turn Off Camera" : "Turn On Camera"}
-              </button>
-              {cameraActive && (
-                <div className="form-group parentGridContaineritem">
-                  <label htmlFor="parentCamera">Take Picture</label>
-                  <Webcam
-                    audio={false}
-                    ref={webcamRef}
-                    screenshotFormat="image/jpeg"
-                    videoConstraints={videoConstraints}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={handleCapture}
-                  >
-                    Capture
-                  </button>
+                  <span>Temperature: <input type='text' style={{ width: "100px" }}></input> F</span>
+                  <form>
+                    <div className='grid-container-For-selected'>
+                      <div>
+                        <input type="checkbox" name="Scratch" value="Scratch" />
+                        <label htmlFor="vehicle1"> Scratch</label>
+                      </div>
+                      <div>
+                        <input type="checkbox" name="Dizziness" value="Dizziness" />
+                        <label htmlFor="Dizziness"> Dizziness</label>
+                      </div>
+                      <div>
+                        <input type="checkbox" name="Bruise" value="Bruise" />
+                        <label htmlFor="Bruise">Bruise</label>
+                      </div>
+                    </div>
+                    <textarea id="w3review" name="w3review" rows={4} cols={88}></textarea>
+                    {selectedImage && (
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        style={{ width: "200px", height: "auto" }}
+                      />
+                    )}
+
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-lg"
+                      onClick={() => setCameraActive(!cameraActive)}
+                    >
+                      {cameraActive ? "Turn Off Camera" : "Turn On Camera"}
+                    </button>
+                    {cameraActive && (
+                      <div className="form-group parentGridContaineritem">
+                        <label htmlFor="parentCamera">Take Picture</label>
+                        <Webcam
+                          audio={false}
+                          ref={webcamRef}
+                          screenshotFormat="image/jpeg"
+                          // videoConstraints={videoConstraints}
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-lg"
+                          onClick={handleCapture}
+                        >
+                          Capture
+                        </button>
+                      </div>
+                    )}
+                    <button type="button" onClick={uploadImage}>Submit</button>
+                  </form>
                 </div>
-              )}
+              </div>
             </div>
+          </div>
+
+        </div>
+
+      </div>
     </>
   );
 };
