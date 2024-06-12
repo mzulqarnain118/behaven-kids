@@ -102,7 +102,7 @@ const TimeOUtSelectAClient: React.FC = () => {
             return;
         }
 
-        const decoded = jwtDecode(token);
+        const decoded = jwtDecode(token); 
         const userRole = (decoded as any).role;
 
         if (!userRole.includes("tor")) {

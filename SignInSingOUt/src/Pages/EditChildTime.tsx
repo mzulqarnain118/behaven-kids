@@ -248,17 +248,26 @@ const EditChildTime: React.FC = () => {
     signOutTime: string,
     pickedUpParent: string
   ) => {
-    const token = localStorage.getItem("token");
+    
     try {
-      console.log("signOutTime = " + signOutTime);
-      console.log("pickedUpParent = " + pickedUpParent);
+
       if (signOutTime !== "Invalid date" && selectedDropOutParentID === null && pickedUpParent === null) {
         alert("Please choose the Guarandian who picked client up!")
         return;
       }
 
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/"); // Redirect to login page if token is not present
+        return;
+      }
+
+      const decoded = jwtDecode(token);
+      const staffID = (decoded as any).StaffID;
+
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}`,
+        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}&staffID=${staffID}`,
         {
           method: "POST",
           headers: {
@@ -492,9 +501,16 @@ const EditChildTime: React.FC = () => {
     }
 
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/"); // Redirect to login page if token is not present
+      return;
+  }
+    const decoded = jwtDecode(token);
+    const staffID = (decoded as any).StaffID;
+
     try {
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddManualClientSignInAndWhichParentDropChildIn?clientID=${selectedChildOptions?.value}&signInTime=${selectManualSignInTime}&parentID=${selectManualParent?.value}`,
+        `${backEndCodeURLLocation}SignIn/AddManualClientSignInAndWhichParentDropChildIn?clientID=${selectedChildOptions?.value}&signInTime=${selectManualSignInTime}&parentID=${selectManualParent?.value}&staffID=${staffID}`,
         {
           method: "POST",
           headers: {

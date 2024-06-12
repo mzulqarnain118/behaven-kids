@@ -4,6 +4,7 @@ import { backEndCodeURLLocation } from "../config";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import "./CSS/ChooseWhichChildren.css";
 import ClientsCheckinCheckoutPopup from "../Components/PopupCheckInOutSuccess"
+import { jwtDecode } from "jwt-decode";
 
 interface ClientInfo {
   clientID: number;
@@ -363,9 +364,9 @@ const ChooseWhichChildren: React.FC = () => {
           child.signInTimeData === null ||
           child.signInTimeData === undefined
         ) {
-          await signInClient(child.childId, token);
+          await signInClient(child.childId);
         } else {
-          await signOutClient(child.childId, token);
+          await signOutClient(child.childId);
         }
       }
       setBlurAmount(20);
@@ -378,11 +379,19 @@ const ChooseWhichChildren: React.FC = () => {
     }
   };
 
-  const signInClient = async (clientID: number, token: string | null) => {
+  const signInClient = async (clientID: number) => {
     try {
-      console.log("ClientID = " + clientID);
+       const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/"); 
+        return;
+      }
+      const decoded = jwtDecode(token);
+      const staffID = (decoded as any).StaffID;
+
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignIn?clientID=${clientID}&parentID=${parentID}`,
+        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignIn?clientID=${clientID}&parentID=${parentID}&staffID=${staffID}`,
         {
           method: "POST",
           headers: {
@@ -405,11 +414,19 @@ const ChooseWhichChildren: React.FC = () => {
     }
   };
 
-  const signOutClient = async (clientID: number, token: string | null) => {
+  const signOutClient = async (clientID: number) => {
     try {
-      console.log("ClientID = " + clientID);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/"); 
+        return;
+      }
+      const decoded = jwtDecode(token);
+      const staffID = (decoded as any).StaffID;
+
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignOut?clientID=${clientID}&parentID=${parentID}`,
+        `${backEndCodeURLLocation}SignIn/AddClientTimeOfSignOut?clientID=${clientID}&parentID=${parentID}&staffID=${staffID}`,
         {
           method: "POST",
           headers: {

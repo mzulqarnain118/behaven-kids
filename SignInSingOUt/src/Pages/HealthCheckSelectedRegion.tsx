@@ -10,12 +10,12 @@ import axios from "axios";
 const HealthCheckSelectedRegion: React.FC = () => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setSelectedImage(files[0]);
-    }
-  };
+  // const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
+  //   if (files && files.length > 0) {
+  //     setSelectedImage(files[0]);
+  //   }
+  // };
 
   const webcamRef = useRef<Webcam>(null);
   const [cameraActive, setCameraActive] = useState<boolean>(false);
@@ -34,9 +34,9 @@ const HealthCheckSelectedRegion: React.FC = () => {
     }
   };
 
-  const videoConstraints = {
-    facingMode: { exact: "environment" }
-  };
+  // const videoConstraints = {
+  //   facingMode: { exact: "environment" }
+  // };
 
   const uploadImage = () => {
     if (!selectedImage) {
