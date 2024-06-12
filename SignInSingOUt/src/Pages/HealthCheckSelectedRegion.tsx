@@ -2,14 +2,34 @@ import React, { useState, useRef } from "react";
 import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
 import './CSS/HealthCheck.css'
-import Webcam from "react-webcam";
 import { backEndCodeURLLocation } from "../config";
 import axios from "axios";
+import PopupCamera from "../Components/PopupCamera";
+import Camera from '../../src/assets/camera.png'
 
 // Define the component
 const HealthCheckSelectedRegion: React.FC = () => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [showModel, setShowModel] = useState<boolean>(false);
+  const [clientTemperature, setClientTemperature] = useState<string>();
+  const [symptoms, setSymptoms] = useState({
+    Scratch: false,
+    Dizziness: false,
+    Bruise: false,
+    HeavyBreath: false,
+    Tireness: false,
+    Rash: false,
+    Swollen: false
+  });
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setSymptoms({
+      ...symptoms,
+      [name]: checked
+    });
+  };
   // const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const files = event.target.files;
   //   if (files && files.length > 0) {
@@ -17,42 +37,62 @@ const HealthCheckSelectedRegion: React.FC = () => {
   //   }
   // };
 
-  const webcamRef = useRef<Webcam>(null);
-  const [cameraActive, setCameraActive] = useState<boolean>(false);
-  const handleCapture = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      if (imageSrc) {
-        fetch(imageSrc)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const file = new File([blob], "photo.png", { type: "image/png" });
-            setSelectedImage(file);
-          })
-          .catch((error) => console.error("Error converting image:", error));
-      }
-    }
-  };
-
   // const videoConstraints = {
   //   facingMode: { exact: "environment" }
   // };
 
   const uploadImage = () => {
-    if (!selectedImage) {
-      console.error("No image selected for upload.");
-      return;
-    }
+    // if (!selectedImage) {
+    //   console.error("No image selected for upload.");
+    //   return;
+    // }
 
     const formData = new FormData();
-    formData.append("image", selectedImage);
+    if (selectedImage) {
+        formData.append("image", selectedImage);
+    }
 
-    axios.post(`${backEndCodeURLLocation}HealthCheck/testing`, formData)
-      .then(response => {
-        console.log("Success:", response.data);
+    if (clientTemperature) {
+      formData.append("temperature", clientTemperature);
+    }
+
+    const HealthCheckFullInfoDTO = {
+      Image: selectedImage,
+      ProvidedSymptoms: symptoms,
+      Temperature: clientTemperature
+    };
+
+    console.log(HealthCheckFullInfoDTO);
+
+    // axios.post(`${backEndCodeURLLocation}HealthCheck/testing`, formData)
+    //   .then(response => {
+    //     console.log("Success:", response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //   });
+
+    const token = localStorage.getItem("token");
+
+    fetch(`${backEndCodeURLLocation}HealthCheck/testing`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(HealthCheckFullInfoDTO),
       })
-      .catch((error) => {
-        console.error("Error:", error);
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          console.log('Success:', data);
+      })
+      .catch(error => {
+          console.error('this error:', error);
       });
   };
 
@@ -86,43 +126,63 @@ const HealthCheckSelectedRegion: React.FC = () => {
           }}
         >
           <div className="card-body">
-            <h3 style={{ textAlign: "center" }}>Health Check</h3>
+            <h2 style={{ textAlign: "center" }}>Health Check</h2>
             <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
               <div className="card-body">
                 <div>
-                  <span>Temperature: <input type='text' style={{ width: "100px" }}></input> F</span>
+                  <span style={{ fontSize: "30px" }}>Temperature: <input onChange={(event) => setClientTemperature(event.target.value)}  type='text' style={{ width: "100px", textAlign: "center" }}></input> F</span>
                   <form>
-                    <div className='grid-container-For-selected'>
+                    <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                       <div>
-                        <input type="checkbox" name="Scratch" value="Scratch" />
-                        <label htmlFor="vehicle1"> Scratch</label>
+                        <input type="checkbox" name="Scratch" checked={symptoms.Scratch} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
+                        <label htmlFor="Scratch"> Scratch</label>
                       </div>
                       <div>
-                        <input type="checkbox" name="Dizziness" value="Dizziness" />
+                        <input type="checkbox" name="Dizziness" checked={symptoms.Dizziness} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
                         <label htmlFor="Dizziness"> Dizziness</label>
                       </div>
                       <div>
-                        <input type="checkbox" name="Bruise" value="Bruise" />
+                        <input type="checkbox" name="Bruise" checked={symptoms.Bruise} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
                         <label htmlFor="Bruise">Bruise</label>
                       </div>
+                      <div>
+                        <input type="checkbox" name="Heavy Breath" checked={symptoms.HeavyBreath} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
+                        <label htmlFor="Heavy Breath">Heavy Breath</label>
+                      </div>
+                      <div>
+                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Tireness} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
+                        <label htmlFor="Tireness">Tireness</label>
+                      </div>
+                      <div>
+                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Rash} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
+                        <label htmlFor="Rash">Rash</label>
+                      </div>
+                      <div>
+                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Swollen} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
+                        <label htmlFor="Swollen">Swollen</label>
+                      </div>
+                      <div>
+                        <label htmlFor="Other">Other</label>
+                        <input type="text" style={{ width: "250px", marginLeft: "20px" }}></input>
+                      </div>
                     </div>
-                    <textarea id="w3review" name="w3review" rows={4} cols={88}></textarea>
+                    <textarea id="w3review" name="w3review" style={{ width: "79vw", height: "250px", marginTop: "25px" }}></textarea>
                     {selectedImage && (
                       <img
                         src={URL.createObjectURL(selectedImage)}
                         alt="Selected"
                         style={{ width: "200px", height: "auto" }}
                       />
-                    )}
+                    )} 
 
                     <button
                       type="button"
-                      className="btn btn-primary btn-lg"
-                      onClick={() => setCameraActive(!cameraActive)}
+                      onClick={() => setShowModel(true)}
+
                     >
-                      {cameraActive ? "Turn Off Camera" : "Turn On Camera"}
+                      <img src={Camera} style={{backgroundColor: "white"}}></img>
                     </button>
-                    {cameraActive && (
+                    {/* {cameraActive && (
                       <div className="form-group parentGridContaineritem">
                         <label htmlFor="parentCamera">Take Picture</label>
                         <Webcam
@@ -140,7 +200,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                           Capture
                         </button>
                       </div>
-                    )}
+                    )} */}
                     <button type="button" onClick={uploadImage}>Submit</button>
                   </form>
                 </div>
@@ -151,6 +211,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
         </div>
 
       </div>
+      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImage} setSelectedImage={setSelectedImage} /> 
     </>
   );
 };
