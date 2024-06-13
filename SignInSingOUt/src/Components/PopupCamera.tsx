@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
@@ -22,9 +22,10 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
     };
 
     const webcamRef = useRef<Webcam>(null);
-    const [cameraActive, setCameraActive] = useState<boolean>(false);
+    // const [cameraActive, setCameraActive] = useState<boolean>(false);
     const handleCapture = () => {
         if (webcamRef.current) {
+            console.log(selectedImage);
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
                 fetch(imageSrc)
@@ -36,6 +37,12 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
                     .catch((error) => console.error("Error converting image:", error));
             }
         }
+    };
+
+    const videoConstraints = {
+        width: 1280, // You can set your preferred dimensions
+    height: 720,
+        facingMode: { exact: "environment" }
     };
 
 
@@ -50,8 +57,8 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
                                     audio={false}
                                     ref={webcamRef}
                                     screenshotFormat="image/jpeg"
-                                    // videoConstraints={videoConstraints}
-                                    style={{ width: "100%", height: "auto" }}
+                                    videoConstraints={videoConstraints}
+                                    style={{ width: "100%", height: "500px" }}
                                 />
                                 <div style={{ width: "75px", height: "75px", backgroundColor: "DodgerBlue", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, margin: "0 auto" }}>
                                     <button

@@ -1,9 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import TimeOutLogo from '../../src/assets/timeout.png';
 import Location from '../../src/assets/location.png';
 import './CSS/HealthCheck.css'
 import { backEndCodeURLLocation } from "../config";
-import axios from "axios";
 import PopupCamera from "../Components/PopupCamera";
 import Camera from '../../src/assets/camera.png'
 
