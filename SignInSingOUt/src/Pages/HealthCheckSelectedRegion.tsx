@@ -4,7 +4,9 @@ import Location from '../../src/assets/location.png';
 import './CSS/HealthCheck.css'
 import { backEndCodeURLLocation } from "../config";
 import PopupCamera from "../Components/PopupCamera";
-import Camera from '../../src/assets/camera.png'
+import Camera from '../../src/assets/camera.png';
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 // Define the component
 const HealthCheckSelectedRegion: React.FC = () => {
@@ -12,15 +14,19 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
   const [clientTemperature, setClientTemperature] = useState<string>();
+  const [other, setOther] = useState<string>();
+  const [description, setDescription] = useState<string>();
   const [symptoms, setSymptoms] = useState({
     Scratch: false,
     Dizziness: false,
     Bruise: false,
     HeavyBreath: false,
-    Tireness: false,
+    Tiredness: false,
     Rash: false,
-    Swollen: false
+    Swelling: false,
+    Nausea: false,
   });
+  const navigate = useNavigate();
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -45,53 +51,53 @@ const HealthCheckSelectedRegion: React.FC = () => {
     //   console.error("No image selected for upload.");
     //   return;
     // }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please Login");
+      navigate("/", { replace: true });
+      return;
+    }
+    const decoded = jwtDecode(token);
+    const staffID = (decoded as any).StaffID;
 
     const formData = new FormData();
     if (selectedImage) {
-        formData.append("image", selectedImage);
+      formData.append('Image', selectedImage);
     }
+    formData.append('Temperature', clientTemperature || "");
+    formData.append('Other', other || "");
+    formData.append('Description', description || "");
+    formData.append('ProvidedSymptoms.Scratch', String(symptoms.Scratch));
+    formData.append('ProvidedSymptoms.Dizziness', String(symptoms.Dizziness));
+    formData.append('ProvidedSymptoms.Bruise', String(symptoms.Bruise));
+    formData.append('ProvidedSymptoms.HeavyBreath', String(symptoms.HeavyBreath));
+    formData.append('ProvidedSymptoms.Tiredness', String(symptoms.Tiredness));
+    formData.append('ProvidedSymptoms.Rash', String(symptoms.Rash));
+    formData.append('ProvidedSymptoms.Swelling', String(symptoms.Swelling));
+    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
+    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
+    formData.append('staffID', staffID);
 
-    if (clientTemperature) {
-      formData.append("temperature", clientTemperature);
-    }
 
-    const HealthCheckFullInfoDTO = {
-      Image: selectedImage,
-      ProvidedSymptoms: symptoms,
-      Temperature: clientTemperature
-    };
-
-    console.log(HealthCheckFullInfoDTO);
-
-    // axios.post(`${backEndCodeURLLocation}HealthCheck/testing`, formData)
-    //   .then(response => {
-    //     console.log("Success:", response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //   });
-
-    const token = localStorage.getItem("token");
 
     fetch(`${backEndCodeURLLocation}HealthCheck/testing`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(HealthCheckFullInfoDTO),
-      })
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
       .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
       })
       .then(data => {
-          console.log('Success:', data);
+        console.log('Success:', data);
       })
       .catch(error => {
-          console.error('this error:', error);
+        console.error('this error:', error);
       });
   };
 
@@ -129,77 +135,61 @@ const HealthCheckSelectedRegion: React.FC = () => {
             <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
               <div className="card-body">
                 <div>
-                  <span style={{ fontSize: "30px" }}>Temperature: <input onChange={(event) => setClientTemperature(event.target.value)}  type='text' style={{ width: "100px", textAlign: "center" }}></input> F</span>
+                  <span style={{ fontSize: "30px" }}>Temperature: <input onChange={(event) => setClientTemperature(event.target.value)} type='text' style={{ width: "100px", textAlign: "center" }}></input>&#8457;</span>
                   <form>
                     <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
-                      <div>
-                        <input type="checkbox" name="Scratch" checked={symptoms.Scratch} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Scratch"> Scratch</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Scratch" type="checkbox" name="Scratch" checked={symptoms.Scratch} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Scratch" style={{ marginLeft: "10px", marginBottom: "5px" }}> Scratch</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Dizziness" checked={symptoms.Dizziness} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Dizziness"> Dizziness</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Dizziness" type="checkbox" name="Dizziness" checked={symptoms.Dizziness} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Dizziness" style={{ marginLeft: "10px", marginBottom: "5px" }}> Dizziness</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Bruise" checked={symptoms.Bruise} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Bruise">Bruise</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Bruise" type="checkbox" name="Bruise" checked={symptoms.Bruise} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Bruise" style={{ marginLeft: "10px", marginBottom: "5px" }}>Bruise</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Heavy Breath" checked={symptoms.HeavyBreath} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Heavy Breath">Heavy Breath</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="HeavyBreath" type="checkbox" name="HeavyBreath" checked={symptoms.HeavyBreath} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="HeavyBreath" style={{ marginLeft: "10px", marginBottom: "5px" }}>Heavy Breath</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Tireness} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Tireness">Tireness</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Tiredness" type="checkbox" name="Tiredness" checked={symptoms.Tiredness} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Tiredness" style={{ marginLeft: "10px", marginBottom: "5px" }}>Tiredness</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Rash} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Rash">Rash</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Rash" type="checkbox" name="Rash" checked={symptoms.Rash} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Rash" style={{ marginLeft: "10px", marginBottom: "5px" }}>Rash</label>
                       </div>
-                      <div>
-                        <input type="checkbox" name="Heavy Breath" checked={symptoms.Swollen} onChange={handleCheckboxChange} style={{ width: "30px", transform: "scale(1.5)" }} />
-                        <label htmlFor="Swollen">Swollen</label>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Swelling" type="checkbox" name="Swelling" checked={symptoms.Swelling} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Swelling" style={{ marginLeft: "10px", marginBottom: "5px" }}>Swelling</label>
                       </div>
-                      <div>
-                        <label htmlFor="Other">Other</label>
-                        <input type="text" style={{ width: "250px", marginLeft: "20px" }}></input>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <input id="Nausea" type="checkbox" name="Nausea" checked={symptoms.Nausea} onChange={handleCheckboxChange} style={{ marginLeft: "10px", transform: "scale(2.2)" }} />
+                        <label htmlFor="Nausea" style={{ marginLeft: "10px", marginBottom: "5px" }}>Nausea</label>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: "25px" }}>
+                        <label htmlFor="Other" style={{ fontSize: "40px" }}>Other</label>
+                        <input type="text" style={{ width: "250px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
                       </div>
                     </div>
-                    <textarea id="w3review" name="w3review" style={{ width: "79vw", height: "250px", marginTop: "25px" }}></textarea>
-                    {selectedImage && (
-                      <img
-                        src={URL.createObjectURL(selectedImage)}
-                        alt="Selected"
-                        style={{ width: "200px", height: "auto" }}
-                      />
-                    )} 
+                    <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "250px", marginTop: "25px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
 
-                    <button
-                      type="button"
-                      onClick={() => setShowModel(true)}
 
-                    >
-                      <img src={Camera} style={{backgroundColor: "white"}}></img>
-                    </button>
-                    {/* {cameraActive && (
-                      <div className="form-group parentGridContaineritem">
-                        <label htmlFor="parentCamera">Take Picture</label>
-                        <Webcam
-                          audio={false}
-                          ref={webcamRef}
-                          screenshotFormat="image/jpeg"
-                          // videoConstraints={videoConstraints}
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-lg"
-                          onClick={handleCapture}
-                        >
-                          Capture
-                        </button>
-                      </div>
-                    )} */}
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setShowModel(true)}
+                        style={{ backgroundColor: "DodgerBlue" }}
+                      >
+                        <img src={Camera}></img>
+                      </button>
+                      {selectedImage && (
+                        <img src={URL.createObjectURL(selectedImage)} style={{ border: "1px", width: "105px", height: "105px" }} ></img>
+                      )}
+                    </div>
                     <button type="button" onClick={uploadImage}>Submit</button>
                   </form>
                 </div>
@@ -210,7 +200,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
         </div>
 
       </div>
-      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImage} setSelectedImage={setSelectedImage} /> 
+      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
     </>
   );
 };
