@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 // Define the component
 const HealthCheckSelectedRegion: React.FC = () => {
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
   const [showModel, setShowModel] = useState<boolean>(false);
   const [clientTemperature, setClientTemperature] = useState<string>();
   const [other, setOther] = useState<string>();
@@ -47,10 +47,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
   // };
 
   const uploadImage = () => {
-    // if (!selectedImage) {
-    //   console.error("No image selected for upload.");
-    //   return;
-    // }
+
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please Login");
@@ -61,8 +58,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
     const staffID = (decoded as any).StaffID;
 
     const formData = new FormData();
-    if (selectedImage) {
-      formData.append('Image', selectedImage);
+    if (selectedImages) {
+      formData.append('Image', selectedImages[0] || "");
     }
     formData.append('Temperature', clientTemperature || "");
     formData.append('Other', other || "");
@@ -178,7 +175,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                     <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "250px", marginTop: "25px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
 
 
-                    <div>
+                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                       <button
                         type="button"
                         onClick={() => setShowModel(true)}
@@ -186,9 +183,15 @@ const HealthCheckSelectedRegion: React.FC = () => {
                       >
                         <img src={Camera}></img>
                       </button>
-                      {selectedImage && (
-                        <img src={URL.createObjectURL(selectedImage)} style={{ border: "1px", width: "105px", height: "105px" }} ></img>
-                      )}
+                      {/* {selectedImages && (
+                        {selectedImages.map}
+                        <img src={URL.createObjectURL(selectedImages[0])} style={{ border: "1px", width: "105px", height: "105px" }} ></img>
+                      )} */}
+                      {selectedImages.map((file, index) => (
+                        <div key={index} style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                          {file && <img src={URL.createObjectURL(file)} alt={`Selected ${index}`} style={{ border: "1px", width: "105px", height: "105px" }}/>}
+                        </div>
+                      ))}
                     </div>
                     <button type="button" onClick={uploadImage}>Submit</button>
                   </form>
@@ -200,7 +203,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
         </div>
 
       </div>
-      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
+      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImages} setSelectedImages={setSelectedImages} />
     </>
   );
 };
