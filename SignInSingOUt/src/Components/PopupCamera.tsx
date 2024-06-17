@@ -25,7 +25,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
     // const [cameraActive, setCameraActive] = useState<boolean>(false);
     const handleCapture = () => {
         if (webcamRef.current) {
-            // console.log(selectedImage);
+             console.log(selectedImage);
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
                 fetch(imageSrc)
@@ -35,7 +35,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
                         // setSelectedImage(file);
                         setSelectedImages((prevImages : any) => {
                             const newImages = [...prevImages, file];
-                            if (newImages.length > 5) {
+                            if (newImages.length > 4) {
                               newImages.shift(); // Remove the first item if there are more than 5 images
                             }
                             return newImages;
@@ -46,11 +46,11 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
         }
     };
 
-    const videoConstraints = {
-        width: 1280, // You can set your preferred dimensions
-        height: 720,
-        facingMode: { exact: "environment" }
-    };
+    // const videoConstraints = {
+    //     width: 1280, // You can set your preferred dimensions
+    //     height: 720,
+    //     facingMode: { exact: "environment" }
+    // };
 
 
     return (

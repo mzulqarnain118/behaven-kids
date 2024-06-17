@@ -3,15 +3,18 @@
     grid-template-columns: minmax(250px, auto) minmax(200px, auto);
     grid-gap: 20px;
     text-align: left;
-    font-size: 30px;
+    font-size: 25px;
+  }
+
+  .checkBoxSize {
+    margin-left: 10px;
+    transform: scale(2.0);
   }
 
   .grid-container-For-bodies {
     display: grid;
     grid-template-columns: 325px 325px;
-    grid-gap: 20px;
     text-align: center;
-    border: solid;
-    font-size: 30px;
-    width: 100%;
+    margin-top: -30px;
+    height: 556px;
   }
