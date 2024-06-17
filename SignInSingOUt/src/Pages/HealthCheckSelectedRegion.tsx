@@ -27,8 +27,9 @@ const bodyParts: OptionType[] = [
   { value: 'right_leg', label: 'Right Leg' },
   { value: 'left_foot', label: 'Left Foot' },
   { value: 'right_foot', label: 'Right Foot' },
-  { value: 'chest', label: 'Chest' },
-  { value: 'stomach', label: 'Stomach' },
+  { value: 'torso', label: 'Torso' },
+  // { value: 'chest', label: 'Chest' },
+  // { value: 'stomach', label: 'Stomach' },
 ];
 
 const frontOrBack: OptionType[] = [
@@ -92,22 +93,28 @@ const HealthCheckSelectedRegion: React.FC = () => {
 
     const formData = new FormData();
     if (selectedImages) {
-      formData.append('Image', selectedImages[0] || "");
+      formData.append('ImageOne', selectedImages[0] || "");
+      formData.append('ImageTwo', selectedImages[1] || "");
+      formData.append('ImageThree', selectedImages[2] || "");
+      formData.append('ImageFour', selectedImages[3] || "");
     }
+    const clientID = "2";
+
+    formData.append('ClientID', clientID);
+    formData.append('StaffID', staffID);
+    formData.append('SelectedBodyPart', selectedArea);
+    formData.append('FrontOrBack', "Front");
     formData.append('Temperature', clientTemperature || "");
-    formData.append('Other', other || "");
-    formData.append('Description', description || "");
     formData.append('ProvidedSymptoms.Scratch', String(symptoms.Scratch));
-    formData.append('ProvidedSymptoms.Dizziness', String(symptoms.Dizziness));
+    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
     formData.append('ProvidedSymptoms.Bruise', String(symptoms.Bruise));
-    formData.append('ProvidedSymptoms.HeavyBreath', String(symptoms.HeavyBreath));
-    formData.append('ProvidedSymptoms.Tiredness', String(symptoms.Tiredness));
     formData.append('ProvidedSymptoms.Rash', String(symptoms.Rash));
     formData.append('ProvidedSymptoms.Swelling', String(symptoms.Swelling));
-    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
-    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
-    formData.append('staffID', staffID);
-
+    formData.append('ProvidedSymptoms.Dizziness', String(symptoms.Dizziness));
+    formData.append('ProvidedSymptoms.HeavyBreath', String(symptoms.HeavyBreath));
+    formData.append('ProvidedSymptoms.Tiredness', String(symptoms.Tiredness));
+    formData.append('Other', other || "");
+    formData.append('Description', description || "");
 
 
     fetch(`${backEndCodeURLLocation}HealthCheck/testing`, {

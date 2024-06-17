@@ -9,6 +9,7 @@
   .checkBoxSize {
     margin-left: 10px;
     transform: scale(2.0);
+    margin-top: 4px;
   }
 
   .grid-container-For-bodies {

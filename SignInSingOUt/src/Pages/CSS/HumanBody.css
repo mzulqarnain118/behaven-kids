@@ -29,6 +29,13 @@
   .human-body svg.head {
     margin-left: -28.5px;
     top: -6px;
+    z-index: 10002;
+  }
+
+  .human-body svg.neck {
+    margin-left: -28.5px;
+    top: -6px;
+    z-index: 10001;
   }
   
   .human-body svg.left-shoulder {
@@ -57,9 +64,9 @@
     top: 88px;
   }
   
-  .human-body svg.stomach {
+  .human-body svg.torso {
     margin-left: -37.5px;
-    top: 130px;
+    top: 90px;
   }
   
   .human-body svg.left-leg {
