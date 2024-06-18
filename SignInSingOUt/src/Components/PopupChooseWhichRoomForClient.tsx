@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 // import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
+import Health from '../../src/assets/health.png';
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -146,6 +147,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
+                                </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    
+                                        <button
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            // onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            <span><img src={Health} style={{width: "30px", marginBottom: "5px"}}></img><span style={{marginLeft: "5px"}}>Health</span></span>
+                                        </button>
+                                  
                                 </div>
 
                             </div>
