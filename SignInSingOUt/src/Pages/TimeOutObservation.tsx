@@ -9,6 +9,7 @@ import Child from '../../src/assets/child.png'
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
 import { backEndCodeURLLocation } from "../config";
 
+
 const TimeOutObservation: React.FC = () => {
   const location = useLocation();
   const { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom } = location.state || {};
@@ -48,7 +49,7 @@ const TimeOutObservation: React.FC = () => {
 
   useEffect(() => {
     if (didUserClickStart) {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); 
       if (!token) {
         alert("Please Login");
         return;

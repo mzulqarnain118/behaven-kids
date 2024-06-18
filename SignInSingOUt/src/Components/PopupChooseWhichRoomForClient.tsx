@@ -5,6 +5,7 @@ import BootstrapModal from "react-bootstrap/Modal";
 // import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import Health from '../../src/assets/health.png';
+import { useNavigate } from "react-router-dom";
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -29,6 +30,19 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
 
     const handleClose = () => {
         // navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
+        setShowModel(false)
+    };
+    const navigate = useNavigate();
+    const goToHealthCheckUp = async () => {
+        try {
+            navigate("/HealthCheck", {
+                replace: true,
+                state: { clientID: clientID, clientFullName: clientFullName},
+              });
+
+        } catch (error) {
+            alert("Error fetching data:" + error);
+        }
         setShowModel(false)
     };
 
@@ -71,11 +85,9 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             }
 
         } catch (error) {
-            alert("Error fetching data:" + error);
+            alert("Error:" + error);
         }
-        setShowModel(false)
     };
-
     return (
         <>
             <div>
@@ -154,7 +166,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         <button
                                             style={{ width: "150px" }}
                                             className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            // onClick={() => transferToAnotherRoom(info.roomID)}
+                                            onClick={() => goToHealthCheckUp()}
                                         >
                                             <span><img src={Health} style={{width: "30px", marginBottom: "5px"}}></img><span style={{marginLeft: "5px"}}>Health</span></span>
                                         </button>
