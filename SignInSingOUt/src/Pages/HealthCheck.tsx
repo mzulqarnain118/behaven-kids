@@ -11,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 interface PreviousDayInfo {
   clientID: number;
   dateOfSubmission: string;
-  selectedBodyPart: string;
+  location: string;
+  type: string;
 }
 
 const HealthCheck: React.FC = () => {
@@ -108,7 +109,8 @@ const HealthCheck: React.FC = () => {
                         <HumanBody />
                       </div>
                     </div>
-                    <div className='grid-container-For-bodies' style={{ marginTop: "25px", borderTop: "solid" }}>
+                    <div className='grid-container-For-bodies' style={{ marginTop: "25px", borderTop: "solid", height: "350px" }}>
+                    <div style={{ maxHeight: "360px", overflowY: "auto" }}>
                       <table>
                         <thead>
                           <tr>
@@ -123,8 +125,8 @@ const HealthCheck: React.FC = () => {
                             clientPreviousDaysHealthInfo.map((item, index) => (
                               <tr key={index}>
                                 <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
-                                <td style={{ width: "250px" }}>{item.selectedBodyPart}</td>
-                                {/* <td style={{ width: "250px" }}>{item.Type}</td> */}
+                                <td style={{ width: "250px" }}>{item.location}</td>
+                                <td style={{ width: "250px" }}>{item.type}</td> 
                               </tr>
                             ))
                           ) : (
@@ -134,10 +136,10 @@ const HealthCheck: React.FC = () => {
                           )}
                         </tbody>
                       </table>
-                      <table>
+                      </div>
+                      {/* <table>
                         <thead>
                           <tr>
-                            {/* <th>ID</th> */}
                             <th>Date</th>
                             <th>Location</th>
                             <th>Type</th>
@@ -145,7 +147,7 @@ const HealthCheck: React.FC = () => {
                         </thead>
                         <tbody>
                         </tbody>
-                      </table>
+                      </table> */}
                     </div>
 
 
