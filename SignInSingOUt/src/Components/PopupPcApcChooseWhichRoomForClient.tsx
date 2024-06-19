@@ -181,6 +181,19 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             </button>
                                         ))}
                                 </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo.filter(info => info.roomName.includes("TOR")).map((info) => (
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            {info.roomName}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </BootstrapModal.Body>

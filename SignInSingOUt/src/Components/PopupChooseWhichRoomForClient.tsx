@@ -43,7 +43,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
         } catch (error) {
             alert("Error fetching data:" + error);
         }
-        setShowModel(false)
+        setShowModel(false);
     };
 
     const transferToAnotherRoom = async (newRoomID: number) => {
@@ -67,6 +67,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                 if (!response.ok) {
                     alert(`Failed to transfer client to another room: ${response.status}`)
                 }
+                setShowModel(false);
             }
             else {
                 const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}`;
@@ -82,6 +83,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                 if (!response.ok) {
                     alert(`Failed to transfer client to another room: ${response.status}`)
                 }
+                setShowModel(false);
             }
 
         } catch (error) {
@@ -217,6 +219,19 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                                 {info.staffFirstName} {info.staffLastName.charAt(0)}.
                                             </button>
                                         ))}
+                                </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    {roomInfo.filter(info => info.roomName.includes("TOR")).map((info) => (
+                                        <button
+                                            key={info.roomID}
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => transferToAnotherRoom(info.roomID)}
+                                        >
+                                            {info.roomName}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         )}

@@ -102,11 +102,11 @@ const HealthCheck: React.FC = () => {
                     <div className='grid-container-For-bodies' >
                       <div style={{ borderRight: "solid", marginTop: "20px" }} >
                         <h3>Previous</h3>
-                        <HumanBody />
+                        <HumanBody clientID={clientID} IsPreviousDay={true}/>
                       </div>
                       <div style={{ borderLeft: "solid", marginTop: "20px" }}>
                         <h3>Today</h3>
-                        <HumanBody />
+                        <HumanBody clientID={clientID} IsPreviousDay={false}/>
                       </div>
                     </div>
                     <div className='grid-container-For-bodies' style={{ marginTop: "25px", borderTop: "solid", height: "350px" }}>
@@ -137,17 +137,35 @@ const HealthCheck: React.FC = () => {
                         </tbody>
                       </table>
                       </div>
-                      {/* <table>
+                      <div className='grid-container-For-bodies' style={{ marginTop: "0px", height: "350px" }}>
+                      <div style={{ maxHeight: "360px", overflowY: "auto" }}>
+                      <table>
                         <thead>
                           <tr>
+                            {/* <th>ID</th> */}
                             <th>Date</th>
                             <th>Location</th>
                             <th>Type</th>
                           </tr>
                         </thead>
                         <tbody>
+                          {clientPreviousDaysHealthInfo.length > 0 ? (
+                            clientPreviousDaysHealthInfo.map((item, index) => (
+                              <tr key={index}>
+                                <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
+                                <td style={{ width: "250px" }}>{item.location}</td>
+                                <td style={{ width: "250px" }}>{item.type}</td> 
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={3}>No data available</td>
+                            </tr>
+                          )}
                         </tbody>
-                      </table> */}
+                      </table>
+                      </div>
+                      </div>
                     </div>
 
 

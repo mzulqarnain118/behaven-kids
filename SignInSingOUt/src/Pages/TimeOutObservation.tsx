@@ -37,6 +37,7 @@ const TimeOutObservation: React.FC = () => {
     { id: 6, label: 'Physical Injury to Child', counter: 0 },
     { id: 7, label: 'Physical Injury to Staff', counter: 0 },
     { id: 8, label: 'Property Damage', counter: 0 },
+    { id: 9, label: 'Bitting', counter: 0 },
   ]);
 
   const [timer, setTimer] = useState('00:00');
@@ -44,12 +45,13 @@ const TimeOutObservation: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
   const [startTime, setStartTime] = useState("");
+  const [description, setDescription] = useState<string>();
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (didUserClickStart) {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
       if (!token) {
         alert("Please Login");
         return;
@@ -111,6 +113,7 @@ const TimeOutObservation: React.FC = () => {
       PhysicalInjuryToChild: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
       PhysicalInjuryToStaff: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Staff') || { counter: 0 }).counter,
       PropertyDamage: (behaviorsColumnTwo.find(b => b.label === 'Property Damage') || { counter: 0 }).counter,
+      Bitting: (behaviorsColumnTwo.find(b => b.label === 'Bitting') || { counter: 0 }).counter,
     };
 
     const behaviorAndAggressionDTO = {
@@ -120,7 +123,8 @@ const TimeOutObservation: React.FC = () => {
       RoomID: String(roomID),
       TimeoutRoomPosition: String(roomPositionName),
       StartTime: String(startTime),
-      ClientPreviousRoom: String(clientPreviousRoom)
+      ClientPreviousRoom: String(clientPreviousRoom),
+      Description: description
     };
 
     try {
@@ -213,7 +217,7 @@ const TimeOutObservation: React.FC = () => {
 
 
           <div className="card" >
-            <div className="card-body grid-container-For-behaviors" style={{ height: "100%" }}>
+            <div className="card-body grid-container-For-behaviors" >
               <div className="card" style={{ border: "none" }}>
                 {behaviorsColumnOne.map((button) => (
                   <div key={button.id} className="grid-container-For-behavior-buttons">
@@ -253,11 +257,11 @@ const TimeOutObservation: React.FC = () => {
                     <button className="counter-buttons" onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
                       {button.label}
                     </button>
-
                   </div>
                 ))}
               </div>
             </div>
+            <textarea placeholder="Description" id="w3review" name="w3review" style={{height: "200px", fontSize: "20px", paddingLeft: "10px", paddingTop: "5px", marginLeft: "40px", marginRight: "40px", marginBottom: "10px", marginTop: "10px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
           </div>
           <br />
           <button onClick={CheckToSeeIfTimeoutIsFinished} className="stopButton">Finish</button>

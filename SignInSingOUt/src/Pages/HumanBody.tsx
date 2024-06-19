@@ -1,13 +1,115 @@
 import { useState, useEffect } from "react";
 import "./CSS/HumanBody.css";
 import { useNavigate } from "react-router-dom";
+import { backEndCodeURLLocation } from "../config";
 
-const HumanBody = () => {
+interface ClientInfo {
+  clientID: string;
+  IsPreviousDay: boolean;
+}
+
+const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
   const navigate = useNavigate();
   const [selectedArea, setSelectedArea] = useState(""); 
 
-  const [leftShoulder, setLeftShoulder] = useState(false);
-  const [rightShoulder, setRightShoulder] = useState(false);
+  const [head, setHead] = useState<boolean>(false);
+  const [leftShoulder, setLeftShoulder] = useState<boolean>(false);
+  const [rightShoulder, setRightShoulder] = useState<boolean>(false);
+  const [leftArm, setLeftArm] = useState<boolean>(false);
+  const [rightArm, setRightArm] = useState<boolean>(false);
+  const [leftHand, setLeftHand] = useState<boolean>(false);
+  const [rightHand, setRightHand] = useState<boolean>(false);
+  const [torso, setTorso] = useState<boolean>(false);
+  const [leftLeg, setLeftLeg] = useState<boolean>(false);
+  const [rightLeg, setRightLeg] = useState<boolean>(false);
+  const [leftFoot, setLeftFoot] = useState<boolean>(false);
+  const [rightFoot, setRightFoot] = useState<boolean>(false);
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Please log In");
+          navigate("/", { replace: true });
+          return;
+        }
+
+        const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch data. Response status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+
+        // console.log("health check data: ", data);
+
+        if (IsPreviousDay === true)
+        {
+          for (let x = 0; x < data.length; x++)
+            {
+              switch (data[x].selectedBodyPart) 
+              {
+                case 'head':
+                  setHead(true);
+                  break;
+                case 'left_shoulder':
+                  setLeftShoulder(true);
+                  break;
+                case 'right_shoulder':
+                  setRightShoulder(true);
+                  break;
+                case 'left_arm':
+                  setLeftArm(true);
+                  break;
+                case 'right_arm':
+                  setRightArm(true);
+                  break;
+                case 'left_hand':
+                  setLeftHand(true);
+                  break;
+                case 'right_hand':
+                  setRightHand(true);
+                  break;
+                case 'torso':
+                  setTorso(true);
+                  break;
+                case 'left_leg':
+                  setLeftLeg(true);
+                  break;
+                case 'right_leg':
+                  setRightLeg(true);
+                  break;
+                case 'left_foot':
+                  setLeftFoot(true);
+                  break;
+                case 'right_foot':
+                  setRightFoot(true);
+                  break;
+                default:
+                  break;
+              } 
+            }
+        }
+        
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handlePieceClick = (event: any) => {
     const position =
@@ -16,10 +118,6 @@ const HumanBody = () => {
     if (position) {
       setSelectedArea(position);
 
-      if (position === "left_shoulder")
-        setLeftShoulder(true);
-      else
-        setLeftShoulder(false);
     }
     // if (confirm("Are you sure you want to delete this item?")) {
     //   // Logic to execute if the user clicked "OK"
@@ -39,10 +137,10 @@ const HumanBody = () => {
     });
   }, [selectedArea]);
 
-  useEffect(() => {
-    setLeftShoulder(true);
-    setRightShoulder(false);
-  });
+  // useEffect(() => {
+  //   setLeftShoulder(true);
+  //   setRightShoulder(false);
+  // });
 
   // const handleClick = (event: any) => {
   //   const position = event.currentTarget.getAttribute('data-position');
@@ -59,7 +157,9 @@ const HumanBody = () => {
       <div className="human-body" onClick={handlePieceClick}>
         <svg
           data-position="head"
-          className={`body-part head ${selectedArea === "head" ? "selected" : ""}`}
+          // className={`body-part head ${selectedArea === "head" ? "selected" : ""}`}
+          className={`head`}
+          style={{ fill: head === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="56.594"
           height="95.031"
@@ -104,6 +204,7 @@ const HumanBody = () => {
         <svg
           data-position="right_arm"
           className="right-arm"
+          style={{ fill: rightArm === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="156.344"
           height="119.25"
@@ -115,6 +216,7 @@ const HumanBody = () => {
         <svg
           data-position="left_arm"
           className="left-arm"
+          style={{ fill: leftArm === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="156.344"
           height="119.25"
@@ -126,6 +228,7 @@ const HumanBody = () => {
         <svg
           data-position="chest"
           className="chest"
+          style={{ fill: torso === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="86.594"
           height="45.063"
@@ -138,6 +241,7 @@ const HumanBody = () => {
         <svg
           data-position="torso"
           className="torso"
+          style={{ fill: torso === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="75.25"
           height="190.594"
@@ -150,6 +254,7 @@ const HumanBody = () => {
         <svg
           data-position="left_leg"
           className="left-leg"
+          style={{ fill: leftLeg === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="93.626"
           height="286.625"
@@ -164,6 +269,7 @@ const HumanBody = () => {
         <svg
           data-position="right_leg"
           className="right-leg"
+          style={{ fill: rightLeg === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="93.626"
           height="286.625"
@@ -177,6 +283,7 @@ const HumanBody = () => {
         <svg
           data-position="left_hand"
           className="left-hand"
+          style={{ fill: leftHand === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="205"
           height="38.938"
@@ -187,6 +294,7 @@ const HumanBody = () => {
         <svg
           data-position="right_hand"
           className="right-hand"
+          style={{ fill: rightHand === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="205"
           height="38.938"
@@ -197,6 +305,7 @@ const HumanBody = () => {
         <svg
           data-position="right_foot"
           className="right-foot"
+          style={{ fill: rightFoot === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="205"
           height="38.938"
@@ -207,6 +316,7 @@ const HumanBody = () => {
         <svg
           data-position="left_foot"
           className="left-foot"
+          style={{ fill: leftFoot === true ? "red" : "" }}
           xmlns="http://www.w3.org/2000/svg"
           width="205"
           height="38.938"
