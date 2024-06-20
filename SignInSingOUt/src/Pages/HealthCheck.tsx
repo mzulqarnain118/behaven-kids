@@ -7,12 +7,21 @@ import StaffLogo from '../../src/assets/person.png';
 import HumanBody from "./HumanBody.tsx";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
-interface PreviousDayInfo {
+interface ClientHealthInfo {
+  id: number;
   clientID: number;
   dateOfSubmission: string;
   location: string;
   type: string;
+}
+
+interface CurrentAndPreviousClientHealthInfo
+{
+  previousDayHealthInfo: ClientHealthInfo[];
+  currentDayHealthInfo: ClientHealthInfo[];
 }
 
 const HealthCheck: React.FC = () => {
@@ -22,7 +31,8 @@ const HealthCheck: React.FC = () => {
 
   const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
   const [showModel, setShowModel] = useState<boolean>(false);
-  const [clientPreviousDaysHealthInfo, setClientPreviousDaysHealthInfo] = useState<PreviousDayInfo[]>([]);
+  const [clientPreviousDaysHealthInfo, setClientPreviousDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
+  const [clientCurrentDaysHealthInfo, setClientCurrentDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
 
   useEffect(() => {
 
@@ -50,10 +60,11 @@ const HealthCheck: React.FC = () => {
           );
         }
 
-        const data = await response.json();
+        const data : CurrentAndPreviousClientHealthInfo = await response.json();
 
         console.log("data ", data);
-        setClientPreviousDaysHealthInfo(data);
+        setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
+        setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -62,7 +73,33 @@ const HealthCheck: React.FC = () => {
     fetchData();
   }, []);
 
+  const MoveHealthCheckToCurrentDate = async (id : number) => {
+    try {
 
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          return (
+            <div style={{backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "20000"}}>
+              <h1>Transfer</h1>
+              <h3>Does the client still have this health condition?</h3>
+              <button className="btn-primary" onClick={onClose} style={{width: "150px", height: "75px", borderRadius: "25px", backgroundColor: "blue", fontSize: "25px"}}>No</button>
+              <button
+                onClick={() => {
+                  // this.handleClickDelete();
+                  onClose();
+                }}
+              >
+                Yes, Delete it!
+              </button>
+            </div>
+          );
+        }
+      });
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <>
@@ -114,7 +151,6 @@ const HealthCheck: React.FC = () => {
                       <table>
                         <thead>
                           <tr>
-                            {/* <th>ID</th> */}
                             <th>Date</th>
                             <th>Location</th>
                             <th>Type</th>
@@ -123,7 +159,8 @@ const HealthCheck: React.FC = () => {
                         <tbody>
                           {clientPreviousDaysHealthInfo.length > 0 ? (
                             clientPreviousDaysHealthInfo.map((item, index) => (
-                              <tr key={index}>
+                              <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id)}>
+                                {/* <tr key={index}> */}
                                 <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
                                 <td style={{ width: "250px" }}>{item.location}</td>
                                 <td style={{ width: "250px" }}>{item.type}</td> 
@@ -149,8 +186,8 @@ const HealthCheck: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {clientPreviousDaysHealthInfo.length > 0 ? (
-                            clientPreviousDaysHealthInfo.map((item, index) => (
+                          {clientCurrentDaysHealthInfo.length > 0 ? (
+                            clientCurrentDaysHealthInfo.map((item, index) => (
                               <tr key={index}>
                                 <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
                                 <td style={{ width: "250px" }}>{item.location}</td>

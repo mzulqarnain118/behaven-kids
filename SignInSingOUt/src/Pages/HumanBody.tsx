@@ -8,6 +8,17 @@ interface ClientInfo {
   IsPreviousDay: boolean;
 }
 
+interface ClientHealthInfo {
+  selectedBodyPart: string;
+}
+
+interface CurrentAndPreviousClientHealthInfo
+{
+  previousDayHealthInfo: ClientHealthInfo[];
+  currentDayHealthInfo: ClientHealthInfo[];
+}
+
+
 const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
   const navigate = useNavigate();
   const [selectedArea, setSelectedArea] = useState(""); 
@@ -51,57 +62,107 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
           );
         }
 
-        const data = await response.json();
+        const data : CurrentAndPreviousClientHealthInfo = await response.json();
 
         // console.log("health check data: ", data);
 
         if (IsPreviousDay === true)
         {
-          for (let x = 0; x < data.length; x++)
+            for (let x = 0; x < data.previousDayHealthInfo.length; x++)
             {
-              switch (data[x].selectedBodyPart) 
-              {
-                case 'head':
-                  setHead(true);
-                  break;
-                case 'left_shoulder':
-                  setLeftShoulder(true);
-                  break;
-                case 'right_shoulder':
-                  setRightShoulder(true);
-                  break;
-                case 'left_arm':
-                  setLeftArm(true);
-                  break;
-                case 'right_arm':
-                  setRightArm(true);
-                  break;
-                case 'left_hand':
-                  setLeftHand(true);
-                  break;
-                case 'right_hand':
-                  setRightHand(true);
-                  break;
-                case 'torso':
-                  setTorso(true);
-                  break;
-                case 'left_leg':
-                  setLeftLeg(true);
-                  break;
-                case 'right_leg':
-                  setRightLeg(true);
-                  break;
-                case 'left_foot':
-                  setLeftFoot(true);
-                  break;
-                case 'right_foot':
-                  setRightFoot(true);
-                  break;
-                default:
-                  break;
-              } 
+              console.log(data.previousDayHealthInfo[x]);
+                switch (data.previousDayHealthInfo[x].selectedBodyPart) 
+                {
+                  case 'head':
+                    setHead(true);
+                    break;
+                  case 'left_shoulder':
+                    setLeftShoulder(true);
+                    break;
+                  case 'right_shoulder':
+                    setRightShoulder(true);
+                    break;
+                  case 'left_arm':
+                    setLeftArm(true);
+                    break;
+                  case 'right_arm':
+                    setRightArm(true);
+                    break;
+                  case 'left_hand':
+                    setLeftHand(true);
+                    break;
+                  case 'right_hand':
+                    setRightHand(true);
+                    break;
+                  case 'torso':
+                    setTorso(true);
+                    break;
+                  case 'left_leg':
+                    setLeftLeg(true);
+                    break;
+                  case 'right_leg':
+                    setRightLeg(true);
+                    break;
+                  case 'left_foot':
+                    setLeftFoot(true);
+                    break;
+                  case 'right_foot':
+                    setRightFoot(true);
+                    break;
+                  default:
+                    break;
+                } 
             }
         }
+
+        if (IsPreviousDay === false)
+          {
+              for (let x = 0; x < data.currentDayHealthInfo.length; x++)
+              {
+                console.log(data.currentDayHealthInfo[x]);
+                  switch (data.currentDayHealthInfo[x].selectedBodyPart) 
+                  {
+                    case 'head':
+                      setHead(true);
+                      break;
+                    case 'left_shoulder':
+                      setLeftShoulder(true);
+                      break;
+                    case 'right_shoulder':
+                      setRightShoulder(true);
+                      break;
+                    case 'left_arm':
+                      setLeftArm(true);
+                      break;
+                    case 'right_arm':
+                      setRightArm(true);
+                      break;
+                    case 'left_hand':
+                      setLeftHand(true);
+                      break;
+                    case 'right_hand':
+                      setRightHand(true);
+                      break;
+                    case 'torso':
+                      setTorso(true);
+                      break;
+                    case 'left_leg':
+                      setLeftLeg(true);
+                      break;
+                    case 'right_leg':
+                      setRightLeg(true);
+                      break;
+                    case 'left_foot':
+                      setLeftFoot(true);
+                      break;
+                    case 'right_foot':
+                      setRightFoot(true);
+                      break;
+                    default:
+                      break;
+                  } 
+              }
+          }
         
 
       } catch (error) {
@@ -154,7 +215,7 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
   return (
     <div>
       {/* <div className="human-body" onClick={handlePieceClick} style={{pointerEvents: "none", opacity: "0.5"}}> */}
-      <div className="human-body" onClick={handlePieceClick}>
+      <div className="human-body" onClick={handlePieceClick} style={{pointerEvents: IsPreviousDay === false ? "auto" : "none", opacity: IsPreviousDay === false ? "1" : "0.5"}}>
         <svg
           data-position="head"
           // className={`body-part head ${selectedArea === "head" ? "selected" : ""}`}

@@ -136,6 +136,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
       .catch(error => {
         console.error('this error:', error);
       });
+
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
   };
 
   const handleChange = (selectedOption: OptionType | null) => {
