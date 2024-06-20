@@ -37,7 +37,7 @@ const TimeOutObservation: React.FC = () => {
     { id: 6, label: 'Physical Injury to Child', counter: 0 },
     { id: 7, label: 'Physical Injury to Staff', counter: 0 },
     { id: 8, label: 'Property Damage', counter: 0 },
-    { id: 9, label: 'Bitting', counter: 0 },
+    { id: 9, label: 'Biting', counter: 0 },
   ]);
 
   const [timer, setTimer] = useState('00:00');
@@ -113,7 +113,7 @@ const TimeOutObservation: React.FC = () => {
       PhysicalInjuryToChild: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
       PhysicalInjuryToStaff: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Staff') || { counter: 0 }).counter,
       PropertyDamage: (behaviorsColumnTwo.find(b => b.label === 'Property Damage') || { counter: 0 }).counter,
-      Bitting: (behaviorsColumnTwo.find(b => b.label === 'Bitting') || { counter: 0 }).counter,
+      Bitting: (behaviorsColumnTwo.find(b => b.label === 'Biting') || { counter: 0 }).counter,
     };
 
     const behaviorAndAggressionDTO = {
@@ -129,21 +129,23 @@ const TimeOutObservation: React.FC = () => {
 
     try {
       const response = await fetch(`${backEndCodeURLLocation}Cbs/AddClientLevelTwoToFive`,
-        {
+      {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(behaviorAndAggressionDTO),
-        }
-      );
+      });
+
       if (!response.ok) {
         console.error(response.statusText);
       }
+
       navigate("/timeoutselectaclient", {
         replace: true,
       });
+      
     } catch (error) {
       console.error(error);
     }
