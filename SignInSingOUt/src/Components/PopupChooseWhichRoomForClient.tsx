@@ -15,6 +15,7 @@ interface CbsAddOrTransferClientsToRooms {
     clientFullName: string;
     clientProgram: string;
     previousRoomID?: number;
+    staffFullName: string;
 }
 
 interface RoomInfoDTO {
@@ -24,7 +25,7 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName }) => {
     if (!open) return null;
     // const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
         try {
             navigate("/HealthCheck", {
                 replace: true,
-                state: { clientID: clientID, clientFullName: clientFullName},
+                state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
               });
 
         } catch (error) {

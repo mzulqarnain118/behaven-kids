@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import './CSS/HealthCheck.css'
 import { backEndCodeURLLocation } from "../config";
-import PopupCamera from "../Components/PopupCamera";
 import ChildLogo from '../../src/assets/child.png';
 import StaffLogo from '../../src/assets/person.png';
 import HumanBody from "./HumanBody.tsx";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { confirmAlert } from 'react-confirm-alert'; 
-import 'react-confirm-alert/src/react-confirm-alert.css'; 
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import PopupHealthCheckView from '../Components/PopupHealthCheckView.tsx'
 
 interface ClientHealthInfo {
   id: number;
@@ -18,8 +18,7 @@ interface ClientHealthInfo {
   type: string;
 }
 
-interface CurrentAndPreviousClientHealthInfo
-{
+interface CurrentAndPreviousClientHealthInfo {
   previousDayHealthInfo: ClientHealthInfo[];
   currentDayHealthInfo: ClientHealthInfo[];
 }
@@ -27,10 +26,10 @@ interface CurrentAndPreviousClientHealthInfo
 const HealthCheck: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { clientID, clientFullName } = location.state || {};
-
-  const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
+  const { clientID, clientFullName, staffFullName } = location.state || {};
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [id, setID] = useState<number | null>(null);
+
   const [clientPreviousDaysHealthInfo, setClientPreviousDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
   const [clientCurrentDaysHealthInfo, setClientCurrentDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
 
@@ -60,7 +59,7 @@ const HealthCheck: React.FC = () => {
           );
         }
 
-        const data : CurrentAndPreviousClientHealthInfo = await response.json();
+        const data: CurrentAndPreviousClientHealthInfo = await response.json();
 
         console.log("data ", data);
         setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
@@ -73,28 +72,60 @@ const HealthCheck: React.FC = () => {
     fetchData();
   }, []);
 
-  const MoveHealthCheckToCurrentDate = async (id : number) => {
+  const MoveHealthCheckToCurrentDate = async (id: number) => {
     try {
+      setID(id);
+      setShowModel(true);
+      // confirmAlert({
+      //   customUI: ({ onClose }) => {
+      //     return (
+      //       <div style={{ backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "30000", textAlign: "center", borderRadius: "25px" }}>
+      //         <h1>Transfer</h1>
+      //         <h3 style={{ marginTop: "20px" }}>Does the client still have this health condition?</h3>
+      //         <div style={{ marginTop: "30px" }}>
+      //           <button className="btn btn-primary" onClick={() => {StaffClickedYesToMovePreviousHealthConditionToNextDay(id); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginRight: "10px" }}>Yes</button>
+      //           <button className="btn btn-danger" style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginLeft: "10px" }} onClick={() => {onClose();}}> No </button>
+      //         </div>
+      //       </div>
+      //     );
+      //   }
+      // });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-      confirmAlert({
-        customUI: ({ onClose }) => {
-          return (
-            <div style={{backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "20000"}}>
-              <h1>Transfer</h1>
-              <h3>Does the client still have this health condition?</h3>
-              <button className="btn-primary" onClick={onClose} style={{width: "150px", height: "75px", borderRadius: "25px", backgroundColor: "blue", fontSize: "25px"}}>No</button>
-              <button
-                onClick={() => {
-                  // this.handleClickDelete();
-                  onClose();
-                }}
-              >
-                Yes, Delete it!
-              </button>
-            </div>
-          );
-        }
-      });
+  const AddHealthInfo = async () => {
+    navigate("/HealthCheckSelectedRegion", {
+      replace: true,
+      state: { clientID, clientFullName, staffFullName },
+    });
+  }
+
+  const StaffClickedYesToMovePreviousHealthConditionToNextDay = async (id: number) => {
+    try {
+      
+      // const token = localStorage.getItem("token");
+      // if (!token) {
+      //   alert("Please log In");
+      //   navigate("/", { replace: true });
+      //   return;
+      // }
+
+      // const response = await fetch(`${backEndCodeURLLocation}HealthCheck/MakePreviousHealthCurrent?id=${id}`, {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error(
+      //     `Failed to fetch data. Response status: ${response.status}`
+      //   );
+      // }
+
 
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -117,7 +148,7 @@ const HealthCheck: React.FC = () => {
 
           <div style={{ display: "flex", flexDirection: "row" }}>
             <img src={StaffLogo} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-            {/* <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{roomPositionName}</h4> */}
+            <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{staffFullName}</h4> 
           </div>
         </div>
       </div>
@@ -139,69 +170,69 @@ const HealthCheck: React.FC = () => {
                     <div className='grid-container-For-bodies' >
                       <div style={{ borderRight: "solid", marginTop: "20px" }} >
                         <h3>Previous</h3>
-                        <HumanBody clientID={clientID} IsPreviousDay={true}/>
+                        <HumanBody clientID={clientID} IsPreviousDay={true} clientFullName={clientFullName} staffFullName={staffFullName} />
                       </div>
                       <div style={{ borderLeft: "solid", marginTop: "20px" }}>
                         <h3>Today</h3>
-                        <HumanBody clientID={clientID} IsPreviousDay={false}/>
+                        <HumanBody clientID={clientID} IsPreviousDay={false} clientFullName={clientFullName} staffFullName={staffFullName}/>
                       </div>
                     </div>
-                    <div className='grid-container-For-bodies' style={{ marginTop: "25px", borderTop: "solid", height: "350px" }}>
-                    <div style={{ maxHeight: "360px", overflowY: "auto" }}>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Location</th>
-                            <th>Type</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {clientPreviousDaysHealthInfo.length > 0 ? (
-                            clientPreviousDaysHealthInfo.map((item, index) => (
-                              <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id)}>
-                                {/* <tr key={index}> */}
-                                <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
-                                <td style={{ width: "250px" }}>{item.location}</td>
-                                <td style={{ width: "250px" }}>{item.type}</td> 
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={3}>No data available</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                      </div>
-                      <div className='grid-container-For-bodies' style={{ marginTop: "0px", height: "350px" }}>
+                    <div className='grid-container-For-bodies' style={{ marginTop: "25px", height: "250px" }}>
                       <div style={{ maxHeight: "360px", overflowY: "auto" }}>
-                      <table>
-                        <thead>
-                          <tr>
-                            {/* <th>ID</th> */}
-                            <th>Date</th>
-                            <th>Location</th>
-                            <th>Type</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {clientCurrentDaysHealthInfo.length > 0 ? (
-                            clientCurrentDaysHealthInfo.map((item, index) => (
-                              <tr key={index}>
-                                <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
-                                <td style={{ width: "250px" }}>{item.location}</td>
-                                <td style={{ width: "250px" }}>{item.type}</td> 
-                              </tr>
-                            ))
-                          ) : (
+                        <table>
+                          <thead>
                             <tr>
-                              <td colSpan={3}>No data available</td>
+                              <th>Date</th>
+                              <th>Location</th>
+                              <th>Type</th>
                             </tr>
-                          )}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {clientPreviousDaysHealthInfo.length > 0 ? (
+                              clientPreviousDaysHealthInfo.map((item, index) => (
+                                <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id)}>
+                                  {/* <tr key={index}> */}
+                                  <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
+                                  <td style={{ width: "250px" }}>{item.location}</td>
+                                  <td style={{ width: "250px" }}>{item.type}</td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={3}>No data available</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
                       </div>
+                      <div className='grid-container-For-bodies' style={{ marginTop: "0px", height: "250px", marginLeft: "15px" }}>
+                        <div style={{ maxHeight: "360px", overflowY: "auto" }}>
+                          <table>
+                            <thead>
+                              <tr>
+                                {/* <th>ID</th> */}
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {clientCurrentDaysHealthInfo.length > 0 ? (
+                                clientCurrentDaysHealthInfo.map((item, index) => (
+                                  <tr key={index}>
+                                    <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
+                                    <td style={{ width: "250px" }}>{item.location}</td>
+                                    <td style={{ width: "250px" }}>{item.type}</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan={3}>No data available</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
 
@@ -209,14 +240,22 @@ const HealthCheck: React.FC = () => {
                     {/* <button type="button" onClick={uploadImage}>ADD+</button> */}
                   </form>
                 </div>
+                
               </div>
+              
             </div>
+            <div style={{textAlign: "center", marginTop: "25px"}}>
+              <button className="add-button-class" style={{marginRight: "15px"}} onClick={() => AddHealthInfo()}>+ ADD</button>
+              <button className="add-button-class" style={{marginLeft: "15px"}}>No Issues</button>
+            </div>
+            
           </div>
 
         </div>
-
+        {id !== null && (
+          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id}/>
+        )}
       </div>
-      <PopupCamera showModel={showModel} setShowModel={setShowModel} selectedImage={selectedImages} setSelectedImages={setSelectedImages} />
     </>
   );
 };

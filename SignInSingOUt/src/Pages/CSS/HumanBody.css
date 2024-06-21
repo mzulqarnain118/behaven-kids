@@ -29,7 +29,7 @@
   .human-body svg.head {
     margin-left: -28.5px;
     top: -6px;
-    z-index: 10002;
+    /* z-index: 10002; */
   }
 
   .human-body svg.neck {
@@ -56,7 +56,7 @@
   .human-body svg.right-arm {
     margin-left: 38px;
     top: 112px;
-    z-index: 10001;
+    /* z-index: 10001; */
   }
   
   .human-body svg.chest {
@@ -72,13 +72,13 @@
   .human-body svg.left-leg {
     margin-left: -46.5px;
     top: 205px;
-    z-index: 9999;
+    /* z-index: 9999; */
   }
   
   .human-body svg.right-leg {
     margin-left: 1.5px;
     top: 205px;
-    z-index: 9999;
+    /* z-index: 9999; */
     /* border: 1px solid black; */
   }
   
@@ -90,21 +90,21 @@
   .human-body svg.right-hand {
     margin-left: 66.5px;
     top: 224px;
-    z-index: 10000;
+    /* z-index: 100; */
   }
   
   .human-body svg.left-foot {
     /* border: 1px solid red; */
     margin-left: -35.5px;
     top: 455px;
-    z-index: 9999;
+    /* z-index: 100; */
   }
   
   .human-body svg.right-foot {
     /* border: 1px solid black; */
     margin-left: 5.5px;
     top: 455px;
-    z-index: 10000;
+    /* z-index: 10000; */
   }
   
   #area {

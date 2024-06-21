@@ -6,6 +6,8 @@ import { backEndCodeURLLocation } from "../config";
 interface ClientInfo {
   clientID: string;
   IsPreviousDay: boolean;
+  clientFullName: string;
+  staffFullName: string;
 }
 
 interface ClientHealthInfo {
@@ -19,7 +21,7 @@ interface CurrentAndPreviousClientHealthInfo
 }
 
 
-const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
+const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullName, staffFullName}) => {
   const navigate = useNavigate();
   const [selectedArea, setSelectedArea] = useState(""); 
 
@@ -194,7 +196,7 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay}) => {
       return;
     navigate("/HealthCheckSelectedRegion", {
       replace: true,
-      state: { selectedArea },
+      state: { selectedArea, clientID, clientFullName, staffFullName },
     });
   }, [selectedArea]);
 
