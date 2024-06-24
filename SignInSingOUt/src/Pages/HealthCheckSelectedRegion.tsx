@@ -43,13 +43,12 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const navigate = useNavigate();
   const { preSelectedBodyPartArea, clientID, clientFullName, staffFullName, preSelectedBackOrFront } = location.state || {};
 
-  
+
 
   useEffect(() => {
-    if (clientID === undefined)
-      {
-        navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
-      }
+    if (clientID === undefined) {
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+    }
   });
 
   const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
@@ -62,16 +61,19 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const [selectedBodyPart, setSelectedBodyPart] = useState<OptionType | null>(preSelectedBodyPartOption);
   const [selectedFrontOrBack, setSelectedFrontOrBack] = useState<OptionType | null>(preSelectedFrontOrBack);
   const [symptoms, setSymptoms] = useState({
-    Scratch: false,
-    Dizziness: false,
-    Bruise: false,
-    HeavyBreath: false,
-    Tiredness: false,
-    Rash: false,
-    Swelling: false,
-    Nausea: false,
+    scratch: false,
+    bruise: false,
+    rash: false,
+    swelling: false,
+    lethargic: false,
+    nausea: false,
+    drySkin: false,
+    tattoo: false,
+    pourHygiene: false,
+    dirtyDiapers: false,
+    previousDayClothes: false,
   });
-  
+
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -110,28 +112,28 @@ const HealthCheckSelectedRegion: React.FC = () => {
       formData.append('ImageFour', selectedImages[3] || "");
     }
 
-    if (selectedBodyPart)
-    {
+    if (selectedBodyPart) {
       formData.append('SelectedBodyPart', selectedBodyPart.value);
     }
-    if (selectedFrontOrBack)
-    {
+    if (selectedFrontOrBack) {
       formData.append('FrontOrBack', selectedFrontOrBack.value);
     }
 
     formData.append('ClientID', clientID);
     formData.append('StaffID', staffID);
-    // formData.append('SelectedBodyPart', selectedBodyPart);
-    // formData.append('FrontOrBack', selectedFrontOrBack);
     formData.append('Temperature', clientTemperature || "");
-    formData.append('ProvidedSymptoms.Scratch', String(symptoms.Scratch));
-    formData.append('ProvidedSymptoms.Nausea', String(symptoms.Nausea));
-    formData.append('ProvidedSymptoms.Bruise', String(symptoms.Bruise));
-    formData.append('ProvidedSymptoms.Rash', String(symptoms.Rash));
-    formData.append('ProvidedSymptoms.Swelling', String(symptoms.Swelling));
-    formData.append('ProvidedSymptoms.Dizziness', String(symptoms.Dizziness));
-    formData.append('ProvidedSymptoms.HeavyBreath', String(symptoms.HeavyBreath));
-    formData.append('ProvidedSymptoms.Tiredness', String(symptoms.Tiredness));
+    formData.append('ProvidedSymptoms.Scratch', String(symptoms.scratch));
+    formData.append('ProvidedSymptoms.Bruise', String(symptoms.bruise));
+    formData.append('ProvidedSymptoms.Rash', String(symptoms.rash));
+    formData.append('ProvidedSymptoms.Swelling', String(symptoms.swelling));
+    formData.append('ProvidedSymptoms.Lethargic', String(symptoms.lethargic));
+    formData.append('ProvidedSymptoms.Nausea', String(symptoms.nausea));
+    formData.append('ProvidedSymptoms.DrySkin', String(symptoms.drySkin));
+    formData.append('ProvidedSymptoms.Tattoo', String(symptoms.tattoo));
+    formData.append('ProvidedSymptoms.PourHygiene', String(symptoms.pourHygiene));
+    formData.append('ProvidedSymptoms.DirtyDiapers', String(symptoms.dirtyDiapers));
+    formData.append('ProvidedSymptoms.PreviousDayClothes', String(symptoms.previousDayClothes));
+
     formData.append('Other', other || "");
     formData.append('Description', description || "");
 
@@ -192,11 +194,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
             {/* <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}> */}
             {/* <div className="card-body"> */}
 
-            <span style={{ fontSize: "25px" }}>Temperature:
-              <input onChange={(event) => setClientTemperature(event.target.value)} type='number' style={{ width: "100px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
-              <span style={{ marginLeft: "10px" }}>&#8457;</span>
-            </span>
-            <div style={{ marginTop: "25px" }}>
+
+            <div style={{ marginTop: "15px" }}>
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <label style={{ marginRight: "15px", fontSize: "25px" }}>Selected Region</label>
                 <Select
@@ -217,44 +216,66 @@ const HealthCheckSelectedRegion: React.FC = () => {
               <form>
                 <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Scratch" type="checkbox" name="Scratch" checked={symptoms.Scratch} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Scratch" style={{ marginLeft: "15px" }}> Scratch</label>
+                    <input id="scratch" type="checkbox" name="scratch" checked={symptoms.scratch} onChange={handleCheckboxChange} className="checkBoxSize" />
+                    <label htmlFor="scratch" style={{ marginLeft: "15px" }}> Scratch</label>
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Dizziness" type="checkbox" name="Dizziness" checked={symptoms.Dizziness} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Dizziness" style={{ marginLeft: "15px" }}> Dizziness</label>
+                    <input id="bruise" type="checkbox" name="bruise" checked={symptoms.bruise} onChange={handleCheckboxChange} className="checkBoxSize" />
+                    <label htmlFor="bruise" style={{ marginLeft: "15px" }}>Bruise</label>
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Bruise" type="checkbox" name="Bruise" checked={symptoms.Bruise} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Bruise" style={{ marginLeft: "15px" }}>Bruise</label>
+                    <input id="rash" type="checkbox" name="rash" checked={symptoms.rash} onChange={handleCheckboxChange} className="checkBoxSize" />
+                    <label htmlFor="rash" style={{ marginLeft: "15px" }}>Rash</label>
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="HeavyBreath" type="checkbox" name="HeavyBreath" checked={symptoms.HeavyBreath} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="HeavyBreath" style={{ marginLeft: "15px" }}>Heavy Breath</label>
+                    <input id="swelling" type="checkbox" name="swelling" checked={symptoms.swelling} onChange={handleCheckboxChange} className="checkBoxSize" />
+                    <label htmlFor="swelling" style={{ marginLeft: "15px" }}>Swelling</label>
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Tiredness" type="checkbox" name="Tiredness" checked={symptoms.Tiredness} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Tiredness" style={{ marginLeft: "15px" }}>Tiredness</label>
+                    <input id="drySkin" type="checkbox" name="drySkin" checked={symptoms.drySkin} onChange={handleCheckboxChange} className="checkBoxSize" />
+                    <label htmlFor="drySkin" style={{ marginLeft: "15px" }}>Dry Skin</label>
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Rash" type="checkbox" name="Rash" checked={symptoms.Rash} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Rash" style={{ marginLeft: "15px" }}>Rash</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Swelling" type="checkbox" name="Swelling" checked={symptoms.Swelling} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Swelling" style={{ marginLeft: "15px" }}>Swelling</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Nausea" type="checkbox" name="Nausea" checked={symptoms.Nausea} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="Nausea" style={{ marginLeft: "15px" }}>Nausea</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="Nausea" type="checkbox" name="Nausea" checked={symptoms.Nausea} onChange={handleCheckboxChange} className="checkBoxSize" disabled={true} />
-                    <label htmlFor="Other" style={{ marginLeft: "15px" }}>Other</label>
-                    <input type="text" style={{ width: "250px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
+                    <input id="other" type="checkbox" name="other" onChange={handleCheckboxChange} className="checkBoxSize" disabled={true} />
+                    <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
+                    <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
                   </div>
                 </div>
-                <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "250px", marginTop: "25px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
+                <hr style={{ marginTop: "35px" }} />
+                <div style={{ fontSize: "25px", marginTop: "25px" }}>
+                  <span style={{ fontSize: "25px", marginTop: "25px" }}>Temperature:
+                    <input onChange={(event) => setClientTemperature(event.target.value)} type='number' style={{ width: "100px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
+                    <span style={{ marginLeft: "10px" }}>&#8457;</span>
+                  </span>
+                  <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="lethargic" type="checkbox" name="lethargic" checked={symptoms.lethargic} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="lethargic" style={{ marginLeft: "15px" }}> Lethargic</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="nausea" type="checkbox" name="nausea" checked={symptoms.nausea} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="nausea" style={{ marginLeft: "15px" }}>Nausea</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={symptoms.pourHygiene} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="pourHygiene" style={{ marginLeft: "15px" }}>Pour Hygiene</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={symptoms.dirtyDiapers} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="dirtyDiapers" style={{ marginLeft: "15px" }}>Dirty Diapers</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="tattoo" type="checkbox" name="tattoo" checked={symptoms.pourHygiene} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="tattoo" style={{ marginLeft: "15px" }}>Tattoo</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={symptoms.previousDayClothes} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <label htmlFor="previousDayClothes" style={{ marginLeft: "15px" }}>Previous Day Clothes</label>
+                    </div>
+                  </div>
+                </div>
+
+                <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "100px", marginTop: "50px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
 
 
                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", marginTop: "15px" }}>
@@ -279,7 +300,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
             </div>
             {/* </div> */}
             {/* </div> */}
-           
+
           </div>
 
         </div>
