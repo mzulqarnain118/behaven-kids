@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import "./CSS/HumanBody.css";
 import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 interface ClientInfo {
   clientID: string;
@@ -23,7 +25,7 @@ interface CurrentAndPreviousClientHealthInfo
 
 const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullName, staffFullName}) => {
   const navigate = useNavigate();
-  const [selectedArea, setSelectedArea] = useState(""); 
+  const [preSelectedBodyPartArea, setPreSelectedBodyPartArea] = useState(""); 
 
   const [head, setHead] = useState<boolean>(false);
   const [leftShoulder, setLeftShoulder] = useState<boolean>(false);
@@ -179,7 +181,7 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
       event.target.getAttribute("data-position") ||
       event.target.parentElement.getAttribute("data-position");
     if (position) {
-      setSelectedArea(position);
+      setPreSelectedBodyPartArea(position);
 
     }
     // if (confirm("Are you sure you want to delete this item?")) {
@@ -192,13 +194,49 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
   };
 
   useEffect(() => {
-    if (selectedArea === "")
+    if (preSelectedBodyPartArea === "")
       return;
-    navigate("/HealthCheckSelectedRegion", {
-      replace: true,
-      state: { selectedArea, clientID, clientFullName, staffFullName },
-    });
-  }, [selectedArea]);
+    
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div style={{ backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "30000", textAlign: "center", borderRadius: "25px" }}>
+            <h1>Front or Back?</h1>
+            {/* <h3 style={{ marginTop: "20px" }}></h3> */}
+            <div style={{ marginTop: "30px" }}>
+              <button className="btn btn-primary" onClick={() => {staffNeedsToSelectFrontOrBack("front"); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginRight: "10px" }}>Front</button>
+              <button className="btn btn-danger"  onClick={() => {staffNeedsToSelectFrontOrBack("back"); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginLeft: "10px" }}> Back </button>
+            </div>
+          </div>
+        );
+      }});
+  }, [preSelectedBodyPartArea]);
+
+  const staffNeedsToSelectFrontOrBack = async (preSelectedBackOrFront: string) => {
+    try {
+      navigate("/HealthCheckSelectedRegion", {
+        replace: true,
+        state: { preSelectedBodyPartArea, clientID, clientFullName, staffFullName, preSelectedBackOrFront },
+      });
+
+      // confirmAlert({
+      //   customUI: ({ onClose }) => {
+      //     return (
+      //       <div style={{ backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "30000", textAlign: "center", borderRadius: "25px" }}>
+      //         <h1>Transfer</h1>
+      //         <h3 style={{ marginTop: "20px" }}>Does the client still have this health condition?</h3>
+      //         <div style={{ marginTop: "30px" }}>
+      //           <button className="btn btn-primary" onClick={() => {StaffClickedYesToMovePreviousHealthConditionToNextDay(id); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginRight: "10px" }}>Yes</button>
+      //           <button className="btn btn-danger" style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginLeft: "10px" }} onClick={() => {onClose();}}> No </button>
+      //         </div>
+      //       </div>
+      //     );
+      //   }
+      // });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   // useEffect(() => {
   //   setLeftShoulder(true);

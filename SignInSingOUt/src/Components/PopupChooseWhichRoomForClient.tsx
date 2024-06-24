@@ -234,6 +234,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                    
+                                        <button
+                                            style={{ width: "150px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => goToHealthCheckUp()}
+                                        >
+                                            <span><img src={Health} style={{width: "30px", marginBottom: "5px"}}></img><span style={{marginLeft: "5px"}}>Health</span></span>
+                                        </button>
+                                  
+                                </div>
                             </div>
                         )}
                     </BootstrapModal.Body>

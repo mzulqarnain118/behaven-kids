@@ -14,6 +14,7 @@ import "./CSS/SdpAttendanceStatusOverview.css";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import PopupPcApcChooseWhichRoomForClient from "../Components/PopupPcApcChooseWhichRoomForClient";
+import Health from '../../src/assets/health.png';
 
 interface SdpRoomInfo {
   roomID: number;
@@ -25,6 +26,7 @@ interface SdpRoomInfo {
   whichRoomClientCurrentlyIn: number;
   whichWaitingRoomIsClientIn: number;
   clientPreviousRoomName: string;
+  didClientRecievedHealthCheck: number;
 }
 
 interface NonSDPRoomsDTO {
@@ -291,11 +293,13 @@ const SdpPanel: React.FC = () => {
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
                     <button onClick={() => 
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
+                      {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{width: "30px", marginBottom: "5px", marginLeft: "10px"}}></img>}
                     </button>
                   ))}
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
                     <button onClick={() => 
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
+                      {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{width: "30px", marginBottom: "5px", marginLeft: "10px"}}></img>}
                     </button>
                   ))}
                 </div>

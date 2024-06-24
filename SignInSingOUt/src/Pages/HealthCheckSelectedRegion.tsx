@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChildLogo from '../../src/assets/child.png';
 import StaffLogo from '../../src/assets/person.png';
 import './CSS/HealthCheck.css'
@@ -40,18 +40,27 @@ const frontOrBack: OptionType[] = [
 // Define the component
 const HealthCheckSelectedRegion: React.FC = () => {
   const location = useLocation();
-  const { selectedArea, clientID, clientFullName, staffFullName } = location.state || {};
-  console.log("ClientID Test = " + clientID);
-  console.log(selectedArea);
+  const navigate = useNavigate();
+  const { preSelectedBodyPartArea, clientID, clientFullName, staffFullName, preSelectedBackOrFront } = location.state || {};
+
+  
+
+  useEffect(() => {
+    if (clientID === undefined)
+      {
+        navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+      }
+  });
 
   const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
   const [showModel, setShowModel] = useState<boolean>(false);
   const [clientTemperature, setClientTemperature] = useState<string>();
   const [other, setOther] = useState<string>();
   const [description, setDescription] = useState<string>();
-  const preSelectedOption = bodyParts.find(option => option.value === selectedArea) || null;
-  const [selectedBodyPart, setSelectedBodyPart] = useState<OptionType | null>(preSelectedOption);
-  const [selectedFrontOrBack, setSelectedFrontOrBack] = useState<OptionType | null>(null);
+  const preSelectedBodyPartOption = bodyParts.find(option => option.value === preSelectedBodyPartArea) || null;
+  const preSelectedFrontOrBack = frontOrBack.find(option => option.value === preSelectedBackOrFront) || null;
+  const [selectedBodyPart, setSelectedBodyPart] = useState<OptionType | null>(preSelectedBodyPartOption);
+  const [selectedFrontOrBack, setSelectedFrontOrBack] = useState<OptionType | null>(preSelectedFrontOrBack);
   const [symptoms, setSymptoms] = useState({
     Scratch: false,
     Dizziness: false,
@@ -62,7 +71,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     Swelling: false,
     Nausea: false,
   });
-  const navigate = useNavigate();
+  
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -127,7 +136,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     formData.append('Description', description || "");
 
 
-    fetch(`${backEndCodeURLLocation}HealthCheck/testing`, {
+    fetch(`${backEndCodeURLLocation}HealthCheck/SubmitClientHealthInfo`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -263,7 +272,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                   ))}
                 </div>
                 <div style={{ width: "100%", textAlign: "center", marginTop: "25px" }} >
-                  <button style={{ width: "150px", height: "60px", fontSize: "25px" }} className="btn btn-primary" type="button" onClick={uploadImage}>Submit</button>
+                  <button disabled={!selectedBodyPart || !selectedFrontOrBack} style={{ width: "150px", height: "60px", fontSize: "25px" }} className="btn btn-primary" type="button" onClick={uploadImage}>Submit</button>
                 </div>
 
               </form>

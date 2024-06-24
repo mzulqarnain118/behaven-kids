@@ -6,9 +6,9 @@ import StaffLogo from '../../src/assets/person.png';
 import HumanBody from "./HumanBody.tsx";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
+// import 'react-confirm-alert/src/react-confirm-alert.css';
 import PopupHealthCheckView from '../Components/PopupHealthCheckView.tsx'
+
 
 interface ClientHealthInfo {
   id: number;
@@ -28,6 +28,7 @@ const HealthCheck: React.FC = () => {
   const navigate = useNavigate();
   const { clientID, clientFullName, staffFullName } = location.state || {};
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [isPreviousDayHealthCondition, setIsPreviousDayHealthCondition] = useState<boolean>(false);
   const [id, setID] = useState<number | null>(null);
 
   const [clientPreviousDaysHealthInfo, setClientPreviousDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
@@ -72,28 +73,22 @@ const HealthCheck: React.FC = () => {
     fetchData();
   }, []);
 
-  const MoveHealthCheckToCurrentDate = async (id: number) => {
+  const MoveHealthCheckToCurrentDate = async (id: number, isPreviousDayCondition: boolean) => {
     try {
       setID(id);
       setShowModel(true);
-      // confirmAlert({
-      //   customUI: ({ onClose }) => {
-      //     return (
-      //       <div style={{ backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "30000", textAlign: "center", borderRadius: "25px" }}>
-      //         <h1>Transfer</h1>
-      //         <h3 style={{ marginTop: "20px" }}>Does the client still have this health condition?</h3>
-      //         <div style={{ marginTop: "30px" }}>
-      //           <button className="btn btn-primary" onClick={() => {StaffClickedYesToMovePreviousHealthConditionToNextDay(id); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginRight: "10px" }}>Yes</button>
-      //           <button className="btn btn-danger" style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginLeft: "10px" }} onClick={() => {onClose();}}> No </button>
-      //         </div>
-      //       </div>
-      //     );
-      //   }
-      // });
+
+      if (isPreviousDayCondition === true)
+        setIsPreviousDayHealthCondition(true);
+      else
+      setIsPreviousDayHealthCondition(false);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+ 
 
   const AddHealthInfo = async () => {
     navigate("/HealthCheckSelectedRegion", {
@@ -102,29 +97,29 @@ const HealthCheck: React.FC = () => {
     });
   }
 
-  const StaffClickedYesToMovePreviousHealthConditionToNextDay = async (id: number) => {
+  const clientHasNoHealthIssuesToday = async () => {
     try {
       
-      // const token = localStorage.getItem("token");
-      // if (!token) {
-      //   alert("Please log In");
-      //   navigate("/", { replace: true });
-      //   return;
-      // }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log In");
+        navigate("/", { replace: true });
+        return;
+      }
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+      const response = await fetch(`${backEndCodeURLLocation}HealthCheck/ClientAlreadyHadAHealthCheck?clientID=${clientID}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      // const response = await fetch(`${backEndCodeURLLocation}HealthCheck/MakePreviousHealthCurrent?id=${id}`, {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error(
-      //     `Failed to fetch data. Response status: ${response.status}`
-      //   );
-      // }
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch data. Response status: ${response.status}`
+        );
+      }
 
 
     } catch (error) {
@@ -152,6 +147,7 @@ const HealthCheck: React.FC = () => {
           </div>
         </div>
       </div>
+      
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div className="card"
           style={{
@@ -163,7 +159,7 @@ const HealthCheck: React.FC = () => {
         >
           <div className="card-body">
             {/* <h2 style={{ textAlign: "center" }}>Health Check</h2> */}
-            <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
+            <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
               <div className="card-body">
                 <div>
                   <form>
@@ -190,7 +186,7 @@ const HealthCheck: React.FC = () => {
                           <tbody>
                             {clientPreviousDaysHealthInfo.length > 0 ? (
                               clientPreviousDaysHealthInfo.map((item, index) => (
-                                <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id)}>
+                                <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id, true)}>
                                   {/* <tr key={index}> */}
                                   <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
                                   <td style={{ width: "250px" }}>{item.location}</td>
@@ -219,7 +215,7 @@ const HealthCheck: React.FC = () => {
                             <tbody>
                               {clientCurrentDaysHealthInfo.length > 0 ? (
                                 clientCurrentDaysHealthInfo.map((item, index) => (
-                                  <tr key={index}>
+                                  <tr key={index} onClick={() => MoveHealthCheckToCurrentDate(item.id, false)}>
                                     <td style={{ width: "250px" }}>{item.dateOfSubmission}</td>
                                     <td style={{ width: "250px" }}>{item.location}</td>
                                     <td style={{ width: "250px" }}>{item.type}</td>
@@ -246,14 +242,14 @@ const HealthCheck: React.FC = () => {
             </div>
             <div style={{textAlign: "center", marginTop: "25px"}}>
               <button className="add-button-class" style={{marginRight: "15px"}} onClick={() => AddHealthInfo()}>+ ADD</button>
-              <button className="add-button-class" style={{marginLeft: "15px"}}>No Issues</button>
+              <button className="add-button-class" style={{marginLeft: "15px"}} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
             </div>
             
           </div>
 
         </div>
-        {id !== null && (
-          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id}/>
+        {id !== null &&  (
+          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id} isPrevious={isPreviousDayHealthCondition}/>
         )}
       </div>
     </>

@@ -46,11 +46,11 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
         }
     };
 
-    // const videoConstraints = {
-    //     width: 1280, // You can set your preferred dimensions
-    //     height: 720,
-    //     facingMode: { exact: "environment" }
-    // };
+    const videoConstraints = {
+        width: 1280, // You can set your preferred dimensions
+        height: 720,
+        facingMode: { exact: "environment" }
+    };
 
 
     return (
@@ -64,7 +64,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel,
                                     audio={false}
                                     ref={webcamRef}
                                     screenshotFormat="image/jpeg"
-                                    // videoConstraints={videoConstraints}
+                                    videoConstraints={videoConstraints}
                                     style={{ width: "100%", height: "500px" }}
                                 />
                                 <div style={{ width: "75px", height: "75px", backgroundColor: "DodgerBlue", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, margin: "0 auto" }}>
