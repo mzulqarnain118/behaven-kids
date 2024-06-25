@@ -53,6 +53,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
 
   const [selectedImages, setSelectedImages] = useState<(File | null)[]>([]);
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [isBodyPartSelectionAvailable, setIsBodyPartSelectionAvailable] = useState<boolean>(false);
+  const [isNonBodyPartSelectionAvailable, setIsNonBodyPartSelectionAvailable] = useState<boolean>(false);
   const [clientTemperature, setClientTemperature] = useState<string>();
   const [other, setOther] = useState<string>();
   const [description, setDescription] = useState<string>();
@@ -72,10 +74,43 @@ const HealthCheckSelectedRegion: React.FC = () => {
     pourHygiene: false,
     dirtyDiapers: false,
     previousDayClothes: false,
+    temp: false,
   });
 
+  useEffect(() => {
+    if ((symptoms.scratch || symptoms.bruise || symptoms.rash || symptoms.swelling || symptoms.drySkin) === false)
+    {
+        setIsNonBodyPartSelectionAvailable(false);
+    }
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp) === false)
+    {
+          setIsBodyPartSelectionAvailable(false);
+    }
+
+  }, [symptoms]);
+
+  useEffect(() => {
+    if (selectedBodyPart !== null)
+      {
+        setIsNonBodyPartSelectionAvailable(false);
+      }
+
+  }, [selectedBodyPart]);
+
+
+  const handleCheckboxChangeForBodyPart = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
+    setIsNonBodyPartSelectionAvailable(true);
+    const { name, checked } = e.target;
+    setSymptoms({
+      ...symptoms,
+      [name]: checked
+    });
+  };
+
+  const handleCheckboxChangeForNonBodyPart = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsBodyPartSelectionAvailable(true);
     const { name, checked } = e.target;
     setSymptoms({
       ...symptoms,
@@ -196,86 +231,100 @@ const HealthCheckSelectedRegion: React.FC = () => {
 
 
             <div style={{ marginTop: "15px" }}>
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <label style={{ marginRight: "15px", fontSize: "25px" }}>Selected Region</label>
-                <Select
-                  options={bodyParts}
-                  onChange={(selectedOption) => setSelectedBodyPart(selectedOption)}
-                  placeholder="Select a body part"
-                  value={selectedBodyPart}
-                />
-                <span style={{ marginLeft: "15px" }}> </span>
-                <Select
-                  options={frontOrBack}
-                  onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
-                  placeholder="Front or Back"
-                  value={selectedFrontOrBack}
 
-                />
-              </div>
               <form>
-                <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
+                <div style={{opacity: isBodyPartSelectionAvailable === true ? 0.5 : 1, pointerEvents: isBodyPartSelectionAvailable === true ? 'none' : 'auto'}}>
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="scratch" type="checkbox" name="scratch" checked={symptoms.scratch} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="scratch" style={{ marginLeft: "15px" }}> Scratch</label>
+                    <label style={{ marginRight: "15px", fontSize: "25px" }}>Selected Region</label>
+                    <Select
+                      options={bodyParts}
+                      onChange={(selectedOption) => setSelectedBodyPart(selectedOption)}
+                      placeholder="Select a body part"
+                      value={selectedBodyPart}
+                      isClearable={true}
+                    />
+                    <span style={{ marginLeft: "15px" }}> </span>
+                    <Select
+                      options={frontOrBack}
+                      onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
+                      placeholder="Front or Back"
+                      value={selectedFrontOrBack}
+                      isClearable={true}
+                    />
                   </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="bruise" type="checkbox" name="bruise" checked={symptoms.bruise} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="bruise" style={{ marginLeft: "15px" }}>Bruise</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="rash" type="checkbox" name="rash" checked={symptoms.rash} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="rash" style={{ marginLeft: "15px" }}>Rash</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="swelling" type="checkbox" name="swelling" checked={symptoms.swelling} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="swelling" style={{ marginLeft: "15px" }}>Swelling</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="drySkin" type="checkbox" name="drySkin" checked={symptoms.drySkin} onChange={handleCheckboxChange} className="checkBoxSize" />
-                    <label htmlFor="drySkin" style={{ marginLeft: "15px" }}>Dry Skin</label>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <input id="other" type="checkbox" name="other" onChange={handleCheckboxChange} className="checkBoxSize" disabled={true} />
-                    <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
-                    <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
-                  </div>
-                </div>
-                <hr style={{ marginTop: "35px" }} />
-                <div style={{ fontSize: "25px", marginTop: "25px" }}>
-                  <span style={{ fontSize: "25px", marginTop: "25px" }}>Temperature:
-                    <input onChange={(event) => setClientTemperature(event.target.value)} type='number' style={{ width: "100px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
-                    <span style={{ marginLeft: "10px" }}>&#8457;</span>
-                  </span>
                   <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="lethargic" type="checkbox" name="lethargic" checked={symptoms.lethargic} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="scratch" type="checkbox" name="scratch" checked={symptoms.scratch} onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" />
+                      <label htmlFor="scratch" style={{ marginLeft: "15px" }}> Scratch</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="bruise" type="checkbox" name="bruise" checked={symptoms.bruise} onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" />
+                      <label htmlFor="bruise" style={{ marginLeft: "15px" }}>Bruise</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="rash" type="checkbox" name="rash" checked={symptoms.rash} onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" />
+                      <label htmlFor="rash" style={{ marginLeft: "15px" }}>Rash</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="swelling" type="checkbox" name="swelling" checked={symptoms.swelling} onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" />
+                      <label htmlFor="swelling" style={{ marginLeft: "15px" }}>Swelling</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="drySkin" type="checkbox" name="drySkin" checked={symptoms.drySkin} onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" />
+                      <label htmlFor="drySkin" style={{ marginLeft: "15px" }}>Dry Skin</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="other" type="checkbox" name="other" onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" disabled={true} />
+                      <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
+                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
+                    </div>
+                  </div>
+                </div>
+
+                <hr style={{ marginTop: "35px" }} />
+                <div style={{opacity: isNonBodyPartSelectionAvailable === true ? 0.5 : 1, pointerEvents: isNonBodyPartSelectionAvailable === true ? 'none' : 'auto'}} >
+
+                  <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="lethargic" type="checkbox" name="lethargic" checked={symptoms.lethargic} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <label htmlFor="lethargic" style={{ marginLeft: "15px" }}> Lethargic</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="nausea" type="checkbox" name="nausea" checked={symptoms.nausea} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="nausea" type="checkbox" name="nausea" checked={symptoms.nausea} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <label htmlFor="nausea" style={{ marginLeft: "15px" }}>Nausea</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={symptoms.pourHygiene} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={symptoms.pourHygiene} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <label htmlFor="pourHygiene" style={{ marginLeft: "15px" }}>Poor Hygiene</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={symptoms.dirtyDiapers} onChange={handleCheckboxChange} className="checkBoxSize" />
-                      <label htmlFor="dirtyDiapers" style={{ marginLeft: "15px" }}>Dirty Diapers</label>
+                      <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={symptoms.dirtyDiapers} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
+                      <label htmlFor="dirtyDiapers" style={{ marginLeft: "15px" }}>Dirty Diaper</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="tattoo" type="checkbox" name="tattoo" checked={symptoms.tattoo} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="tattoo" type="checkbox" name="tattoo" checked={symptoms.tattoo} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <label htmlFor="tattoo" style={{ marginLeft: "15px" }}>Tattoo</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={symptoms.previousDayClothes} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={symptoms.previousDayClothes} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <label htmlFor="previousDayClothes" style={{ marginLeft: "15px" }}>Previous Day Clothes</label>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="temp" type="checkbox" name="temp" checked={symptoms.temp} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
+                      <span style={{ marginLeft: "15px" }}>Temp:
+                        <input onChange={(event) => setClientTemperature(event.target.value)} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
+                        <span style={{ marginLeft: "10px" }}>&#8457;</span>
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <input id="other" type="checkbox" name="other" onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" disabled={true} />
+                      <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
+                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
                     </div>
                   </div>
                 </div>
-
-                <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "100px", marginTop: "50px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
+                <hr style={{ marginTop: "35px" }} />
+                <textarea placeholder="Description" id="w3review" name="w3review" style={{ width: "640px", height: "100px", marginTop: "25px", fontSize: "20px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
 
 
                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", marginTop: "15px" }}>
