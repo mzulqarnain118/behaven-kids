@@ -258,14 +258,14 @@ const HealthCheckSelectedRegion: React.FC = () => {
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={symptoms.pourHygiene} onChange={handleCheckboxChange} className="checkBoxSize" />
-                      <label htmlFor="pourHygiene" style={{ marginLeft: "15px" }}>Pour Hygiene</label>
+                      <label htmlFor="pourHygiene" style={{ marginLeft: "15px" }}>Poor Hygiene</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={symptoms.dirtyDiapers} onChange={handleCheckboxChange} className="checkBoxSize" />
                       <label htmlFor="dirtyDiapers" style={{ marginLeft: "15px" }}>Dirty Diapers</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="tattoo" type="checkbox" name="tattoo" checked={symptoms.pourHygiene} onChange={handleCheckboxChange} className="checkBoxSize" />
+                      <input id="tattoo" type="checkbox" name="tattoo" checked={symptoms.tattoo} onChange={handleCheckboxChange} className="checkBoxSize" />
                       <label htmlFor="tattoo" style={{ marginLeft: "15px" }}>Tattoo</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
