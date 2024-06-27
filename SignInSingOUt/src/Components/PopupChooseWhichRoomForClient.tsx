@@ -54,7 +54,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
-            if (newRoomID === 29 || newRoomID === 30) {
+            if (newRoomID === 29 || newRoomID === 30 || newRoomID === 32 || newRoomID === 33) {
                 const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
                 console.log(url);
                 const response = await fetch(url, {

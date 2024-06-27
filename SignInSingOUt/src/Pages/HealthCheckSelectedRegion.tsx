@@ -59,10 +59,13 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const [isBodySelectedRegionAvailable, setIsBodySelectedRegionAvailable] = useState<boolean>(true);
   const [isClearButtonVisible, setIsClearButtonVisible] = useState<boolean>(false);
   const [isNonBodyPartSelectionAvailable, setIsNonBodyPartSelectionAvailable] = useState<boolean>(true);
-  const [isFrontAndBackAvaliable, setIsFrontAndBackAvaliable] = useState<boolean>(true);
-  const [isTempChecked, setIsTempChecked] = useState<boolean>(false);
+  const [isFrontAndBackDisabled, setIsFrontAndBackDisabled] = useState<boolean>(true);
+  const [isTempInputDisabled, setIsTempInputDisabled] = useState<boolean>(true);
   const [clientTemperature, setClientTemperature] = useState<string>();
-  const [other, setOther] = useState<string>();
+  const [isOtherForSelectedRegionDisabled, setIsOtherForSelectedRegionDisabled] = useState<boolean>(true);
+  const [isOtherForNonBodyPartDisabled, setIsOtherForNonBodyPartDisabled] = useState<boolean>(true);
+  const [otherForSelectedRegion, setOtherForSelectedRegion] = useState<string>();
+  const [otherForNonBodyPart, setOtherForNonBodyPart] = useState<string>();
   const [description, setDescription] = useState<string>();
   const preSelectedBodyPartOption = bodyParts.find(option => option.value === preSelectedBodyPartArea) || null;
   const preSelectedFrontOrBack = frontOrBack.find(option => option.value === preSelectedBackOrFront) || null;
@@ -81,36 +84,85 @@ const HealthCheckSelectedRegion: React.FC = () => {
     dirtyDiapers: false,
     previousDayClothes: false,
     temp: false,
+    otherForSelectedRegion: false,
+    otherForNonBodyPart: false,
   });
 
   useEffect(() => {
-    if ((symptoms.scratch || symptoms.bruise || symptoms.rash || symptoms.swelling || symptoms.drySkin) === true) {
-      return;
+    if (isBodyPartSelectionAvailable === true)
+    {
+      if ((symptoms.scratch || symptoms.bruise || symptoms.rash || symptoms.swelling || symptoms.drySkin || symptoms.otherForSelectedRegion) === true) {
+        if (symptoms.otherForSelectedRegion === true)
+        {
+            setIsOtherForSelectedRegionDisabled(false);
+        }
+        return;
+      } else  {
+        if (symptoms.otherForSelectedRegion === false)
+          {
+              setIsOtherForSelectedRegionDisabled(true);
+          }
+      }
     }
 
     if (isNonBodyPartSelectionAvailable === true)
     {
-        if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp) === true) {
+        if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp || symptoms.otherForNonBodyPart) === true) {
+
+          if (symptoms.temp === true)
+          {
+            setIsTempInputDisabled(false);
+          }
+          if (symptoms.otherForNonBodyPart === true)
+          {
+              setIsOtherForNonBodyPartDisabled(false);
+          }
+         
+
           setIsBodySelectedRegionAvailable(false);
           setCanStaffSubmit(true);
           setCanStaffUseCamera(true);
-        } else if ((symptoms.lethargic && symptoms.nausea && symptoms.pourHygiene && symptoms.dirtyDiapers && symptoms.tattoo && symptoms.previousDayClothes && symptoms.temp) === false) {
+        } 
+        else if ((symptoms.lethargic && symptoms.nausea && symptoms.pourHygiene && symptoms.dirtyDiapers && symptoms.tattoo && symptoms.previousDayClothes && symptoms.temp && symptoms.otherForNonBodyPart) === false) {
           // setIsBodySelectedRegionAvailable(false);
           // setCanStaffSubmit(true);
           setCanStaffUseCamera(false);
           setCanStaffSubmit(false);
           setIsBodySelectedRegionAvailable(true);
+          setIsTempInputDisabled(true);
+          
+       
         }
+        if (symptoms.otherForNonBodyPart === false)
+          {
+            setIsOtherForNonBodyPartDisabled(true);
+          }
     }
-    
-
-
   }, [symptoms]);
 
   useEffect(() => {
+    if (isTempInputDisabled === true)
+      setClientTemperature("");
+
+    if (isOtherForSelectedRegionDisabled === true)
+      setOtherForSelectedRegion("");
+
+    if (isOtherForNonBodyPartDisabled === true)
+      setOtherForNonBodyPart("");
+
+  }, [isTempInputDisabled, isOtherForSelectedRegionDisabled, isOtherForNonBodyPartDisabled]);
+
+  useEffect(() => {
+
+    if (preSelectedFrontOrBack !== null)
+    {
+        setIsFrontAndBackDisabled(false);
+    }
 
     if (selectedBodyPart !== null && selectedFrontOrBack !== null) {
       setIsBodyPartSelectionAvailable(true);
+      setIsNonBodyPartSelectionAvailable(false);
+      setIsClearButtonVisible(true);
       setCanStaffSubmit(true);
       setCanStaffUseCamera(true);
     }
@@ -119,7 +171,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
       setIsClearButtonVisible(true);
       setIsBodyPartSelectionAvailable(false);
       setCanStaffSubmit(false);
-      setIsFrontAndBackAvaliable(false);
+      setIsFrontAndBackDisabled(false);
       setSymptoms(prevSymptoms => ({
         ...prevSymptoms,
         scratch: false,
@@ -127,11 +179,13 @@ const HealthCheckSelectedRegion: React.FC = () => {
         rash: false,
         swelling: false,
         drySkin: false,
+        otherForSelectedRegion: false,
+        otherForNonBodyPart: false,
       }));
     }
     else {
       setIsNonBodyPartSelectionAvailable(true);
-      setIsFrontAndBackAvaliable(true);
+      setIsFrontAndBackDisabled(true);
       
     }
 
@@ -155,8 +209,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
       [name]: checked
     });
 
-    if (symptoms.temp === true)
-      setIsTempChecked(false);
+    if (symptoms.temp === false)
+      setIsTempInputDisabled(true);
   };
 
   const clearSelectedRegion = () => {
@@ -173,6 +227,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     setSelectedFrontOrBack(null);
     setIsBodyPartSelectionAvailable(false);
     setIsClearButtonVisible(false);
+    setOtherForSelectedRegion("");
   };
   // const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const files = event.target.files;
@@ -226,7 +281,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     formData.append('ProvidedSymptoms.DirtyDiapers', String(symptoms.dirtyDiapers));
     formData.append('ProvidedSymptoms.PreviousDayClothes', String(symptoms.previousDayClothes));
 
-    formData.append('Other', other || "");
+    formData.append('Other', otherForSelectedRegion || "");
     formData.append('Description', description || "");
 
 
@@ -314,7 +369,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                       onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
                       placeholder="Front or Back"
                       value={selectedFrontOrBack}
-                      isDisabled={isFrontAndBackAvaliable}
+                      isDisabled={isFrontAndBackDisabled}
                       styles={{
                         container: (provided) => ({
                           ...provided,
@@ -350,9 +405,9 @@ const HealthCheckSelectedRegion: React.FC = () => {
                       <label htmlFor="drySkin" style={{ marginLeft: "15px" }}>Dry Skin</label>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="other" type="checkbox" name="other" onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" disabled={true} />
-                      <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
-                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
+                      <input id="otherForSelectedRegion" type="checkbox" name="otherForSelectedRegion" onChange={handleCheckboxChangeForBodyPart} className="checkBoxSize" checked={symptoms.otherForSelectedRegion} />
+                      <label htmlFor="otherForSelectedRegion" style={{ marginLeft: "15px" }}>Other</label>
+                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOtherForSelectedRegion(event.target.value)} value={otherForSelectedRegion} disabled={isOtherForSelectedRegionDisabled}></input>
                     </div>
                   </div>
                 </div>
@@ -388,14 +443,14 @@ const HealthCheckSelectedRegion: React.FC = () => {
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <input id="temp" type="checkbox" name="temp" checked={symptoms.temp} onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" />
                       <span style={{ marginLeft: "15px" }}>Temp:
-                        <input onChange={(event) => setClientTemperature(event.target.value)} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }} disabled={isTempChecked}></input>
+                        <input onChange={(event) => setClientTemperature(event.target.value)} value={clientTemperature} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }} disabled={isTempInputDisabled}></input>
                         <span style={{ marginLeft: "10px" }}>&#8457;</span>
                       </span>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <input id="other" type="checkbox" name="other" onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" disabled={isTempChecked} />
-                      <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
-                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOther(event.target.value)}></input>
+                      <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" checked={symptoms.otherForNonBodyPart} />
+                      <label htmlFor="otherForNonBodyPart" style={{ marginLeft: "15px" }}>Other</label>
+                      <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOtherForNonBodyPart(event.target.value)} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input>
                     </div>
                   </div>
                 </div>

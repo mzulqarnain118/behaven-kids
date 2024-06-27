@@ -114,7 +114,10 @@ const TimeOUtSelectAClient: React.FC = () => {
             setRoomID(29);
         else if (userRole.includes("dtor"))
             setRoomID(30);
-
+        else if (userRole.includes("ntor"))
+            setRoomID(32);
+        else if (userRole.includes("stor"))
+            setRoomID(33);
     }, []);
 
     const GetRoomInfo = async (userName: string) => {
