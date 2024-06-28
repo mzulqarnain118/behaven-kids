@@ -182,7 +182,6 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
       event.target.parentElement.getAttribute("data-position");
     if (position) {
       setPreSelectedBodyPartArea(position);
-
     }
     // if (confirm("Are you sure you want to delete this item?")) {
     //   // Logic to execute if the user clicked "OK"

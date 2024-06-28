@@ -33,45 +33,49 @@ const HealthCheck: React.FC = () => {
 
   const [clientPreviousDaysHealthInfo, setClientPreviousDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
   const [clientCurrentDaysHealthInfo, setClientCurrentDaysHealthInfo] = useState<ClientHealthInfo[]>([]);
+  const [didItRenderHealthCheck, setDidItRenderHealthCheck] = useState<boolean>(false);
 
   useEffect(() => {
+    if (didItRenderHealthCheck === false) {
+      const fetchData = async () => {
+        try {
 
-    const fetchData = async () => {
-      try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            alert("Please log In");
+            navigate("/", { replace: true });
+            return;
+          }
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-          alert("Please log In");
-          navigate("/", { replace: true });
-          return;
+          const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch data. Response status: ${response.status}`
+            );
+          }
+
+          const data: CurrentAndPreviousClientHealthInfo = await response.json();
+
+          console.log("data ", data);
+          setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
+          setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
+          setDidItRenderHealthCheck(true);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
+      };
 
-        const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+      fetchData();
+    }
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch data. Response status: ${response.status}`
-          );
-        }
-
-        const data: CurrentAndPreviousClientHealthInfo = await response.json();
-
-        console.log("data ", data);
-        setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
-        setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
-
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  });
 
   const MoveHealthCheckToCurrentDate = async (id: number, isPreviousDayCondition: boolean) => {
     try {
@@ -81,14 +85,14 @@ const HealthCheck: React.FC = () => {
       if (isPreviousDayCondition === true)
         setIsPreviousDayHealthCondition(true);
       else
-      setIsPreviousDayHealthCondition(false);
+        setIsPreviousDayHealthCondition(false);
 
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
- 
+
 
   const AddHealthInfo = async () => {
     navigate("/HealthCheckSelectedRegion", {
@@ -99,7 +103,7 @@ const HealthCheck: React.FC = () => {
 
   const clientHasNoHealthIssuesToday = async () => {
     try {
-      
+
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please log In");
@@ -143,11 +147,11 @@ const HealthCheck: React.FC = () => {
 
           <div style={{ display: "flex", flexDirection: "row" }}>
             <img src={StaffLogo} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
-            <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{staffFullName}</h4> 
+            <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{staffFullName}</h4>
           </div>
         </div>
       </div>
-      
+
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div className="card"
           style={{
@@ -170,7 +174,7 @@ const HealthCheck: React.FC = () => {
                       </div>
                       <div style={{ borderLeft: "solid", marginTop: "20px" }}>
                         <h3>Today</h3>
-                        <HumanBody clientID={clientID} IsPreviousDay={false} clientFullName={clientFullName} staffFullName={staffFullName}/>
+                        <HumanBody clientID={clientID} IsPreviousDay={false} clientFullName={clientFullName} staffFullName={staffFullName} />
                       </div>
                     </div>
                     <div className='grid-container-For-bodies' style={{ marginTop: "25px", height: "250px" }}>
@@ -236,20 +240,20 @@ const HealthCheck: React.FC = () => {
                     {/* <button type="button" onClick={uploadImage}>ADD+</button> */}
                   </form>
                 </div>
-                
+
               </div>
-              
+
             </div>
-            <div style={{textAlign: "center", marginTop: "25px"}}>
-              <button className="add-button-class" style={{marginRight: "15px"}} onClick={() => AddHealthInfo()}>+ ADD</button>
-              <button className="add-button-class" style={{marginLeft: "15px"}} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
+            <div style={{ textAlign: "center", marginTop: "25px" }}>
+              <button className="add-button-class" style={{ marginRight: "15px" }} onClick={() => AddHealthInfo()}>+ ADD</button>
+              <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
             </div>
-            
+
           </div>
 
         </div>
-        {id !== null &&  (
-          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id} isPrevious={isPreviousDayHealthCondition}/>
+        {id !== null && (
+          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id} isPrevious={isPreviousDayHealthCondition} />
         )}
       </div>
     </>

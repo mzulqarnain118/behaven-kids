@@ -266,11 +266,11 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                                                                         <span style={{ marginLeft: "10px" }}>&#8457;</span>
                                                                     </span>
                                                                 </div>
-                                                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    {/* <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" className="checkBoxSize" checked={symptoms.otherForNonBodyPart} /> */}
+                                                                 {/* <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                                   <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" className="checkBoxSize" checked={symptoms.otherForNonBodyPart} /> 
                                                                     <label htmlFor="otherForNonBodyPart" style={{ marginLeft: "15px" }}>Other</label>
-                                                                    {/* <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input> */}
-                                                                </div>
+                                                                    <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input> 
+                                                                </div>  */}
                                                             </div>
                                                         </div>
 

@@ -65,7 +65,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const [isOtherForSelectedRegionDisabled, setIsOtherForSelectedRegionDisabled] = useState<boolean>(true);
   const [isOtherForNonBodyPartDisabled, setIsOtherForNonBodyPartDisabled] = useState<boolean>(true);
   const [otherForSelectedRegion, setOtherForSelectedRegion] = useState<string>();
-  const [otherForNonBodyPart, setOtherForNonBodyPart] = useState<string>();
+  const [, setOtherForNonBodyPart] = useState<string>();
   const [description, setDescription] = useState<string>();
   const preSelectedBodyPartOption = bodyParts.find(option => option.value === preSelectedBodyPartArea) || null;
   const preSelectedFrontOrBack = frontOrBack.find(option => option.value === preSelectedBackOrFront) || null;
@@ -89,54 +89,47 @@ const HealthCheckSelectedRegion: React.FC = () => {
   });
 
   useEffect(() => {
-    if (isBodyPartSelectionAvailable === true)
-    {
+    if (isBodyPartSelectionAvailable === true) {
       if ((symptoms.scratch || symptoms.bruise || symptoms.rash || symptoms.swelling || symptoms.drySkin || symptoms.otherForSelectedRegion) === true) {
-        if (symptoms.otherForSelectedRegion === true)
-        {
-            setIsOtherForSelectedRegionDisabled(false);
+        if (symptoms.otherForSelectedRegion === true) {
+          setIsOtherForSelectedRegionDisabled(false);
         }
         return;
-      } else  {
-        if (symptoms.otherForSelectedRegion === false)
-          {
-              setIsOtherForSelectedRegionDisabled(true);
-          }
+      } else {
+        if (symptoms.otherForSelectedRegion === false) {
+          setIsOtherForSelectedRegionDisabled(true);
+        }
       }
     }
 
-    if (isNonBodyPartSelectionAvailable === true)
-    {
-        if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp || symptoms.otherForNonBodyPart) === true) {
+    if (isNonBodyPartSelectionAvailable === true) {
+      if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp || symptoms.otherForNonBodyPart) === true) {
 
-          if (symptoms.temp === true)
-          {
-            setIsTempInputDisabled(false);
-          }
-          if (symptoms.otherForNonBodyPart === true)
-          {
-              setIsOtherForNonBodyPartDisabled(false);
-          }
-         
-
-          setIsBodySelectedRegionAvailable(false);
-          setCanStaffSubmit(true);
-          setCanStaffUseCamera(true);
-        } 
-        else if ((symptoms.lethargic && symptoms.nausea && symptoms.pourHygiene && symptoms.dirtyDiapers && symptoms.tattoo && symptoms.previousDayClothes && symptoms.temp && symptoms.otherForNonBodyPart) === false) {
-          // setIsBodySelectedRegionAvailable(false);
-          // setCanStaffSubmit(true);
-          setCanStaffUseCamera(false);
-          setCanStaffSubmit(false);
-          setIsBodySelectedRegionAvailable(true);
-          setIsTempInputDisabled(true);
-          
-       
+        if (symptoms.temp === true) {
+          setIsTempInputDisabled(false);
         }
-        if (symptoms.otherForNonBodyPart === false)
-          {
-            setIsOtherForNonBodyPartDisabled(true);
-          }
+        if (symptoms.otherForNonBodyPart === true) {
+          setIsOtherForNonBodyPartDisabled(false);
+        }
+
+
+        setIsBodySelectedRegionAvailable(false);
+        setCanStaffSubmit(true);
+        setCanStaffUseCamera(true);
+      }
+      else if ((symptoms.lethargic && symptoms.nausea && symptoms.pourHygiene && symptoms.dirtyDiapers && symptoms.tattoo && symptoms.previousDayClothes && symptoms.temp && symptoms.otherForNonBodyPart) === false) {
+        // setIsBodySelectedRegionAvailable(false);
+        // setCanStaffSubmit(true);
+        setCanStaffUseCamera(false);
+        setCanStaffSubmit(false);
+        setIsBodySelectedRegionAvailable(true);
+        setIsTempInputDisabled(true);
+
+
+      }
+      if (symptoms.otherForNonBodyPart === false) {
+        setIsOtherForNonBodyPartDisabled(true);
+      }
     }
   }, [symptoms]);
 
@@ -154,9 +147,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
 
   useEffect(() => {
 
-    if (preSelectedFrontOrBack !== null)
-    {
-        setIsFrontAndBackDisabled(false);
+    if (preSelectedFrontOrBack !== null) {
+      setIsFrontAndBackDisabled(false);
     }
 
     if (selectedBodyPart !== null && selectedFrontOrBack !== null) {
@@ -166,7 +158,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
       setCanStaffSubmit(true);
       setCanStaffUseCamera(true);
     }
-    else if (selectedBodyPart !== null ) {
+    else if (selectedBodyPart !== null) {
       setIsNonBodyPartSelectionAvailable(false);
       setIsClearButtonVisible(true);
       setIsBodyPartSelectionAvailable(false);
@@ -186,7 +178,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     else {
       setIsNonBodyPartSelectionAvailable(true);
       setIsFrontAndBackDisabled(true);
-      
+
     }
 
 
@@ -305,21 +297,22 @@ const HealthCheckSelectedRegion: React.FC = () => {
         console.error('this error:', error);
       });
 
-    if (submitOrAdd === "submit")
-      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+    if (submitOrAdd === "submit") {
+        navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+      }
     else {
       navigate("/HealthCheck", {
         replace: true,
-        state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
+        state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName },
       });
     }
-      
+
   };
 
   const CancelHealthCheckSubmit = () => {
     navigate("/HealthCheck", {
       replace: true,
-      state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
+      state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName },
     });
   };
 
@@ -396,7 +389,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
                         }),
                       }}
                     />
-                    <button onClick={() => clearSelectedRegion()} type="button" className="btn btn-danger" style={{width: "100px", height: "40px", fontSize: "18px", marginLeft: "20px", visibility: isClearButtonVisible === true ? "visible" : "hidden"}}> Clear</button>
+                    <button onClick={() => clearSelectedRegion()} type="button" className="btn btn-danger" style={{ width: "100px", height: "40px", fontSize: "18px", marginLeft: "20px", visibility: isClearButtonVisible === true ? "visible" : "hidden" }}> Clear</button>
                   </div>
                   <div className='grid-container-For-selected' style={{ marginTop: "20px", opacity: isBodyPartSelectionAvailable === true ? 1 : 0.2, pointerEvents: isBodyPartSelectionAvailable === true ? 'auto' : 'none' }} >
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -462,11 +455,11 @@ const HealthCheckSelectedRegion: React.FC = () => {
                         <span style={{ marginLeft: "10px" }}>&#8457;</span>
                       </span>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    {/* <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }} >
                       <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" onChange={handleCheckboxChangeForNonBodyPart} className="checkBoxSize" checked={symptoms.otherForNonBodyPart} />
                       <label htmlFor="otherForNonBodyPart" style={{ marginLeft: "15px" }}>Other</label>
                       <input type="text" style={{ width: "150px", marginLeft: "20px" }} onChange={(event) => setOtherForNonBodyPart(event.target.value)} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <hr style={{ marginTop: "35px" }} />
