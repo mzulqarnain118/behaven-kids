@@ -240,7 +240,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
   //   facingMode: { exact: "environment" }
   // };
 
-  const uploadImage = () => {
+  const SubmitHealthCheck = (submitOrAdd: string) => {
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -305,7 +305,22 @@ const HealthCheckSelectedRegion: React.FC = () => {
         console.error('this error:', error);
       });
 
-    navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+    if (submitOrAdd === "submit")
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+    else {
+      navigate("/HealthCheck", {
+        replace: true,
+        state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
+      });
+    }
+      
+  };
+
+  const CancelHealthCheckSubmit = () => {
+    navigate("/HealthCheck", {
+      replace: true,
+      state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
+    });
   };
 
   return (
@@ -473,7 +488,9 @@ const HealthCheckSelectedRegion: React.FC = () => {
                   ))}
                 </div>
                 <div style={{ width: "100%", textAlign: "center", marginTop: "25px" }} >
-                  <button disabled={!canStaffSubmit} style={{ width: "150px", height: "60px", fontSize: "25px" }} className="btn btn-primary" type="button" onClick={uploadImage}>Submit</button>
+                  <button disabled={!canStaffSubmit} style={{ width: "150px", height: "60px", fontSize: "25px" }} className="btn btn-primary" type="button" onClick={() => SubmitHealthCheck("submit")}>Submit</button>
+                  <button disabled={!canStaffSubmit} style={{ width: "175px", height: "60px", fontSize: "25px", marginLeft: "20px" }} className="btn btn-success" type="button" onClick={() => SubmitHealthCheck("add")}>Add/Submit</button>
+                  <button style={{ width: "150px", height: "60px", fontSize: "25px", marginLeft: "20px" }} className="btn btn-danger" type="button" onClick={CancelHealthCheckSubmit}>Cancel</button>
                 </div>
 
               </form>

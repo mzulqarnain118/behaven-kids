@@ -234,10 +234,6 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                                                         </div>
                                                         <hr style={{ marginTop: "35px" }} />
                                                         <div style={{ fontSize: "25px", marginTop: "25px" }}>
-                                                            <span style={{ fontSize: "25px", marginTop: "25px" }}>Temperature:
-                                                                <input value={clientHealthCheckInfo[0].temperature} type='number' style={{ width: "100px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
-                                                                <span style={{ marginLeft: "10px" }}>&#8457;</span>
-                                                            </span>
                                                             <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                                     <input id="lethargic" type="checkbox" name="lethargic" checked={clientHealthCheckInfo[0].lethargic === 0 ? false : true} className="checkBoxSize" />
@@ -262,6 +258,18 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                                     <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={clientHealthCheckInfo[0].previousDayCloths === 0 ? false : true} className="checkBoxSize" />
                                                                     <label htmlFor="previousDayClothes" style={{ marginLeft: "15px" }}>Previous Day Clothes</label>
+                                                                </div>
+                                                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                                    <input id="temp" type="checkbox" name="temp" className="checkBoxSize" checked={clientHealthCheckInfo[0].temperature === null ? false : true}/>
+                                                                    <span style={{ marginLeft: "15px" }}>Temp:
+                                                                        <input value={clientHealthCheckInfo[0].temperature} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
+                                                                        <span style={{ marginLeft: "10px" }}>&#8457;</span>
+                                                                    </span>
+                                                                </div>
+                                                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                                    {/* <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" className="checkBoxSize" checked={symptoms.otherForNonBodyPart} /> */}
+                                                                    <label htmlFor="otherForNonBodyPart" style={{ marginLeft: "15px" }}>Other</label>
+                                                                    {/* <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input> */}
                                                                 </div>
                                                             </div>
                                                         </div>
