@@ -54,6 +54,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [roomID, setRoomID] = useState<number | null>(null);
     const [locationID, setLocationID] = useState<string>("");
     const [clientID, setClientID] = useState<number | null>(null);
+    const [currentStaffID, setCurrentStaffID] = useState<string | null>(null);
     const [roomName, setRoomName] = useState<string>("");
     const [cbsFullName, setCbsFullName] = useState<string>("");
     const [clientFullName, setClientFullName] = useState<string>("");
@@ -202,7 +203,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             }
             const decoded = jwtDecode(token) as DecodedToken;
             const staffID = decoded.StaffID;
-
+            setCurrentStaffID(staffID);
             const response = await fetch(`${backEndCodeURLLocation}Cbs/GetCbsInformation?staffID=${staffID}`, {
                 method: "GET",
                 headers: {
@@ -417,8 +418,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
             </div>
 
-            {clientID !== null && roomID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName}/>
+            {clientID !== null && roomID !== null && currentStaffID !== null && (
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID}/>
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null &&(
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>

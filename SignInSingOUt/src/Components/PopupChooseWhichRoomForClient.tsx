@@ -16,6 +16,8 @@ interface CbsAddOrTransferClientsToRooms {
     clientProgram: string;
     previousRoomID?: number;
     staffFullName: string;
+    staffID: string;
+    locationID: string;
 }
 
 interface RoomInfoDTO {
@@ -25,7 +27,7 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName, staffID, locationID }) => {
     if (!open) return null;
     // const navigate = useNavigate();
 
@@ -54,8 +56,8 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
-            if (newRoomID === 29 || newRoomID === 30 || newRoomID === 32 || newRoomID === 33) {
-                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
+            // if (newRoomID === 29 || newRoomID === 30 || newRoomID === 32 || newRoomID === 33) {
+                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&staffIDWhoTransferedClient=${staffID}&locationID=${locationID}&previousRoomID=${previousRoomID}`;
                 console.log(url);
                 const response = await fetch(url, {
                     method: "POST",
@@ -69,23 +71,23 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                     alert(`Failed to transfer client to another room: ${response.status}`)
                 }
                 setShowModel(false);
-            }
-            else {
-                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
-                console.log(url);
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+            // }
+            // else {
+            //     const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
+            //     console.log(url);
+            //     const response = await fetch(url, {
+            //         method: "POST",
+            //         headers: {
+            //             Authorization: `Bearer ${token}`,
+            //             "Content-Type": "application/json",
+            //         },
+            //     });
 
-                if (!response.ok) {
-                    alert(`Failed to transfer client to another room: ${response.status}`)
-                }
-                setShowModel(false);
-            }
+            //     if (!response.ok) {
+            //         alert(`Failed to transfer client to another room: ${response.status}`)
+            //     }
+            //     setShowModel(false);
+            // }
 
         } catch (error) {
             alert("Error:" + error);
