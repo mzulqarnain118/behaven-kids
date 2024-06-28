@@ -118,7 +118,17 @@
     color: #a5a5a5;
   }
   
-  #area #data {
+  #area #right {
     color: black;
+    margin-left: 200px;
+    top: -150px;
+    position: relative;
+  }
+
+  #area #left {
+    color: black;
+    margin-right: 200px;
+    top: -210px;
+    position: relative;
   }
   

@@ -6,7 +6,6 @@ import StaffLogo from '../../src/assets/person.png';
 import HumanBody from "./HumanBody.tsx";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// import 'react-confirm-alert/src/react-confirm-alert.css';
 import PopupHealthCheckView from '../Components/PopupHealthCheckView.tsx'
 
 
@@ -56,19 +55,20 @@ const HealthCheck: React.FC = () => {
           });
 
           if (!response.ok) {
-            throw new Error(
-              `Failed to fetch data. Response status: ${response.status}`
-            );
+            alert("Error Getting Data");
+            navigate("/", { replace: true });
+            return;
           }
 
           const data: CurrentAndPreviousClientHealthInfo = await response.json();
 
-          console.log("data ", data);
           setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
           setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
           setDidItRenderHealthCheck(true);
         } catch (error) {
-          console.error("Error fetching data:", error);
+          alert("Error Getting Data");
+            navigate("/", { replace: true });
+            return;
         }
       };
 
@@ -88,7 +88,7 @@ const HealthCheck: React.FC = () => {
         setIsPreviousDayHealthCondition(false);
 
     } catch (error) {
-      console.error("Error fetching data:", error);
+      alert("Error fetching data: " + error);
     }
   };
 
@@ -127,7 +127,7 @@ const HealthCheck: React.FC = () => {
 
 
     } catch (error) {
-      console.error("Error fetching data:", error);
+      alert("Error fetching data: " + error);
     }
   };
 

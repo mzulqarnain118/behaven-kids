@@ -94,6 +94,9 @@ const HealthCheckSelectedRegion: React.FC = () => {
         if (symptoms.otherForSelectedRegion === true) {
           setIsOtherForSelectedRegionDisabled(false);
         }
+        if (symptoms.otherForSelectedRegion === false) {
+          setIsOtherForSelectedRegionDisabled(true);
+        }
         return;
       } else {
         if (symptoms.otherForSelectedRegion === false) {
@@ -105,9 +108,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
     if (isNonBodyPartSelectionAvailable === true) {
       if ((symptoms.lethargic || symptoms.nausea || symptoms.pourHygiene || symptoms.dirtyDiapers || symptoms.tattoo || symptoms.previousDayClothes || symptoms.temp || symptoms.otherForNonBodyPart) === true) {
 
-        if (symptoms.temp === true) {
-          setIsTempInputDisabled(false);
-        }
+        
         if (symptoms.otherForNonBodyPart === true) {
           setIsOtherForNonBodyPartDisabled(false);
         }
@@ -123,7 +124,7 @@ const HealthCheckSelectedRegion: React.FC = () => {
         setCanStaffUseCamera(false);
         setCanStaffSubmit(false);
         setIsBodySelectedRegionAvailable(true);
-        setIsTempInputDisabled(true);
+        
 
 
       }
@@ -134,16 +135,26 @@ const HealthCheckSelectedRegion: React.FC = () => {
   }, [symptoms]);
 
   useEffect(() => {
-    if (isTempInputDisabled === true)
+    if (symptoms.temp === true) {
+      setIsTempInputDisabled(false);
+    }
+    else {
+      setIsTempInputDisabled(true);
       setClientTemperature("");
+    }
+  }, [symptoms.temp]);
 
-    if (isOtherForSelectedRegionDisabled === true)
+  useEffect(() => {
+    if (symptoms.otherForSelectedRegion === true) {
+      setIsOtherForSelectedRegionDisabled(false);
+    }
+    else {
+      setIsOtherForSelectedRegionDisabled(true);
       setOtherForSelectedRegion("");
+    }
+  }, [symptoms.otherForSelectedRegion]);
 
-    if (isOtherForNonBodyPartDisabled === true)
-      setOtherForNonBodyPart("");
 
-  }, [isTempInputDisabled, isOtherForSelectedRegionDisabled, isOtherForNonBodyPartDisabled]);
 
   useEffect(() => {
 

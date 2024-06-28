@@ -19,6 +19,8 @@ interface OptionType {
 }
 
 interface ClientHealthCheckInfo {
+    selectedBodyPart: string;
+    frontOrBack: string;
     scratch: number;
     bruise: number;
     rash: number;
@@ -62,20 +64,13 @@ const frontOrBack: OptionType[] = [
 const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setShowModel, id, isPrevious }) => {
     if (!open) return null;
 
-    const location = useLocation();
-    const { selectedArea, clientID, clientFullName, staffFullName } = location.state || {};
-    console.log("ClientID Test = " + clientID);
-    console.log(clientFullName + staffFullName);
-    console.log(selectedArea);
-
     const [selectedImageBlobPicture1, setSelectedImageBlobPicture1] = useState<Blob | undefined>(undefined);
     const [selectedImageBlobPicture2, setSelectedImageBlobPicture2] = useState<Blob | undefined>(undefined);
     const [selectedImageBlobPicture3, setSelectedImageBlobPicture3] = useState<Blob | undefined>(undefined);
     const [selectedImageBlobPicture4, setSelectedImageBlobPicture4] = useState<Blob | undefined>(undefined);
 
 
-    const preSelectedOption = bodyParts.find(option => option.value === selectedArea) || null;
-    const [selectedBodyPart, setSelectedBodyPart] = useState<OptionType | null>(preSelectedOption);
+    const [selectedBodyPart, setSelectedBodyPart] = useState<OptionType | null>(null);
     const [selectedFrontOrBack, setSelectedFrontOrBack] = useState<OptionType | null>(null);
     const [clientHealthCheckInfo, setClientHealthCheckInfo] = useState<ClientHealthCheckInfo[]>();
 
@@ -98,7 +93,6 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                 navigate("/", { replace: true });
                 return;
             }
-            console.log("ID = " + id);
             const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientSpecificRecord?id=${id}`, {
                 method: "GET",
                 headers: {
@@ -107,27 +101,30 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                 },
             });
             const data = await response.json();
-            console.log("data = ", data);
             setClientHealthCheckInfo(data);
+            const selectedBodyPart = bodyParts.find(option => option.value === data[0].selectedBodyPart) || null;
+            setSelectedBodyPart(selectedBodyPart);
+            const selectedFrontOrBack = frontOrBack.find(option => option.value === data[0].frontOrBack) || null;
+            setSelectedFrontOrBack(selectedFrontOrBack);
 
             if (data && data.length > 0) {
                 const pictures = [data[0].picture1, data[0].picture2, data[0].picture3, data[0].picture4];
                 const setters = [setSelectedImageBlobPicture1, setSelectedImageBlobPicture2, setSelectedImageBlobPicture3, setSelectedImageBlobPicture4];
-        
+
                 pictures.forEach((base64String, index) => {
-                  if (base64String) {
-                    const byteCharacters = atob(base64String); // Decode base64 string
-                    const byteNumbers = new Array(byteCharacters.length);
-                    for (let i = 0; i < byteCharacters.length; i++) {
-                      byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    if (base64String) {
+                        const byteCharacters = atob(base64String); // Decode base64 string
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'image/jpeg' }); // Adjust MIME type as needed
+
+                        setters[index](blob);
                     }
-                    const byteArray = new Uint8Array(byteNumbers);
-                    const blob = new Blob([byteArray], { type: 'image/jpeg' }); // Adjust MIME type as needed
-        
-                    setters[index](blob);
-                  }
                 });
-              }
+            }
 
             if (!response.ok) {
                 throw new Error(
@@ -163,7 +160,7 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
             window.location.reload();
 
         } catch (error) {
-            console.error("Error fetching data:", error);
+            alert("Error moving the Data:" + error);
         }
     };
 
@@ -184,21 +181,19 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                             >
                                 {clientHealthCheckInfo !== undefined &&
                                     <div className="card-body" style={{ pointerEvents: "none" }}>
-                                        <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}> *
+                                        <div className="card" style={{ width: "700px", alignItems: "start", minHeight: "150px" }}>
                                             <div className="card-body">
                                                 <div style={{ marginTop: "25px" }}>
                                                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                         <label style={{ marginRight: "15px", fontSize: "25px" }}>Selected Region</label>
                                                         <Select
                                                             options={bodyParts}
-                                                            onChange={(selectedOption) => setSelectedBodyPart(selectedOption)}
                                                             placeholder="Select a body part"
                                                             value={selectedBodyPart}
                                                         />
                                                         <span style={{ marginLeft: "15px" }}> </span>
                                                         <Select
                                                             options={frontOrBack}
-                                                            onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
                                                             placeholder="Front or Back"
                                                             value={selectedFrontOrBack}
 
@@ -207,66 +202,66 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                                                     <form>
                                                         <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="scratch" type="checkbox" name="scratch" checked={clientHealthCheckInfo[0].scratch === 0 ? false : true} className="checkBoxSize" />
+                                                                <input id="scratch" type="checkbox" name="scratch" checked={clientHealthCheckInfo[0].scratch === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                 <label htmlFor="scratch" style={{ marginLeft: "15px" }}> Scratch</label>
                                                             </div>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="bruise" type="checkbox" name="bruise" checked={clientHealthCheckInfo[0].bruise === 0 ? false : true} className="checkBoxSize" />
+                                                                <input id="bruise" type="checkbox" name="bruise" checked={clientHealthCheckInfo[0].bruise === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                 <label htmlFor="bruise" style={{ marginLeft: "15px" }}>Bruise</label>
                                                             </div>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="rash" type="checkbox" name="rash" checked={clientHealthCheckInfo[0].rash === 0 ? false : true} className="checkBoxSize" />
+                                                                <input id="rash" type="checkbox" name="rash" checked={clientHealthCheckInfo[0].rash === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                 <label htmlFor="rash" style={{ marginLeft: "15px" }}>Rash</label>
                                                             </div>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="swelling" type="checkbox" name="swelling" checked={clientHealthCheckInfo[0].swelling === 0 ? false : true} className="checkBoxSize" />
+                                                                <input id="swelling" type="checkbox" name="swelling" checked={clientHealthCheckInfo[0].swelling === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                 <label htmlFor="swelling" style={{ marginLeft: "15px" }}>Swelling</label>
                                                             </div>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="drySkin" type="checkbox" name="drySkin" checked={clientHealthCheckInfo[0].drySkin === 0 ? false : true} className="checkBoxSize" />
+                                                                <input id="drySkin" type="checkbox" name="drySkin" checked={clientHealthCheckInfo[0].drySkin === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                 <label htmlFor="drySkin" style={{ marginLeft: "15px" }}>Dry Skin</label>
                                                             </div>
                                                             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                <input id="other" type="checkbox" name="other" className="checkBoxSize" disabled={true} />
+                                                                <input id="other" type="checkbox" name="other" className="checkBoxSize" disabled={true} readOnly/>
                                                                 <label htmlFor="other" style={{ marginLeft: "15px" }}>Other</label>
-                                                                <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={clientHealthCheckInfo[0].other}></input>
+                                                                <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={clientHealthCheckInfo[0].other} readOnly></input>
                                                             </div>
                                                         </div>
                                                         <hr style={{ marginTop: "35px" }} />
                                                         <div style={{ fontSize: "25px", marginTop: "25px" }}>
                                                             <div className='grid-container-For-selected' style={{ marginTop: "20px" }}>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="lethargic" type="checkbox" name="lethargic" checked={clientHealthCheckInfo[0].lethargic === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="lethargic" type="checkbox" name="lethargic" checked={clientHealthCheckInfo[0].lethargic === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="lethargic" style={{ marginLeft: "15px" }}> Lethargic</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="nausea" type="checkbox" name="nausea" checked={clientHealthCheckInfo[0].nausa === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="nausea" type="checkbox" name="nausea" checked={clientHealthCheckInfo[0].nausa === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="nausea" style={{ marginLeft: "15px" }}>Nausea</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={clientHealthCheckInfo[0].pourHygiene === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="pourHygiene" type="checkbox" name="pourHygiene" checked={clientHealthCheckInfo[0].pourHygiene === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="pourHygiene" style={{ marginLeft: "15px" }}>Poor Hygiene</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={clientHealthCheckInfo[0].dirtyDiapers === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="dirtyDiapers" type="checkbox" name="dirtyDiapers" checked={clientHealthCheckInfo[0].dirtyDiapers === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="dirtyDiapers" style={{ marginLeft: "15px" }}>Dirty Diapers</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="tattoo" type="checkbox" name="tattoo" checked={clientHealthCheckInfo[0].tatto === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="tattoo" type="checkbox" name="tattoo" checked={clientHealthCheckInfo[0].tatto === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="tattoo" style={{ marginLeft: "15px" }}>Tattoo</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={clientHealthCheckInfo[0].previousDayCloths === 0 ? false : true} className="checkBoxSize" />
+                                                                    <input id="previousDayClothes" type="checkbox" name="previousDayClothes" checked={clientHealthCheckInfo[0].previousDayCloths === 0 ? false : true} className="checkBoxSize" readOnly/>
                                                                     <label htmlFor="previousDayClothes" style={{ marginLeft: "15px" }}>Previous Day Clothes</label>
                                                                 </div>
                                                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                                    <input id="temp" type="checkbox" name="temp" className="checkBoxSize" checked={clientHealthCheckInfo[0].temperature === null ? false : true}/>
+                                                                    <input id="temp" type="checkbox" name="temp" className="checkBoxSize" checked={clientHealthCheckInfo[0].temperature === null ? false : true} readOnly/>
                                                                     <span style={{ marginLeft: "15px" }}>Temp:
-                                                                        <input value={clientHealthCheckInfo[0].temperature} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }}></input>
+                                                                        <input value={clientHealthCheckInfo[0].temperature} type='number' style={{ width: "75px", height: "35px", textAlign: "center", marginLeft: "10px" }} readOnly></input>
                                                                         <span style={{ marginLeft: "10px" }}>&#8457;</span>
                                                                     </span>
                                                                 </div>
-                                                                 {/* <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                                                {/* <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                                    <input id="otherForNonBodyPart" type="checkbox" name="otherForNonBodyPart" className="checkBoxSize" checked={symptoms.otherForNonBodyPart} /> 
                                                                     <label htmlFor="otherForNonBodyPart" style={{ marginLeft: "15px" }}>Other</label>
                                                                     <input type="text" style={{ width: "150px", marginLeft: "20px" }} value={otherForNonBodyPart} disabled={isOtherForNonBodyPartDisabled}></input> 

@@ -217,21 +217,6 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
         replace: true,
         state: { preSelectedBodyPartArea, clientID, clientFullName, staffFullName, preSelectedBackOrFront },
       });
-
-      // confirmAlert({
-      //   customUI: ({ onClose }) => {
-      //     return (
-      //       <div style={{ backgroundColor: "white", border: "solid", width: "650px", height: "400px", padding: "15px", zIndex: "30000", textAlign: "center", borderRadius: "25px" }}>
-      //         <h1>Transfer</h1>
-      //         <h3 style={{ marginTop: "20px" }}>Does the client still have this health condition?</h3>
-      //         <div style={{ marginTop: "30px" }}>
-      //           <button className="btn btn-primary" onClick={() => {StaffClickedYesToMovePreviousHealthConditionToNextDay(id); onClose();}} style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginRight: "10px" }}>Yes</button>
-      //           <button className="btn btn-danger" style={{ width: "125px", height: "65px", borderRadius: "25px", fontSize: "30px", marginLeft: "10px" }} onClick={() => {onClose();}}> No </button>
-      //         </div>
-      //       </div>
-      //     );
-      //   }
-      // });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -425,9 +410,12 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
           <path d="m 19.558357,1.92821 c -22.1993328,20.55867 -11.0996668,10.27933 0,0 z m 5.975,5.989 -0.664,18.415 -1.55,6.435 -4.647,0 -1.327,-4.437 -1.55,-0.222 0.332,4.437 -5.864,-1.778 -1.5499998,-0.887 -6.64,-1.442 -0.22,-5.214 6.418,-10.87 4.4259998,-5.548 c 9.991542,-3.26362 9.41586,-8.41457 12.836,1.111 z" />
         </svg>
       </div>
-      {/* <div id="area">
-        Area: <span id="data">{selectedArea}</span>
-      </div> */}
+      <div id="area">
+         <span id="right">R</span>
+      </div>
+      <div id="area">
+         <span id="left">L</span>
+      </div>
     </div>
   );
 };
