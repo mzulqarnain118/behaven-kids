@@ -12,6 +12,7 @@ interface CbsAddOrTransferClientsToRooms {
     roomID: number;
     locationID: string;
     cbsProgramType: string;
+    staffID: string;
 }
 
 interface ClientInfo {
@@ -21,7 +22,7 @@ interface ClientInfo {
     clientLastName: string;
 }
 
-const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferClientsToRooms> = ({ showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel, roomID, locationID, cbsProgramType}) => {
+const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferClientsToRooms> = ({ showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel, roomID, locationID, cbsProgramType, staffID}) => {
     if (!open) return null;
     const navigate = useNavigate();
 
@@ -75,7 +76,7 @@ const PopupGetClientsWhoAreWaitingToBeAsignToARoom: React.FC<CbsAddOrTransferCli
                 return;
             }
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${roomID}`, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${roomID}&staffID=${staffID}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

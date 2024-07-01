@@ -246,7 +246,8 @@ const EditChildTime: React.FC = () => {
     id: number,
     signInTime: string,
     signOutTime: string,
-    pickedUpParent: string
+    pickedUpParent: string,
+    clientID: number
   ) => {
     
     try {
@@ -267,7 +268,7 @@ const EditChildTime: React.FC = () => {
       const staffID = (decoded as any).StaffID;
 
       const response = await fetch(
-        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}&staffID=${staffID}`,
+        `${backEndCodeURLLocation}SignIn/EditSignInSignOutTime?id=${id}&signInTime=${signInTime}&signOutTime=${signOutTime}&changeParentDropInID=${selectedDropInParentID}&changeParentPickUpID=${selectedDropOutParentID}&staffID=${staffID}&clientID=${clientID}`,
         {
           method: "POST",
           headers: {
@@ -684,7 +685,8 @@ const EditChildTime: React.FC = () => {
                           item.id,
                           item.signInTime,
                           item.signOutTime,
-                          item.pickedOutParentFirstName
+                          item.pickedOutParentFirstName,
+                          item.clientID
                         )
                       }
                     >

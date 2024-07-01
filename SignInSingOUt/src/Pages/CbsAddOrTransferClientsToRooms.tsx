@@ -421,8 +421,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             {clientID !== null && roomID !== null && currentStaffID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID}/>
             )}
-            {roomID !== null && locationID !== null && cbsProgramType !== null &&(
-                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType}/>
+            {roomID !== null && locationID !== null && cbsProgramType !== null && currentStaffID !== null && (
+                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType} staffID={currentStaffID}/>
             )} 
         </>
     );
