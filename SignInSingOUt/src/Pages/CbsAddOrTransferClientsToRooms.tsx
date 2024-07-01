@@ -311,7 +311,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 return;
             }
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}`, {
+            const response = await fetch(`${backEndCodeURLLocation}Cbs/CbsPutClientInTheirRoom?cliendID=${clientID}&roomID=${defaultRoomID}&staffID=${currentStaffID}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
