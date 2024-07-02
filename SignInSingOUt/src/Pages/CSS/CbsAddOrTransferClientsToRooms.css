@@ -35,6 +35,14 @@
     text-align: center;
   }
 
+  .grid-container-for-RBT-and-THR-page {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto);
+    grid-gap: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+
   .grid-item-container-For-CBS-page {
     padding: 10px;
   }

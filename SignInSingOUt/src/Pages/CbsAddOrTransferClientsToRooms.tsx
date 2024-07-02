@@ -26,6 +26,19 @@ interface ChildInfo {
     program: string;
 }
 
+interface ChildHistoryLogInfo {
+    id: number
+    clientID: number;
+    clientFirstName: string;
+    clientLastName: string;
+    defaultRoomID: number;
+    program: string;
+    clientAssignedStartTime: string;
+    clientAssignedEndTime: string;
+    clientAssignedDurationTime: string;
+
+}
+
 interface ClientInfoResponse {
     distinctClientSignInOutInfo: ChildInfo[];
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
@@ -49,6 +62,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
+    const [clientsWhoAreCurrentlyInARoomWithTransferHistory, setClientsWhoAreCurrentlyInARoomWithTransferHistory] = useState<ChildHistoryLogInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);
@@ -77,7 +91,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         setCurrentTime(new Date());
     }
     useEffect(() => {
-        Testing();
+        // Testing();
         console.log("apple");
     }, [roomID]);
 
@@ -280,8 +294,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             }
 
             const data = await response.json();
-
-            setClientsWhoAreCurrentlyInARoom(data);
+            console.log("data = ", data);
+            // setClientsWhoAreCurrentlyInARoom(data);
+            setClientsWhoAreCurrentlyInARoomWithTransferHistory(data);
 
         } catch (error) {
             window.location.reload();
@@ -373,13 +388,37 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
                                 <h2>Assigned</h2>
+                                {roomName !== "RBT" &&
                                 <div className="grid-container-For-CBS-page">
-                                    {clientsWhoAreCurrentlyInARoom.map((info,) => ( 
+                                    {clientsWhoAreCurrentlyInARoom.map((info) => ( 
                                         <button key={info.clientID} 
                                             onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
                                         </button>
                                     ))}
+
                                 </div>
+                                }
+                                {roomName === "RBT" &&
+                                <div>
+                                <div className="grid-container-for-RBT-and-THR-page">
+                                    <h5>Client Name</h5>
+                                    <h5>Start Time</h5>
+                                    <h5>End Time</h5>
+                                    <h5>Session Time</h5>
+                                </div>
+                                
+                                {clientsWhoAreCurrentlyInARoomWithTransferHistory.map((info) => ( 
+                                    <div className="grid-container-for-RBT-and-THR-page">
+                                        <h5>{info.clientFirstName + " " + info.clientLastName}</h5>
+                                        <h5>{info.clientAssignedStartTime.toString()}</h5>
+                                        <h5>{info.clientAssignedEndTime.toString()}</h5>
+                                        <h5>{info.clientAssignedDurationTime !== null ? info.clientAssignedDurationTime : null}</h5> 
+                                    </div>
+                                ))}
+
+                                
+                                </div>
+                                }
                             </div>
                         </div>
                     </div>
