@@ -64,7 +64,12 @@ const SsnPin: React.FC = () => {
             return;
           }
 
-          const makeClientActiveIntimeOutRoom = await fetch(`${backEndCodeURLLocation}TimeOutRoom/MakeClientsActiveInTimeOutRoom?cliendID=${clientID}&roomID=${roomID}`, {
+          const data = await getStaffInfo.json();
+          const staffID = data.staffID;
+          const staffFullName = data.staffFirstName + " " + data.staffLastName;
+          setShowErrorMessage(false);
+
+          const makeClientActiveIntimeOutRoom = await fetch(`${backEndCodeURLLocation}TimeOutRoom/MakeClientsActiveInTimeOutRoom?cliendID=${clientID}&roomID=${roomID}&staffID=${staffID}`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -81,15 +86,6 @@ const SsnPin: React.FC = () => {
             
             return;
           }
-
-
-
-          const data = await getStaffInfo.json();
-          console.log("data ", data);
-          const staffID = data.staffID;
-          const staffFullName = data.staffFirstName + " " + data.staffLastName;
-          setShowErrorMessage(false);
-
 
 
           navigate("/timeoutobservation", {
