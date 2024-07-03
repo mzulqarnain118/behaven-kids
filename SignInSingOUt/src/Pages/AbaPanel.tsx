@@ -124,65 +124,6 @@ const AbaPanel: React.FC = () => {
     };
   }
 
- 
-  // useEffect(() => {
-  //   // Load timers from local storage if available
-  //   const storedTimers = localStorage.getItem("timers");
-  //   if (storedTimers) {
-  //     setTimers(JSON.parse(storedTimers));
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   // Save timers to local storage whenever they change
-  //   localStorage.setItem("timers", JSON.stringify(timers));
-  // }, [timers]);
-
-  // const startTimer = (clientId: string) => {
-  //   const intervalId = setInterval(() => {
-  //     setTimers((prevTimers) => ({
-  //       ...prevTimers,
-  //       [clientId]: (prevTimers[clientId] || 0) + 1,
-  //     }));
-  //   }, 1000);
-  //   return intervalId;
-  // };
-
-  // const stopTimer = (intervalId: NodeJS.Timeout) => {
-  //   clearInterval(intervalId);
-  // };
-
-  // useEffect(() => {
-  //   // Start or stop timers based on client data
-  //   const intervalIds: { [key: string]: NodeJS.Timeout } = {};
-  //   allClientsInfo.forEach((client) => {
-  //     const clientId = `${client.clientFirstName}-${client.clientLastName}-${client.clientPreviousRoomName}`;
-  //     if (client.whichRoomClientCurrentlyIn === 30) {
-  //       intervalIds[clientId] = startTimer(clientId);
-  //     } else {
-  //       const intervalId = intervalIds[clientId];
-  //       if (intervalId) {
-  //         stopTimer(intervalId);
-  //         delete intervalIds[clientId];
-  //       }
-  //     }
-  //   });
-
-  //   // Cleanup intervals on unmount
-  //   return () => {
-  //     Object.values(intervalIds).forEach(stopTimer);
-  //   };
-  // }, [allClientsInfo]);
-
-  // const formatTime = (time: number) => {
-  //   const hours = Math.floor(time / 3600);
-  //   const minutes = Math.floor((time % 3600) / 60);
-  //   const seconds = time % 60;
-  //   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  // };
-
-
-
   return (
     <>
       <div style={{ display: "flex" }}>

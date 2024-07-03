@@ -36,13 +36,13 @@ interface ChildHistoryLogInfo {
     clientAssignedStartTime: string;
     clientAssignedEndTime: string;
     clientAssignedDurationTime: string;
-
 }
 
 interface ClientInfoResponse {
     distinctClientSignInOutInfo: ChildInfo[];
     allClientsWhoAreDefaultedForARoom: ChildInfo[];
     clientsWhoAreCurrentlyInARoom: ChildInfo[];
+    allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom: ChildInfo[];
     clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom: ChildHistoryLogInfo[];
 }
 
@@ -58,12 +58,13 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC = () => {
+const RbtAddOrTransferClientsToRooms: React.FC = () => {
 
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
-    const [clientsWhoAreCurrentlyInARoomWithTransferHistory, setClientsWhoAreCurrentlyInARoomWithTransferHistory] = useState<ChildHistoryLogInfo[]>([]);
+    const [allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom, setAllRbtClientsWhoAreWaitingInTheCommonUnassignedRoom] = useState<ChildInfo[]>([]);
+    const [clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom, setClientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom] = useState<ChildHistoryLogInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);
@@ -100,9 +101,15 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         if (roomID === null) {
             return;
         }
-
-        const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}`);
-        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
+        const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Please Login");
+                navigate("/", { replace: true });
+                return;
+            }
+        const decoded = jwtDecode(token) as DecodedToken;
+        const staffID = decoded.StaffID;
+        const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}&staffID=${staffID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -111,7 +118,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
             setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
-
+            setClientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom(data.clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom);
+            // setAllRbtClientsWhoAreWaitingInTheCommonUnassignedRoom(data.allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom);
         };
 
 
@@ -132,7 +140,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
         const decoded = jwtDecode(token);
         const userRole = (decoded as any).role;
-        if (userRole !== "floor") {
+        if (userRole !== "rbt") {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
         }
@@ -213,7 +221,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             if (!token) {
                 alert("Please Login");
                 navigate("/", { replace: true });
-                return; 
+                return;
             }
             const decoded = jwtDecode(token) as DecodedToken;
             const staffID = decoded.StaffID;
@@ -242,36 +250,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
     };
 
-    const getClientsThatAreWaitingInTheWaitingRoom = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetClientsWhoAreSignedInAndReadyToBeAssignedToARoom_AndWhoAreAbsent?roomID=${roomID}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
-            }
-
-            const data: ClientInfoResponse = await response.json();
-
-            setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
-
-            setChildInfo(data.allClientsWhoAreDefaultedForARoom);
-
-        } catch (error) {
-            window.location.reload();
-        }
-    };
-
     const getAllClientsThatAreInARoom = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -296,7 +274,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             const data = await response.json();
             console.log("data = ", data);
             // setClientsWhoAreCurrentlyInARoom(data);
-            //setClientsWhoAreCurrentlyInARoomWithTransferHistory(data);
+            // setClientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom(data);
 
         } catch (error) {
             window.location.reload();
@@ -340,14 +318,12 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             }
 
             getAllClientsThatAreInARoom();
-            getClientsThatAreWaitingInTheWaitingRoom();
-            // window.location.reload();
         } catch (error) {
             alert("Error fetching data:" + error);
         }
     };
 
-    return ( 
+    return (
         <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px" }}>
@@ -360,7 +336,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: "25px", marginLeft: "150px" }}>
                     <h4> &#128336; {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h4>
-                    
+
                     <div style={{ display: "flex", flexDirection: "row" }}>
                         <img src={Person} style={{ width: "30px", height: "30px", marginTop: "15px" }} />
                         <h4 style={{ marginTop: "15px", marginLeft: "10px" }}>{cbsFullName}</h4>
@@ -385,29 +361,29 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 >
 
                     <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "100px" }}>
                             <div className="card-body">
                                 <h2>Assigned</h2>
-                                <div className="grid-container-For-CBS-page">
-                                    {clientsWhoAreCurrentlyInARoom.map((info) => ( 
-                                        <button key={info.clientID} 
-                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
-                                        </button>
-                                    ))}
 
-                                </div>
+                                    <div className="grid-container-For-CBS-page">
+                                        {clientsWhoAreCurrentlyInARoom.map((info) => (
+                                            <button key={info.clientID}
+                                                onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977' }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                            </button>
+                                        ))}
+
+                                    </div>
+                                
                             </div>
                         </div>
                     </div>
-
-
                     <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "100px" }}>
                             <div className="card-body">
-                                <h2>Unassigned</h2>
+                                <h2>My Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
-   
+
                                         <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
 
                                     ))}
@@ -415,33 +391,57 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    {!roomName.includes('THR') && !roomName.includes('GS') && (
-                    <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
+                    {/* <div className="card-body">
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "100px" }}>
                             <div className="card-body">
-                                <h2>Not In</h2>
+                                <h2>All Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
-                                    {childInfo.map((info,) => (
-                                        <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #eaeaea, lightgrey)', color: "black",  boxShadow: '-3px -3px 6px 1px rgba(128, 128, 128, 0.5)', border: '1px solid lightgrey'}} >{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
+                                    {allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom.map((info,) => (
+
+                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
+
                                     ))}
                                 </div>
                             </div>
                         </div>
+                    </div> */}
+                    <div className="card-body">
+                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
+                            <div className="card-body">
+                                {roomName === "RBT" &&
+                                    <div>
+                                        <div className="grid-container-for-RBT-and-THR-page">
+                                            <h5>Client Name</h5>
+                                            <h5>Start Time</h5>
+                                            <h5>End Time</h5>
+                                            <h5>Session Time</h5>
+                                        </div>
+
+                                        {clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom.map((info) => (
+                                            <div className="grid-container-for-RBT-and-THR-page">
+                                                <h5>{info.clientFirstName + " " + info.clientLastName}</h5>
+                                                <h5>{info.clientAssignedStartTime.toString()}</h5>
+                                                <h5>{info.clientAssignedEndTime.toString()}</h5>
+                                                <h5>{info.clientAssignedDurationTime !== null ? info.clientAssignedDurationTime : null}</h5>
+                                            </div>
+                                        ))}
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </div>
-                    )}
-                    <button className="add-button-class" onClick={() => CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom()}>+ ADD</button>
                     <br />
                 </div>
             </div>
 
             {clientID !== null && roomID !== null && currentStaffID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID}/>
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID} />
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null && currentStaffID !== null && (
-                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType} staffID={currentStaffID}/>
-            )} 
+                <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType} staffID={currentStaffID} />
+            )}
         </>
     );
 };
 
-export default CbsAddOrTransferClientsToRooms;
+export default RbtAddOrTransferClientsToRooms;

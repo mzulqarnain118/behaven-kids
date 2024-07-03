@@ -15,6 +15,7 @@ import MakeClientCurrent from './Pages/MakeClientCurrent'
 import ReceptionistGivesTemporaryPinToParent from './Pages/ReceptionistGivesTemporaryPinToParent'
 import ClientInOutNoShow from './Pages/ClientInOutNoShow'
 import CbsAddOrTransferClientsToRooms from './Pages/CbsAddOrTransferClientsToRooms'
+import RbtAddOrTransferClientsToRooms from './Pages/RbtAddOrTransferClientsToRooms'
 import SdpPanel from './Pages/SdpPanel'
 import TimeOutObservation from './Pages/TimeOutObservation'
 import TimeOutSelectAClient from './Pages/TimeOutSelectAClient'
@@ -42,6 +43,7 @@ const App: React.FC = () => {
       <Route path='/ReceptionistGivesTemporaryPinToParent' element={<ReceptionistGivesTemporaryPinToParent/>}></Route>
       <Route path='/ClientInOutNoShow' element={<ClientInOutNoShow/>}></Route>
       <Route path='/CbsAddOrTransferClientsToRooms' element={<CbsAddOrTransferClientsToRooms/>}></Route>
+      <Route path='/RbtAddOrTransferClientsToRooms' element={<RbtAddOrTransferClientsToRooms/>}></Route>
       <Route path='/SdpPanel' element={<SdpPanel/>}></Route>
       <Route path='/TimeOutObservation' element={<TimeOutObservation/>}></Route>
       <Route path='/TimeOutSelectAClient' element={<TimeOutSelectAClient/>}></Route>

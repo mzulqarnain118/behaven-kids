@@ -260,7 +260,7 @@ const Navbar: React.FC = () => {
           </div>
         </nav>
       )}
-      {showNavbar === true && (role === "floor" || role.includes("tor")) && (
+      {showNavbar === true && (role === "floor" || role === "rbt" || role.includes("tor")) && (
         <nav className="navbar bg-white">
           <div className="container-fluid">
           
@@ -344,7 +344,7 @@ const Navbar: React.FC = () => {
           </div>
         </nav>
       )}
-      {showNavbar === true && role !== "parent" && !role.includes("tor") && role !== "floor"  && (
+      {showNavbar === true && role !== "parent" && !role.includes("tor") && role !== "floor" && role !== "rbt"  && (
         <nav className="navbar bg-white ">
           <div className="container-fluid">
             <button

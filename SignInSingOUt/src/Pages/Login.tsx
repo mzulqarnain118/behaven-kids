@@ -31,6 +31,8 @@ const LoginPage: React.FC = () => {
         navigate("/EditChildTime");
       else if (userRole === "floor")
         navigate("/CbsAddOrTransferClientsToRooms");
+      else if (userRole === "rbt")
+        navigate("/rbtaddortransferclientstorooms");
       else if (userRole.includes("tor"))
         navigate("/timeoutselectaclient")
 
