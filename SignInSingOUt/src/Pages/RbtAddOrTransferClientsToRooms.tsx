@@ -284,9 +284,19 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
 
 
     const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
+
+
         setClientID(clientID);
         setClientFullName(clientFullName);
         setClientProgram(clientProgram);
+        console.log("clientID = " + clientID);
+        console.log("clientFullName = " + clientFullName);
+        console.log("clientProgram = " + clientProgram);
+        console.log("roomInfo = ", roomInfo);
+        console.log("roomID = " + roomID);
+        console.log("cbsFullName = " + cbsFullName);
+        console.log("currentStaffID = " + currentStaffID);
+        console.log("locationID = " + locationID);
         setShowModel(true);
     };
 
@@ -434,7 +444,7 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
                 </div>
             </div>
 
-            {clientID !== null && roomID !== null && currentStaffID !== null && (
+            {clientID !== null && roomID !== null && currentStaffID !== null && locationID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID} />
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null && currentStaffID !== null && (
