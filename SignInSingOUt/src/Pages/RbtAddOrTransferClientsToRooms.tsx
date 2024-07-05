@@ -9,11 +9,11 @@ import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import Person from '../../src/assets/person.png';
-import RBT from '../../src/assets/rbt.png'
-import Therapy from '../../src/assets/therapy.png'
-import Gs from '../../src/assets/gs.png'
+import RBT from '../../src/assets/rbt.png';
+import Therapy from '../../src/assets/therapy.png';
+import Gs from '../../src/assets/gs.png';
 import { useNavigate } from "react-router-dom";
-import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
+import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom';
 
 interface ChildInfo {
     id: number
@@ -79,6 +79,7 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
     const [clientProgram, setClientProgram] = useState<string>("");
     const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+    const [userRole, setUserRole] = useState<string>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -102,11 +103,11 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
             return;
         }
         const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
+        if (!token) {
+            alert("Please Login");
+            navigate("/", { replace: true });
+            return;
+        }
         const decoded = jwtDecode(token) as DecodedToken;
         const staffID = decoded.StaffID;
         const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}&staffID=${staffID}`);
@@ -119,7 +120,7 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
             setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
             setClientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom(data.clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom);
-            // setAllRbtClientsWhoAreWaitingInTheCommonUnassignedRoom(data.allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom);
+            setAllRbtClientsWhoAreWaitingInTheCommonUnassignedRoom(data.allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom);
         };
 
 
@@ -140,7 +141,8 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
 
         const decoded = jwtDecode(token);
         const userRole = (decoded as any).role;
-        if (userRole !== "rbt") {
+        setUserRole(userRole);
+        if (userRole !== "rbt" && userRole !== "thr") {
             navigate("/"); // Redirect to login page if user role is not "floor"
             return;
         }
@@ -284,24 +286,10 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
 
 
     const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
-
-
         setClientID(clientID);
         setClientFullName(clientFullName);
         setClientProgram(clientProgram);
-        console.log("clientID = " + clientID);
-        console.log("clientFullName = " + clientFullName);
-        console.log("clientProgram = " + clientProgram);
-        console.log("roomInfo = ", roomInfo);
-        console.log("roomID = " + roomID);
-        console.log("cbsFullName = " + cbsFullName);
-        console.log("currentStaffID = " + currentStaffID);
-        console.log("locationID = " + locationID);
         setShowModel(true);
-    };
-
-    const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
-        setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
     };
 
     const PutClientInDeseignatedRoom = async (clientID: number, defaultRoomID: number) => {
@@ -375,15 +363,15 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
                             <div className="card-body">
                                 <h2>Assigned</h2>
 
-                                    <div className="grid-container-For-CBS-page">
-                                        {clientsWhoAreCurrentlyInARoom.map((info) => (
-                                            <button key={info.clientID}
-                                                onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977' }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
-                                            </button>
-                                        ))}
+                                <div className="grid-container-For-CBS-page">
+                                    {clientsWhoAreCurrentlyInARoom.map((info) => (
+                                        <button key={info.clientID}
+                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977' }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                        </button>
+                                    ))}
 
-                                    </div>
-                                
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -401,38 +389,42 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <div className="card-body">
-                        <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "100px" }}>
-                            <div className="card-body">
-                                <h2>All Unassigned</h2>
-                                <div className="grid-container-For-CBS-page">
-                                    {allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom.map((info,) => (
-
-                                        <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
-
-                                    ))}
+                    { userRole === "rbt" &&
+                        <div className="card-body">
+                            <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "100px" }}>
+                                <div className="card-body">
+                                    <h2>All Unassigned</h2>
+                                    <div className="grid-container-For-CBS-page">
+                                        {allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom.map((info,) => (
+                                            <button onClick={() => PutClientInDeseignatedRoom(info.clientID, -1)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div> */}
+                    }
+
                     <div className="card-body">
                         <div className="card" style={{ width: "700px", alignItems: "center", minHeight: "150px" }}>
                             <div className="card-body">
-                                {roomName === "RBT" &&
+                                {(roomName === "RBT" || roomName == "THR") &&
                                     <div>
                                         <div className="grid-container-for-RBT-and-THR-page">
-                                            <h5>Client Name</h5>
-                                            <h5>Start Time</h5>
-                                            <h5>End Time</h5>
-                                            <h5>Session Time</h5>
+                                            <p style={{fontSize: "20px"}}>Client Name</p>
+                                            <p style={{fontSize: "20px"}}>Start Time</p>
+                                            <p style={{fontSize: "20px"}}>End Time</p>
+                                            <p style={{fontSize: "20px"}}>Session Time (mins)</p>
                                         </div>
 
                                         {clientsWhoAreCurrentlyAssignedInARbtOrTherapyRoom.map((info) => (
-                                            <div className="grid-container-for-RBT-and-THR-page">
-                                                <h5>{info.clientFirstName + " " + info.clientLastName}</h5>
-                                                <h5>{info.clientAssignedStartTime.toString()}</h5>
-                                                <h5>{info.clientAssignedEndTime.toString()}</h5>
-                                                <h5>{info.clientAssignedDurationTime !== null ? info.clientAssignedDurationTime : null}</h5>
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                                <div className="grid-container-for-RBT-and-THR-page" >
+                                                    <p>{info.clientFirstName + " " + info.clientLastName.charAt(0) + "."}</p>
+                                                    <p style={{color: "green"}}>{info.clientAssignedStartTime.toString()}</p>
+                                                    <p style={{color: "red"}}>{info.clientAssignedEndTime.toString()}</p>
+                                                    <p>{info.clientAssignedDurationTime !== null ? info.clientAssignedDurationTime : null}</p>
+                                                </div>
+                                                <hr style={{marginTop: "-5px", width: "90%", marginLeft: "15px"}}/>
                                             </div>
                                         ))}
                                     </div>

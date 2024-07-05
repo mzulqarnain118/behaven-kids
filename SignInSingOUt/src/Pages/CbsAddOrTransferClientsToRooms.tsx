@@ -272,37 +272,37 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
     };
 
-    const getAllClientsThatAreInARoom = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please Login");
-                navigate("/", { replace: true });
-                return;
-            }
+    // const getAllClientsThatAreInARoom = async () => {
+    //     try {
+    //         const token = localStorage.getItem("token");
+    //         if (!token) {
+    //             alert("Please Login");
+    //             navigate("/", { replace: true });
+    //             return;
+    //         }
 
-            const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+    //         const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
+    //             method: "GET",
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 "Content-Type": "application/json",
+    //             },
+    //         });
 
-            if (!response.ok) {
-                alert(`Failed to fetch data. Response status: ${response.status}`)
-            }
+    //         if (!response.ok) {
+    //             alert(`Failed to fetch data. Response status: ${response.status}`)
+    //         }
 
-            const data = await response.json();
-            console.log("data = ", data);
-            // setClientsWhoAreCurrentlyInARoom(data);
-            //setClientsWhoAreCurrentlyInARoomWithTransferHistory(data);
+    //         const data = await response.json();
+    //         console.log("data = ", data);
+    //         // setClientsWhoAreCurrentlyInARoom(data);
+    //         //setClientsWhoAreCurrentlyInARoomWithTransferHistory(data);
 
-        } catch (error) {
-            window.location.reload();
-            // alert("Useffect 2 - Error fetching data:" + error);
-        }
-    };
+    //     } catch (error) {
+    //         window.location.reload();
+    //         // alert("Useffect 2 - Error fetching data:" + error);
+    //     }
+    // };
 
 
     const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
@@ -339,7 +339,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 return;
             }
 
-            getAllClientsThatAreInARoom();
+            // getAllClientsThatAreInARoom();
             getClientsThatAreWaitingInTheWaitingRoom();
             // window.location.reload();
         } catch (error) {

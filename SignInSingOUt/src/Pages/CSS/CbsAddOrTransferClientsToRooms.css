@@ -37,9 +37,8 @@
 
   .grid-container-for-RBT-and-THR-page {
     display: grid;
-    grid-template-columns: minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto);
-    grid-gap: 20px;
-    padding: 10px;
+    grid-template-columns: minmax(150px, auto) minmax(120px, auto) minmax(120px, auto) minmax(170px, auto);
+    grid-gap: 10px;
     text-align: center;
   }
 

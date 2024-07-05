@@ -40,8 +40,8 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
         try {
             navigate("/HealthCheck", {
                 replace: true,
-                state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName},
-              });
+                state: { clientID: clientID, clientFullName: clientFullName, staffFullName: staffFullName },
+            });
 
         } catch (error) {
             alert("Error fetching data:" + error);
@@ -56,38 +56,21 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             if (!token) {
                 throw new Error("Token not found in localStorage");
             }
-            // if (newRoomID === 29 || newRoomID === 30 || newRoomID === 32 || newRoomID === 33) {
-                const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&staffIDWhoTransferedClient=${staffID}&locationID=${locationID}&previousRoomID=${previousRoomID}`;
-                console.log(url);
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
 
-                if (!response.ok) {
-                    alert(`Failed to transfer client to another room: ${response.status}`)
-                }
-                setShowModel(false);
-            // }
-            // else {
-            //     const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&previousRoomID=${previousRoomID}`;
-            //     console.log(url);
-            //     const response = await fetch(url, {
-            //         method: "POST",
-            //         headers: {
-            //             Authorization: `Bearer ${token}`,
-            //             "Content-Type": "application/json",
-            //         },
-            //     });
+            const url = `${backEndCodeURLLocation}Cbs/CbsChangesClientsToAWaitingRoom?cliendID=${clientID}&roomID=${newRoomID}&staffIDWhoTransferedClient=${staffID}&locationID=${locationID}&previousRoomID=${previousRoomID}`;
+            console.log(url);
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
-            //     if (!response.ok) {
-            //         alert(`Failed to transfer client to another room: ${response.status}`)
-            //     }
-            //     setShowModel(false);
-            // }
+            if (!response.ok) {
+                alert(`Failed to transfer client to another room: ${response.status}`)
+            }
+            setShowModel(false);
 
         } catch (error) {
             alert("Error:" + error);
@@ -103,12 +86,11 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
                         {clientProgram === "ABA" && (
                             <div style={{ textAlign: "center" }}>
-
                                 <h4>{clientFullName} - {clientProgram}</h4>
                                 <br />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo
-                                        .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null) 
+                                        .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null)
                                         .map(info => (
                                             <button
                                                 key={info.roomID}
@@ -119,6 +101,12 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             </button>
                                         ))}
                                 </div>
+                                <hr />
+                                <button
+                                    style={{ width: "150px" }}
+                                    className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                    onClick={() => transferToAnotherRoom(34)}> RBT
+                                </button>
                             </div>
                         )}
                         {clientProgram === "SDP" && (
@@ -167,15 +155,15 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 </div>
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                    
-                                        <button
-                                            style={{ width: "150px" }}
-                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            onClick={() => goToHealthCheckUp()}
-                                        >
-                                            <span><img src={Health} style={{width: "30px", marginBottom: "5px"}}></img><span style={{marginLeft: "5px"}}>Health</span></span>
-                                        </button>
-                                  
+
+                                    <button
+                                        style={{ width: "150px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => goToHealthCheckUp()}
+                                    >
+                                        <span><img src={Health} style={{ width: "30px", marginBottom: "5px" }}></img><span style={{ marginLeft: "5px" }}>Health</span></span>
+                                    </button>
+
                                 </div>
 
                             </div>
@@ -238,15 +226,15 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 </div>
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-                                    
-                                        <button
-                                            style={{ width: "150px" }}
-                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            onClick={() => goToHealthCheckUp()}
-                                        >
-                                            <span><img src={Health} style={{width: "30px", marginBottom: "5px"}}></img><span style={{marginLeft: "5px"}}>Health</span></span>
-                                        </button>
-                                  
+
+                                    <button
+                                        style={{ width: "150px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => goToHealthCheckUp()}
+                                    >
+                                        <span><img src={Health} style={{ width: "30px", marginBottom: "5px" }}></img><span style={{ marginLeft: "5px" }}>Health</span></span>
+                                    </button>
+
                                 </div>
                             </div>
                         )}
