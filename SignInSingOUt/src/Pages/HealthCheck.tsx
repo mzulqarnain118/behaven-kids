@@ -35,47 +35,48 @@ const HealthCheck: React.FC = () => {
   const [didItRenderHealthCheck, setDidItRenderHealthCheck] = useState<boolean>(false);
 
   useEffect(() => {
-    if (didItRenderHealthCheck === false) {
-      const fetchData = async () => {
-        try {
+    setDidItRenderHealthCheck(true);
+  }, []);
 
-          const token = localStorage.getItem("token");
-          if (!token) {
-            alert("Please log In");
-            navigate("/", { replace: true });
-            return;
-          }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
 
-          const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            alert("Error Getting Data");
-            navigate("/", { replace: true });
-            return;
-          }
-
-          const data: CurrentAndPreviousClientHealthInfo = await response.json();
-
-          setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
-          setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
-          setDidItRenderHealthCheck(true);
-        } catch (error) {
-          alert("Error Getting Data");
-            navigate("/", { replace: true });
-            return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Please log In");
+          navigate("/", { replace: true });
+          return;
         }
-      };
 
-      fetchData();
-    }
+        const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-  });
+        if (!response.ok) {
+          alert("Error Getting Data");
+          navigate("/", { replace: true });
+          return;
+        }
+
+        const data: CurrentAndPreviousClientHealthInfo = await response.json();
+        setClientPreviousDaysHealthInfo(data.previousDayHealthInfo);
+        setClientCurrentDaysHealthInfo(data.currentDayHealthInfo);
+        setDidItRenderHealthCheck(true);
+      } catch (error) {
+        alert("Error Getting Data");
+        navigate("/", { replace: true });
+        return;
+      }
+    };
+
+    fetchData();
+
+  }, [didItRenderHealthCheck]);
 
   const MoveHealthCheckToCurrentDate = async (id: number, isPreviousDayCondition: boolean) => {
     try {
@@ -170,11 +171,15 @@ const HealthCheck: React.FC = () => {
                     <div className='grid-container-For-bodies' >
                       <div style={{ borderRight: "solid", marginTop: "20px" }} >
                         <h3>Previous</h3>
-                        <HumanBody clientID={clientID} IsPreviousDay={true} clientFullName={clientFullName} staffFullName={staffFullName} />
+                        {didItRenderHealthCheck === true &&
+                          <HumanBody clientID={clientID} IsPreviousDay={true} clientFullName={clientFullName} staffFullName={staffFullName} />
+                        }
                       </div>
                       <div style={{ borderLeft: "solid", marginTop: "20px" }}>
                         <h3>Today</h3>
-                        <HumanBody clientID={clientID} IsPreviousDay={false} clientFullName={clientFullName} staffFullName={staffFullName} />
+                        {didItRenderHealthCheck === true &&
+                          <HumanBody clientID={clientID} IsPreviousDay={false} clientFullName={clientFullName} staffFullName={staffFullName} />
+                        }
                       </div>
                     </div>
                     <div className='grid-container-For-bodies' style={{ marginTop: "25px", height: "250px" }}>
@@ -244,7 +249,7 @@ const HealthCheck: React.FC = () => {
               </div>
 
             </div>
-            <div style={{ textAlign: "center", marginTop: "25px" }}>
+            <div style={{ textAlign: "center", marginTop: "25px", pointerEvents: staffFullName !== null ? "auto" : "none", opacity: staffFullName !== null ? "1" : ".2"}}>
               <button className="add-button-class" style={{ marginRight: "15px" }} onClick={() => AddHealthInfo()}>+ ADD</button>
               <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
             </div>

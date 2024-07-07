@@ -48,10 +48,11 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
         const token = localStorage.getItem("token");
         if (!token) {
           alert("Please log In");
+     
           navigate("/", { replace: true });
           return;
         }
-
+        
         const response = await fetch(`${backEndCodeURLLocation}HealthCheck/GetClientPreviousAndCurrentDayHealthInfo?clientID=${clientID}`, {
           method: "GET",
           headers: {
@@ -239,7 +240,7 @@ const HumanBody: React.FC<ClientInfo> = ({clientID, IsPreviousDay, clientFullNam
   return (
     <div>
       {/* <div className="human-body" onClick={handlePieceClick} style={{pointerEvents: "none", opacity: "0.5"}}> */}
-      <div className="human-body" onClick={handlePieceClick} style={{pointerEvents: IsPreviousDay === false ? "auto" : "none", opacity: IsPreviousDay === false ? "1" : "0.5"}}>
+      <div className="human-body" onClick={handlePieceClick} style={{pointerEvents: (IsPreviousDay === false && staffFullName !== null) ? "auto" : "none", opacity: (IsPreviousDay === false && staffFullName !== null)  ? "1" : "0.5"}}>
         <svg
           data-position="head"
           // className={`body-part head ${selectedArea === "head" ? "selected" : ""}`}

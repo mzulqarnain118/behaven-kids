@@ -3,6 +3,8 @@ import "./animation.scss";
 import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 import { backEndCodeURLLocation } from "../config";
+import { useNavigate } from "react-router-dom";
+import Health from '../../src/assets/health.png';
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -28,6 +30,20 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
     const handleClose = () => {
         // navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
         setShowModel(false)
+    };
+
+    const navigate = useNavigate();
+    const goToHealthCheckUp = async () => {
+        try {
+            navigate("/HealthCheck", {
+                replace: true,
+                state: { clientID: clientID, clientFullName: clientFullName, staffFullName: null },
+            });
+
+        } catch (error) {
+            alert("Error fetching data:" + error);
+        }
+        setShowModel(false);
     };
 
     const transferToAnotherRoom = async (newRoomID: number) => {
@@ -100,7 +116,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             </button>
                                         ))}
                                 </div>
-                            </div>
+                            </div> 
                         )}
                         {clientProgram === "SDP" && (
                             <div style={{ textAlign: "center" }}>
@@ -145,6 +161,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
+                                </div>
+                                <hr />
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+
+                                    <button
+                                        style={{ width: "150px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => goToHealthCheckUp()}
+                                    >
+                                        <span><img src={Health} style={{ width: "30px", marginBottom: "5px" }}></img><span style={{ marginLeft: "5px" }}>Health</span></span>
+                                    </button>
+
                                 </div>
 
                             </div>
