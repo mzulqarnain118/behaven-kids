@@ -63,7 +63,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
-    const [clientsWhoAreCurrentlyInARoomWithTransferHistory, setClientsWhoAreCurrentlyInARoomWithTransferHistory] = useState<ChildHistoryLogInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);

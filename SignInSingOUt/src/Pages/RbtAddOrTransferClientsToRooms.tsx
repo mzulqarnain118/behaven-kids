@@ -60,7 +60,7 @@ interface RoomInfoDTO {
 
 const RbtAddOrTransferClientsToRooms: React.FC = () => {
 
-    const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
+    const [, setChildInfo] = useState<ChildInfo[]>([]);
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [allRbtClientsWhoAreWaitingInTheCommonUnassignedRoom, setAllRbtClientsWhoAreWaitingInTheCommonUnassignedRoom] = useState<ChildInfo[]>([]);

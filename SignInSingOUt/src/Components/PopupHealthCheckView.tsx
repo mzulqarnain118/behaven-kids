@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./animation.scss";
 import BootstrapModal from "react-bootstrap/Modal";
 import '../Pages/CSS/HealthCheck.css'
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import { backEndCodeURLLocation } from "../config";
 

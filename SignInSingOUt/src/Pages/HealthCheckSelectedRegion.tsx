@@ -63,9 +63,8 @@ const HealthCheckSelectedRegion: React.FC = () => {
   const [isTempInputDisabled, setIsTempInputDisabled] = useState<boolean>(true);
   const [clientTemperature, setClientTemperature] = useState<string>();
   const [isOtherForSelectedRegionDisabled, setIsOtherForSelectedRegionDisabled] = useState<boolean>(true);
-  const [isOtherForNonBodyPartDisabled, setIsOtherForNonBodyPartDisabled] = useState<boolean>(true);
+  const [, setIsOtherForNonBodyPartDisabled] = useState<boolean>(true);
   const [otherForSelectedRegion, setOtherForSelectedRegion] = useState<string>();
-  const [, setOtherForNonBodyPart] = useState<string>();
   const [description, setDescription] = useState<string>();
   const preSelectedBodyPartOption = bodyParts.find(option => option.value === preSelectedBodyPartArea) || null;
   const preSelectedFrontOrBack = frontOrBack.find(option => option.value === preSelectedBackOrFront) || null;
