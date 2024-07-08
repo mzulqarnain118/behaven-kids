@@ -29,8 +29,6 @@ interface RoomInfoDTO {
 
 const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName, staffID, locationID }) => {
     if (!open) return null;
-    // const navigate = useNavigate();
-
     const handleClose = () => {
         // navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
         setShowModel(false)
@@ -76,6 +74,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             alert("Error:" + error);
         }
     };
+    
     return (
         <>
             <div>
@@ -199,7 +198,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo
-                                        .filter(info => info.roomName.includes("RBT"))
+                                        .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null)
                                         .map(info => (
                                             <button
                                                 key={info.roomID}

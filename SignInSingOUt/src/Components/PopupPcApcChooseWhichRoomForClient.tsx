@@ -197,7 +197,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo
-                                        .filter(info => info.roomName.includes("RBT"))
+                                        .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null)
                                         .map(info => (
                                             <button
                                                 key={info.roomID}
