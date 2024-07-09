@@ -24,6 +24,7 @@ interface ChildInfo {
     signOutTime: string;
     defaultRoomID: number;
     program: string;
+    didClientRecievedHealthCheck: number;
 }
 
 interface ChildHistoryLogInfo {
@@ -110,6 +111,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             setClientsWhoAreSignedIn(data.distinctClientSignInOutInfo);
             setChildInfo(data.allClientsWhoAreDefaultedForARoom);
             setClientsWhoAreCurrentlyInARoom(data.clientsWhoAreCurrentlyInARoom);
+            console.log(data.clientsWhoAreCurrentlyInARoom);
 
         };
 
@@ -270,39 +272,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             window.location.reload();
         }
     };
-
-    // const getAllClientsThatAreInARoom = async () => {
-    //     try {
-    //         const token = localStorage.getItem("token");
-    //         if (!token) {
-    //             alert("Please Login");
-    //             navigate("/", { replace: true });
-    //             return;
-    //         }
-
-    //         const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllClientsWhoAreCurrentlyInTheCBSRoom?roomID=${roomID}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //                 "Content-Type": "application/json",
-    //             },
-    //         });
-
-    //         if (!response.ok) {
-    //             alert(`Failed to fetch data. Response status: ${response.status}`)
-    //         }
-
-    //         const data = await response.json();
-    //         console.log("data = ", data);
-    //         // setClientsWhoAreCurrentlyInARoom(data);
-    //         //setClientsWhoAreCurrentlyInARoomWithTransferHistory(data);
-
-    //     } catch (error) {
-    //         window.location.reload();
-    //         // alert("Useffect 2 - Error fetching data:" + error);
-    //     }
-    // };
-
 
     const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string) => {
         setClientID(clientID);

@@ -7,7 +7,7 @@ import HumanBody from "./HumanBody.tsx";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PopupHealthCheckView from '../Components/PopupHealthCheckView.tsx'
-
+import { jwtDecode } from "jwt-decode";
 
 interface ClientHealthInfo {
   id: number;
@@ -21,6 +21,12 @@ interface CurrentAndPreviousClientHealthInfo {
   previousDayHealthInfo: ClientHealthInfo[];
   currentDayHealthInfo: ClientHealthInfo[];
 }
+
+interface DecodedToken {
+  StaffID: string;
+  Location: string;
+}
+
 
 const HealthCheck: React.FC = () => {
   const location = useLocation();
@@ -111,14 +117,19 @@ const HealthCheck: React.FC = () => {
         navigate("/", { replace: true });
         return;
       }
-      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
-      const response = await fetch(`${backEndCodeURLLocation}HealthCheck/ClientAlreadyHadAHealthCheck?clientID=${clientID}`, {
+      
+      const decoded = jwtDecode(token) as DecodedToken;
+      const staffID = decoded.StaffID;
+
+      const response = await fetch(`${backEndCodeURLLocation}HealthCheck/ClientHasNoHealthIssues?clientID=${clientID}&staffID=${staffID}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
 
       if (!response.ok) {
         throw new Error(
@@ -130,6 +141,14 @@ const HealthCheck: React.FC = () => {
     } catch (error) {
       alert("Error fetching data: " + error);
     }
+  };
+
+  const StaffGoesBackToMainPage = async () => {
+
+
+      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+
+
   };
 
   return (
@@ -204,7 +223,7 @@ const HealthCheck: React.FC = () => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan={3}>No data available</td>
+                                <td colSpan={3}>No Health Issues Recorded</td>
                               </tr>
                             )}
                           </tbody>
@@ -232,7 +251,7 @@ const HealthCheck: React.FC = () => {
                                 ))
                               ) : (
                                 <tr>
-                                  <td colSpan={3}>No data available</td>
+                                  <td colSpan={3}>Currently No Health Issues</td>
                                 </tr>
                               )}
                             </tbody>
@@ -252,13 +271,14 @@ const HealthCheck: React.FC = () => {
             <div style={{ textAlign: "center", marginTop: "25px", pointerEvents: staffFullName !== null ? "auto" : "none", opacity: staffFullName !== null ? "1" : ".2"}}>
               <button className="add-button-class" style={{ marginRight: "15px" }} onClick={() => AddHealthInfo()}>+ ADD</button>
               <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
+              <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => StaffGoesBackToMainPage()}>Cancel</button>
             </div>
 
           </div>
 
         </div>
         {id !== null && (
-          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id} isPrevious={isPreviousDayHealthCondition} />
+          <PopupHealthCheckView showModel={showModel} setShowModel={setShowModel} id={id} isPrevious={isPreviousDayHealthCondition} clientID={clientID} />
         )}
       </div>
     </>

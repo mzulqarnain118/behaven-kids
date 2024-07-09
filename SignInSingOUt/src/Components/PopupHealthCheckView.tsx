@@ -11,6 +11,7 @@ interface PopupHealthCheckView {
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
     id: number;
     isPrevious: boolean;
+    clientID: number;
 }
 
 interface OptionType {
@@ -41,6 +42,12 @@ interface ClientHealthCheckInfo {
     picture4: Blob;
 }
 
+interface DecodedToken 
+{
+    StaffID: string;
+    LocationID: string;
+}
+
 const bodyParts: OptionType[] = [
     { value: 'head', label: 'Head' },
     { value: 'left_shoulder', label: 'Left Shoulder' },
@@ -61,7 +68,7 @@ const frontOrBack: OptionType[] = [
     { value: 'back', label: 'Back' },
 ];
 
-const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setShowModel, id, isPrevious }) => {
+const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setShowModel, id, isPrevious, clientID }) => {
     if (!open) return null;
 
     const [selectedImageBlobPicture1, setSelectedImageBlobPicture1] = useState<Blob | undefined>(undefined);
@@ -145,7 +152,7 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                 return;
             }
 
-            const response = await fetch(`${backEndCodeURLLocation}HealthCheck/MakePreviousHealthCurrent?id=${id}`, {
+            const response = await fetch(`${backEndCodeURLLocation}HealthCheck/MakePreviousHealthCurrent?id=${id}&clientID=${clientID}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -288,7 +295,6 @@ const PopupHealthCheckView: React.FC<PopupHealthCheckView> = ({ showModel, setSh
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 }
 
