@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
+    setLevelOneTotal: React.Dispatch<React.SetStateAction<number>>;
+    levelOneTotal: number;
     roomInfo: RoomInfoDTO[];
     clientID: number;
     clientFullName: string;
@@ -27,10 +29,34 @@ interface RoomInfoDTO {
     staffLastName: string;
 }
 
-const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName, staffID, locationID }) => {
+const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName, staffID, locationID, levelOneTotal, setLevelOneTotal }) => {
     if (!open) return null;
-    const handleClose = () => {
-        // navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
+    const handleClose = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                throw new Error("Token not found in localStorage");
+            }
+
+            const url = `${backEndCodeURLLocation}TimeOutRoom/AddLevelOnePerClient?clientID=${clientID}&levelOneCounter=${levelOneTotal}`;
+            console.log(url);
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                alert(`Failed to transfer client to another room: ${response.status}`)
+            }
+            setShowModel(false);
+
+        } catch (error) {
+            alert("Error:" + error);
+        }
         setShowModel(false)
     };
     const navigate = useNavigate();
@@ -151,6 +177,16 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
+                                </div>
+                                <div style={{marginTop: "10px" }} >
+                                        <button
+                                            style={{ width: "310px", display: 'flex', alignItems: 'center' }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                        >
+                                            <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
+                                            <p style={{ flex: '1', margin: '0',  textAlign: "left"}}> {levelOneTotal}</p>
+                                        </button>
                                 </div>
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">

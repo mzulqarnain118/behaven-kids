@@ -9,11 +9,12 @@ import Apple from '../../src/assets/apple.png';
 import Bird from '../../src/assets/bird.png';
 import Parrot from '../../src/assets/parrot.png';
 import Person from '../../src/assets/person.png';
-import RBT from '../../src/assets/rbt.png'
-import Therapy from '../../src/assets/therapy.png'
-import Gs from '../../src/assets/gs.png'
+import RBT from '../../src/assets/rbt.png';
+import Therapy from '../../src/assets/therapy.png';
+import Gs from '../../src/assets/gs.png';
 import { useNavigate } from "react-router-dom";
-import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom'
+import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom';
+import Health from '../../src/assets/health.png';
 
 interface ChildInfo {
     id: number
@@ -78,6 +79,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientProgram, setClientProgram] = useState<string>("");
     const [cbsProgramType, setCbsProgramType] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+    const [levelOneTotal, setLevelOneTotal] = useState<number>(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -102,7 +104,6 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         }
 
         const eventSource = new EventSource(`${backEndCodeURLLocation}Cbs/RealTimeUpdates?roomID=${roomID}`);
-        //const eventSource = new EventSource(`http://192.168.0.9:7012/Cbs/RealTimeUpdates?roomID=${roomID}`);
 
         eventSource.onmessage = (event) => {
 
@@ -203,9 +204,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
 
         } catch (error) {
             window.location.reload();
-            // alert("error" + error);
         }
-
     };
 
     const getCBSInformation = async () => {
@@ -359,7 +358,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info) => ( 
                                         <button key={info.clientID} 
-                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program )} className="round-button-for-class grid-item-container-For-CBS-page" style={{ display: 'flex', alignItems: 'center', width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977'}}>
+                                            <p style={{ flex: '3', margin: '0', textAlign: "right" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</p>
+                                            <p style={{ flex: '2', margin: '0', textAlign: "left" }}>{info.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}</p>
                                         </button>
                                     ))}
 
@@ -403,7 +404,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             </div>
 
             {clientID !== null && roomID !== null && currentStaffID !== null && (
-                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID}/>
+                <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID} levelOneTotal={levelOneTotal} setLevelOneTotal={setLevelOneTotal}/>
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null && currentStaffID !== null && (
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType} staffID={currentStaffID}/>
