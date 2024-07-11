@@ -222,20 +222,9 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             {info.roomName}
                                         </button>
                                     ))}
-                                    {/* {roomInfo.filter(info => info.roomName.includes("GS")).map((info) => (
-                                        <button
-                                            key={info.roomID}
-                                            style={{ width: "150px" }}
-                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            onClick={() => transferToAnotherRoom(info.roomID)}
-                                        >
-                                            {info.staffFirstName} {info.staffLastName.charAt(0)}.
-                                        </button>
-                                    ))} */}
-
                                 </div>
                                 <hr />
-                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
+                                <div style={{ textAlign: "center"}} className="grid-container-for-room-selection">
                                     {roomInfo
                                         .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null)
                                         .map(info => (
@@ -262,6 +251,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
+                                {setLevelOneTotal !== undefined &&
+                                    <div style={{marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "310px", display: 'flex', alignItems: 'center' }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                    >
+                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
+                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red"}}> {levelOneTotal}</p>
+                                    </button>
+                                    </div>
+                                }
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
 
