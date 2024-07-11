@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
     setShowModel: React.Dispatch<React.SetStateAction<any>>;
-    setLevelOneTotal: React.Dispatch<React.SetStateAction<number>>;
-    levelOneTotal: number;
+    setLevelOneTotal?: React.Dispatch<React.SetStateAction<number>>;
+    levelOneTotal?: number;
     roomInfo: RoomInfoDTO[];
     clientID: number;
     clientFullName: string;
@@ -178,16 +178,19 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-                                <div style={{marginTop: "10px" }} >
-                                        <button
-                                            style={{ width: "310px", display: 'flex', alignItems: 'center' }}
-                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                            onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
-                                        >
-                                            <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
-                                            <p style={{ flex: '1', margin: '0',  textAlign: "left"}}> {levelOneTotal}</p>
-                                        </button>
-                                </div>
+                                {setLevelOneTotal !== undefined &&
+                                    <div style={{marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "310px", display: 'flex', alignItems: 'center' }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                    >
+                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
+                                        <p style={{ flex: '1', margin: '0',  textAlign: "left"}}> {levelOneTotal}</p>
+                                    </button>
+                                    </div>
+                                }
+                               
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
 

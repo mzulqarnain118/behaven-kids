@@ -42,11 +42,11 @@ interface ClientHealthCheckInfo {
     picture4: Blob;
 }
 
-interface DecodedToken 
-{
-    StaffID: string;
-    LocationID: string;
-}
+// interface DecodedToken 
+// {
+//     StaffID: string;
+//     LocationID: string;
+// }
 
 const bodyParts: OptionType[] = [
     { value: 'head', label: 'Head' },
