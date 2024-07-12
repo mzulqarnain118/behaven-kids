@@ -267,7 +267,6 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
-
                                     <button
                                         style={{ width: "150px" }}
                                         className="round-button-for-choose-room grid-item-container-for-room-selection"
