@@ -166,6 +166,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
 
                                 </div>
                                 <hr />
+                                {setLevelOneTotal !== undefined &&
+                                    <div style={{marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                    >
+                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
+                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red", fontSize: "25px"}}> {levelOneTotal}</p>
+                                    </button>
+                                    </div>
+                                }
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo.filter(info => info.roomName.includes("TOR")).map((info) => (
                                         <button
@@ -178,18 +190,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-                                {setLevelOneTotal !== undefined &&
-                                    <div style={{marginTop: "10px" }} >
-                                    <button
-                                        style={{ width: "310px", display: 'flex', alignItems: 'center' }}
-                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
-                                    >
-                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
-                                        <p style={{ flex: '1', margin: '0',  textAlign: "left"}}> {levelOneTotal}</p>
-                                    </button>
-                                    </div>
-                                }
+                                
                                
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
@@ -239,6 +240,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         ))}
                                 </div>
                                 <hr />
+                                {setLevelOneTotal !== undefined &&
+                                    <div style={{marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                    >
+                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
+                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red", fontSize: "25px"}}> {levelOneTotal}</p>
+                                    </button>
+                                    </div>
+                                }
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo.filter(info => info.roomName.includes("TOR")).map((info) => (
                                         <button
@@ -251,18 +264,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-                                {setLevelOneTotal !== undefined &&
-                                    <div style={{marginTop: "10px" }} >
-                                    <button
-                                        style={{ width: "310px", display: 'flex', alignItems: 'center' }}
-                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
-                                    >
-                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
-                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red"}}> {levelOneTotal}</p>
-                                    </button>
-                                    </div>
-                                }
+                                
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
 
