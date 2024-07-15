@@ -14,6 +14,7 @@ import Therapy from '../../src/assets/therapy.png';
 import Gs from '../../src/assets/gs.png';
 import { useNavigate } from "react-router-dom";
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom';
+import ManuallyAddTimeoutModal from "../Components/ManuallyAddTimeoutModal";
 import Health from '../../src/assets/health.png';
 
 interface ChildInfo {
@@ -403,7 +404,12 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                     <button className="add-button-class" onClick={() => CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom()}>+ ADD</button>
                     <br />
                 </div>
+                
             </div>
+
+            {clientID !== null && clientFullName !== null && (
+            <ManuallyAddTimeoutModal showModel={true} setShowModel={setShowModel} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} staffFullName={cbsFullName} locationID={locationID} levelOneTotal={levelOneTotal}/>
+            )}
 
             {clientID !== null && roomID !== null && currentStaffID !== null && (
                 <PopupChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={roomID} staffFullName={cbsFullName} staffID={currentStaffID} locationID={locationID} levelOneTotal={levelOneTotal} setLevelOneTotal={setLevelOneTotal}/>
