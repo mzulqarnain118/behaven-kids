@@ -24,6 +24,24 @@
     margin-bottom: 4px;
   }
 
+  .grid-container-For-behavior-buttons-modal {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(50px, auto);
+    grid-gap: 20px;
+    padding: 2px;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .grid-container-For-aggression-buttons-modal {
+    display: grid;
+    grid-template-columns: minmax(50px, auto) minmax(150px, auto);
+    grid-gap: 20px;
+    padding: 2px;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
   .stopButton {
     box-shadow: -2px -2px 7px 0px #ab1616;
     background:linear-gradient(to bottom, #ff7a7a 5%, #e33b3b 100%);
@@ -56,4 +74,21 @@
     text-shadow:0px 1px 0px #528ecc;
     width: 190px;
     height: 58px;
+  }
+
+  .counter-buttons-modal {
+    box-shadow: -2px -2px 8px 0px #1564ad;
+    background:linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+    background-color:#79bbff;
+    border:1px solid #337bc4;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:18px;
+    font-weight:bold;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #528ecc;
+    width: 190px;
+    height: 54px;
   }

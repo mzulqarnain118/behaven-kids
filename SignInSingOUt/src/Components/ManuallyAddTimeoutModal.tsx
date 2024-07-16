@@ -15,6 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { Dayjs } from 'dayjs';
+import Select from 'react-select';
 
 interface ManuallyAddTimeoutModal {
   showModel: boolean;
@@ -23,12 +24,31 @@ interface ManuallyAddTimeoutModal {
   clientID?: number;
   clientFullName: string;
   clientProgram: string;
-  staffFullName: string;
   staffID?: string;
   locationID: string;
 }
 
-const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel, setShowModel, clientID, clientFullName, staffFullName, staffID }) => {
+interface OptionType {
+  label: string;
+  value: string;
+}
+
+const OmahaTimeoutRoomNames: OptionType[] = [
+  { value: '29', label: 'Upstairs' },
+  { value: '30', label: 'Downstairs' },
+];
+
+const LincolnTimeoutRoomNames: OptionType[] = [
+  { value: '32', label: 'North' },
+  { value: '33', label: 'South' },
+];
+
+const frontOrBack: OptionType[] = [
+  { value: 'front', label: 'Front' },
+  { value: 'back', label: 'Back' },
+];
+
+const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel, setShowModel, clientID, clientFullName, staffID }) => {
   if (!open) return null;
   const handleClose = async () => {
     setShowModel(false)
@@ -68,8 +88,6 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
   const [selectedStartTime, setSelectedStartTime] = useState<string>("");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("");
   const [selectManualDate, setSelectManualDate] = useState<Dayjs | null>(null);
-
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
 
   useEffect(() => {
@@ -236,20 +254,36 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                   <div style={{ display: "flex", marginTop: "15px" }}>
                     <img src={Child} style={{ width: "35px", height: "35px" }} />
                     <h3 style={{ marginLeft: "1px" }}>{clientFullName}</h3>
+                    <Select
+                      options={OmahaTimeoutRoomNames}
+                      // onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
+                      placeholder="Location"
+                      // value={selectedFrontOrBack}
+                      styles={{
+                        container: (provided) => ({
+                          ...provided,
+                          width: 160, // Set the desired width
+                        }),
+                        control: (provided) => ({
+                          ...provided,
+                          width: 160, // Set the desired width
+                        }),
+                      }}
+                    />
                   </div>
                   <div style={{ width: "690px", display: "flex", justifyContent: "space-between", marginTop: "15px", marginBottom: "10px" }}>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={['DatePicker']} >
-                        <DatePicker value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{ textField: { required: true } }} />
+                        <DatePicker value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{ textField: { required: true, size: 'small' } }} />
                       </DemoContainer>
                     </LocalizationProvider>
 
-                    <div style={{ display: "flex", marginTop: "5px" }}>
-                      <img src={Timer} style={{ width: "50px", height: "50px" }} />
+                    <div style={{ display: "flex" }}>
+                      <img src={Timer} style={{ width: "45px", height: "45px" }} />
                       <input
                         type="time"
-                        style={{width: "175px", height: "60px"}}
+                        style={{width: "175px", height: "45px"}}
                         className="form-control"
                         value={selectedStartTime}
                         onChange={(e) =>
@@ -259,7 +293,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
 
                       <input
                         type="time"
-                        style={{width: "175px", height: "60px"}}
+                        style={{width: "175px", height: "45px"}}
                         className="form-control"
                         value={selectedEndTime}
                         onChange={(e) =>
@@ -274,8 +308,8 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                     <div className="card-body grid-container-For-behaviors" >
                       <div className="card" style={{ border: "none" }}>
                         {behaviorsColumnOne.map((button) => (
-                          <div key={button.id} className="grid-container-For-behavior-buttons">
-                            <button className="counter-buttons" onTouchEnd={() => behaviorButtonClickColumnOne(button.id)}>
+                          <div key={button.id} className="grid-container-For-behavior-buttons-modal">
+                            <button className="counter-buttons-modal" onTouchEnd={() => behaviorButtonClickColumnOne(button.id)}>
                               {button.label}
                             </button>
                             <p style={{
@@ -295,7 +329,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                       </div>
                       <div className="card" style={{ border: "none" }}>
                         {behaviorsColumnTwo.map((button) => (
-                          <div key={button.id} className="grid-container-For-aggression-buttons">
+                          <div key={button.id} className="grid-container-For-aggression-buttons-modal">
                             <p style={{
                               border: '2px solid black',
                               borderRadius: '50%',
@@ -308,17 +342,20 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                             }}>
                               {button.counter}
                             </p>
-                            <button className="counter-buttons" onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
+                            <button className="counter-buttons-modal" onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
                               {button.label}
                             </button>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <textarea placeholder="Description" id="w3review" name="w3review" style={{ height: "200px", fontSize: "20px", paddingLeft: "10px", paddingTop: "5px", marginLeft: "40px", marginRight: "40px", marginBottom: "10px", marginTop: "10px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
+                    <textarea placeholder="Description" id="w3review" name="w3review" style={{ height: "75px", fontSize: "20px", paddingLeft: "10px", paddingTop: "5px", marginLeft: "40px", marginRight: "40px", marginBottom: "10px" }} onChange={(event) => setDescription(event.target.value)}></textarea>
                   </div>
                   <br />
-                  <button onClick={CheckToSeeIfTimeoutIsFinished} className="stopButton">Finish</button>
+                  <div style={{ display: "flex" }}>
+                    <button onClick={CheckToSeeIfTimeoutIsFinished} className="stopButton">Submit</button>
+                    <button onClick={handleClose} className="stopButton">Cancel</button>
+                  </div>
                   <br />
                 </div>
 
@@ -326,11 +363,6 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
               <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
             </>
           </BootstrapModal.Body>
-          <BootstrapModal.Footer>
-            <Button variant="primary" onClick={handleClose}>
-              Close
-            </Button>
-          </BootstrapModal.Footer>
         </BootstrapModal>
       </div>
 

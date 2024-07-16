@@ -28,8 +28,6 @@ const bodyParts: OptionType[] = [
   { value: 'left_foot', label: 'Left Foot' },
   { value: 'right_foot', label: 'Right Foot' },
   { value: 'torso', label: 'Torso' },
-  // { value: 'chest', label: 'Chest' },
-  // { value: 'stomach', label: 'Stomach' },
 ];
 
 const frontOrBack: OptionType[] = [
