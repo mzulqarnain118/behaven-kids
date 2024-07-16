@@ -407,8 +407,8 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                 
             </div>
 
-            {clientID !== null && clientFullName !== null && (
-            <ManuallyAddTimeoutModal showModel={true} setShowModel={setShowModel} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} staffFullName={cbsFullName} locationID={locationID} levelOneTotal={levelOneTotal}/>
+            {clientID !== null && clientFullName !== null && currentStaffID !== null && (
+            <ManuallyAddTimeoutModal showModel={true} setShowModel={setShowModel} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} locationID={locationID} levelOneTotal={levelOneTotal} staffID={currentStaffID}/>
             )}
 
             {clientID !== null && roomID !== null && currentStaffID !== null && (

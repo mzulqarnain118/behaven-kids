@@ -15,7 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { Dayjs } from 'dayjs';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 interface ManuallyAddTimeoutModal {
   showModel: boolean;
@@ -43,12 +43,20 @@ const LincolnTimeoutRoomNames: OptionType[] = [
   { value: '33', label: 'South' },
 ];
 
-const frontOrBack: OptionType[] = [
-  { value: 'front', label: 'Front' },
-  { value: 'back', label: 'Back' },
+const threePositions: OptionType[] = [
+  { value: 'Position 1', label: 'Position 1' },
+  { value: 'Position 2', label: 'Position 2' },
+  { value: 'Position 3', label: 'Position 3' },
 ];
 
-const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel, setShowModel, clientID, clientFullName, staffID }) => {
+const fourPositions: OptionType[] = [
+  { value: 'Position 1', label: 'Position 1' },
+  { value: 'Position 2', label: 'Position 2' },
+  { value: 'Position 3', label: 'Position 3' },
+  { value: 'Position 4', label: 'Position 4' },
+];
+
+const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel, setShowModel, clientID, clientFullName, staffID, locationID }) => {
   if (!open) return null;
   const handleClose = async () => {
     setShowModel(false)
@@ -81,13 +89,17 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
   ]);
 
   const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalForConfirmation, setShowModalForConfirmation] = useState<boolean>(false);
   const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
   const [startTime, setStartTime] = useState("");
   const [description, setDescription] = useState<string>();
   const [selectedStartTime, setSelectedStartTime] = useState<string>("");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("");
   const [selectManualDate, setSelectManualDate] = useState<Dayjs | null>(null);
+  const [isThereFourPositions, setIsThereFourPositions] = useState<boolean>();
+  const [roomID, setRoomID] = useState<string>();
+  const [roomPositionName, setRoomPositionName] = useState<string>();
+
 
 
   useEffect(() => {
@@ -119,27 +131,28 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
       PropertyDamage: (behaviorsColumnTwo.find(b => b.label === 'Property Damage') || { counter: 0 }).counter,
       Bitting: (behaviorsColumnTwo.find(b => b.label === 'Biting') || { counter: 0 }).counter,
     };
-
-    const behaviorAndAggressionDTO = {
+    
+    const manualTimeOutInformationDTO = {
       Behaviors: behaviorsDTO,
+      StartTime: String(selectedStartTime),
+      EndTime: String(selectedEndTime),
       ClientID: String(clientID),
       StaffID: String(staffID),
-      // RoomID: String(roomID),
-      // TimeoutRoomPosition: String(roomPositionName),
-      StartTime: String(startTime),
-      // ClientPreviousRoom: String(clientPreviousRoom),
-      Description: description
+      RoomID: String(roomID),
+      TimeoutRoomPosition: String(roomPositionName),
+      Description: description,
+      DateOfTimeOut: selectManualDate
     };
 
     try {
-      const response = await fetch(`${backEndCodeURLLocation}Cbs/AddClientLevelTwoToFive`,
+      const response = await fetch(`${backEndCodeURLLocation}Cbs/ManuallyAddClientLevelTwoToFive`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(behaviorAndAggressionDTO),
+          body: JSON.stringify(manualTimeOutInformationDTO),
         });
 
       if (!response.ok) {
@@ -182,7 +195,19 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
   };
 
   const CheckToSeeIfTimeoutIsFinished = () => {
-    setShowModal(true);
+    setShowModalForConfirmation(true);
+  };
+
+  const whichTimeoutLocation = (selected: SingleValue<OptionType>) => {
+    if (selected?.label === "North")
+    {
+      setIsThereFourPositions(true);
+    }
+    setRoomID(selected?.value);
+  };
+
+  const whichTimeoutPosition = (selected: SingleValue<OptionType>) => {
+    setRoomPositionName(selected?.value);
   };
 
   const handleUpdateTime = async (
@@ -216,6 +241,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
         }
 
         setSelectedStartTime(() => selectedTime);
+        
       }
 
       if (field === "timeOutEndTime") {
@@ -251,22 +277,41 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
             <>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <div className="card" style={{ width: "750px", display: "flex", justifyContent: "center", alignItems: "center", border: "solid gray" }}>
-                  <div style={{ display: "flex", marginTop: "15px" }}>
-                    <img src={Child} style={{ width: "35px", height: "35px" }} />
-                    <h3 style={{ marginLeft: "1px" }}>{clientFullName}</h3>
+                  <div style={{ width: "690px", display: "flex", marginTop: "15px", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex" }}>
+                      <img src={Child} style={{ width: "35px", height: "35px" }} />
+                      <h3 style={{ marginLeft: "1px" }}>{clientFullName}</h3>
+                      
+                    </div>
                     <Select
-                      options={OmahaTimeoutRoomNames}
-                      // onChange={(selectedOption) => setSelectedFrontOrBack(selectedOption)}
-                      placeholder="Location"
+                      options={locationID === "OHCU" ? OmahaTimeoutRoomNames : LincolnTimeoutRoomNames}
+                      onChange={whichTimeoutLocation}
+                      placeholder="Which Location"
                       // value={selectedFrontOrBack}
                       styles={{
                         container: (provided) => ({
                           ...provided,
-                          width: 160, // Set the desired width
+                          width: 200, // Set the desired width
                         }),
                         control: (provided) => ({
                           ...provided,
-                          width: 160, // Set the desired width
+                          width: 200, // Set the desired width
+                        }),
+                      }}
+                    />
+                    <Select
+                      options={isThereFourPositions === true ? fourPositions : threePositions}
+                      onChange={whichTimeoutPosition}
+                      placeholder="Which Position"
+                      // value={selectedFrontOrBack}
+                      styles={{
+                        container: (provided) => ({
+                          ...provided,
+                          width: 200, // Set the desired width
+                        }),
+                        control: (provided) => ({
+                          ...provided,
+                          width: 200, // Set the desired width
                         }),
                       }}
                     />
@@ -283,7 +328,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                       <img src={Timer} style={{ width: "45px", height: "45px" }} />
                       <input
                         type="time"
-                        style={{width: "175px", height: "45px"}}
+                        style={{ width: "175px", height: "45px" }}
                         className="form-control"
                         value={selectedStartTime}
                         onChange={(e) =>
@@ -293,7 +338,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
 
                       <input
                         type="time"
-                        style={{width: "175px", height: "45px"}}
+                        style={{ width: "175px", height: "45px" }}
                         className="form-control"
                         value={selectedEndTime}
                         onChange={(e) =>
@@ -360,7 +405,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                 </div>
 
               </div>
-              <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
+              <PopupTimeOutRoomSession showModal={showModalForConfirmation} setShowModal={setShowModalForConfirmation} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
             </>
           </BootstrapModal.Body>
         </BootstrapModal>
