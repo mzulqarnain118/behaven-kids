@@ -1,13 +1,11 @@
 
 import "./animation.scss";
-import Button from "react-bootstrap/Button";
 import BootstrapModal from "react-bootstrap/Modal";
 import "../Pages/CSS/TimeOutObservation.css"
-import Location from '../../src/assets/location.png';
 import Timer from '../../src/assets/timer.png';
 import Child from '../../src/assets/child.png'
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { backEndCodeURLLocation } from "../config";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -88,10 +86,8 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
     { id: 9, label: 'Biting', counter: 0 },
   ]);
 
-  const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
   const [showModalForConfirmation, setShowModalForConfirmation] = useState<boolean>(false);
   const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState("");
   const [description, setDescription] = useState<string>();
   const [selectedStartTime, setSelectedStartTime] = useState<string>("");
   const [selectedEndTime, setSelectedEndTime] = useState<string>("");
@@ -405,7 +401,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                 </div>
 
               </div>
-              <PopupTimeOutRoomSession showModal={showModalForConfirmation} setShowModal={setShowModalForConfirmation} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
+              <PopupTimeOutRoomSession showModal={showModalForConfirmation} setShowModal={setShowModalForConfirmation} setDidUserClickYes={setDidUserClickYes} />
             </>
           </BootstrapModal.Body>
         </BootstrapModal>

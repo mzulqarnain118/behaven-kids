@@ -41,7 +41,7 @@ const TimeOutObservation: React.FC = () => {
   ]);
 
   const [timer, setTimer] = useState('00:00');
-  const [didUserClickStart, setDidUserClickStart] = useState<Boolean>(false);
+  const [didUserClickStart, ] = useState<Boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [didUserClickYes, setDidUserClickYes] = useState<boolean>(false);
   const [startTime, setStartTime] = useState("");
@@ -271,7 +271,7 @@ const TimeOutObservation: React.FC = () => {
         </div>
 
       </div>
-      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickStart={setDidUserClickStart} setDidUserClickYes={setDidUserClickYes} />
+      <PopupTimeOutRoomSession showModal={showModal} setShowModal={setShowModal} setDidUserClickYes={setDidUserClickYes} />
     </>
   );
 };

@@ -5,11 +5,10 @@ import BootstrapModal from "react-bootstrap/Modal";
 interface PopupTimeOutRoomSession {
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<any>>;
-    setDidUserClickStart: React.Dispatch<React.SetStateAction<any>>;
     setDidUserClickYes: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal, setShowModal, setDidUserClickStart, setDidUserClickYes}) => {
+const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal, setShowModal, setDidUserClickYes}) => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -20,7 +19,6 @@ const PopupTimeOutRoomSession: React.FC<PopupTimeOutRoomSession> = ({ showModal,
     };
 
     const submitTimeoutData = () => {
-        setDidUserClickStart(false);
         setIsSubmitting(true);
         setShowModal(false);
         setDidUserClickYes(true);

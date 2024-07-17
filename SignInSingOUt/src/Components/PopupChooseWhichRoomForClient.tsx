@@ -6,6 +6,8 @@ import BootstrapModal from "react-bootstrap/Modal";
 import { backEndCodeURLLocation } from "../config";
 import Health from '../../src/assets/health.png';
 import { useNavigate } from "react-router-dom";
+import ManuallyAddTimeoutModal from "../Components/ManuallyAddTimeoutModal";
+import { useState } from "react";
 
 interface CbsAddOrTransferClientsToRooms {
     showModel: boolean;
@@ -30,6 +32,9 @@ interface RoomInfoDTO {
 }
 
 const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID, staffFullName, staffID, locationID, levelOneTotal, setLevelOneTotal }) => {
+    
+    const [showManualTimeOutModal, setShowManualTimeOutModal] = useState<boolean>(false);
+    
     if (!open) return null;
     const handleClose = async () => {
         try {
@@ -68,7 +73,18 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             });
 
         } catch (error) {
-            alert("Error fetching data:" + error);
+            alert(error);
+        }
+        setShowModel(false);
+    };
+
+    const openTimeoutManualModal = async () => {
+        try {
+            setShowManualTimeOutModal(true);
+            setShowModel(false);
+
+        } catch (error) {
+            alert(error);
         }
         setShowModel(false);
     };
@@ -100,7 +116,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
             alert("Error:" + error);
         }
     };
-    
+
     return (
         <>
             <div>
@@ -167,15 +183,15 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 </div>
                                 <hr />
                                 {setLevelOneTotal !== undefined &&
-                                    <div style={{marginTop: "10px" }} >
-                                    <button
-                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
-                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
-                                    >
-                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
-                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red", fontSize: "25px"}}> {levelOneTotal}</p>
-                                    </button>
+                                    <div style={{ marginTop: "10px" }} >
+                                        <button
+                                            style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                        >
+                                            <p style={{ flex: '2', margin: '0' }}>Timeout L1:</p>
+                                            <p style={{ flex: '1', margin: '0', textAlign: "left", color: "red", fontSize: "25px" }}> {levelOneTotal}</p>
+                                        </button>
                                     </div>
                                 }
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
@@ -190,8 +206,8 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-                                
-                               
+
+
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
 
@@ -225,7 +241,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                     ))}
                                 </div>
                                 <hr />
-                                <div style={{ textAlign: "center"}} className="grid-container-for-room-selection">
+                                <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo
                                         .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null)
                                         .map(info => (
@@ -241,15 +257,15 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                 </div>
                                 <hr />
                                 {setLevelOneTotal !== undefined &&
-                                    <div style={{marginTop: "10px" }} >
-                                    <button
-                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
-                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
-                                        onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
-                                    >
-                                        <p style={{ flex: '2', margin: '0'  }}>Timeout L1:</p>
-                                        <p style={{ flex: '1', margin: '0',  textAlign: "left", color: "red", fontSize: "25px"}}> {levelOneTotal}</p>
-                                    </button>
+                                    <div style={{ marginTop: "10px" }} >
+                                        <button
+                                            style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                            className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                            onClick={() => setLevelOneTotal(levelOneTotal => levelOneTotal + 1)}
+                                        >
+                                            <p style={{ flex: '2', margin: '0' }}>Timeout L1:</p>
+                                            <p style={{ flex: '1', margin: '0', textAlign: "left", color: "red", fontSize: "25px" }}> {levelOneTotal}</p>
+                                        </button>
                                     </div>
                                 }
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
@@ -264,7 +280,16 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-                                
+                                <div style={{ marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => openTimeoutManualModal()}
+                                    >
+                                        <p style={{ flex: '2', margin: '0' }}>Add Timeout Manually</p>
+                                    </button>
+                                </div>
+
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     <button
@@ -284,7 +309,11 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                         </Button>
                     </BootstrapModal.Footer>
                 </BootstrapModal>
+                {clientID !== null && clientFullName !== null && staffID !== null && (
+                    <ManuallyAddTimeoutModal showModel={showManualTimeOutModal} setShowModel={setShowManualTimeOutModal} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} locationID={locationID} levelOneTotal={levelOneTotal} staffID={staffID} />
+                )}
             </div>
+
 
         </>
 
