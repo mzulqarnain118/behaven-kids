@@ -59,6 +59,24 @@
     text-shadow:0px 1px 0px #cc5454;
   }
 
+  
+  .submitButton {
+    box-shadow: -2px -2px 7px 0px #1564ad;
+    background:linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+    background-color:#79bbff;
+    border-radius:5px;
+    border:1px solid #337bc4;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:20px;
+    font-weight:bold;
+    padding:12px 44px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #528ecc;
+  }
+
   .counter-buttons {
     box-shadow: -2px -2px 8px 0px #1564ad;
     background:linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
@@ -68,7 +86,7 @@
     cursor:pointer;
     color:#ffffff;
     font-family:Arial;
-    font-size:18px;
+    font-size:18px; 
     font-weight:bold;
     text-decoration:none;
     text-shadow:0px 1px 0px #528ecc;

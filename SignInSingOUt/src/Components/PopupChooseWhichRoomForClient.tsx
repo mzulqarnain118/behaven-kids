@@ -206,7 +206,15 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                         </button>
                                     ))}
                                 </div>
-
+                                <div style={{ marginTop: "10px" }} >
+                                    <button
+                                        style={{ width: "320px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}
+                                        className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                        onClick={() => openTimeoutManualModal()}
+                                    >
+                                        <p style={{ flex: '2', margin: '0' }}>Add Timeout Manually</p>
+                                    </button>
+                                </div>
 
                                 <hr />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
