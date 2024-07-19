@@ -6,6 +6,14 @@
     text-align: center;
   }
 
+  .grid_container_for_ABA_rooms {
+    display: grid;
+    grid-template-columns: minmax(100px, auto) minmax(100px, auto) minmax(100px, auto) minmax(100px, auto) minmax(100px, auto) minmax(100px, auto);
+    grid-gap: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+
   .grid-container-for-timeout-rooms {
     display: grid;
     grid-template-columns: auto auto;
@@ -35,6 +43,13 @@
     text-align: center;
   }
 
+  .grid_Container_For_Active_Clients_In_Aba {
+    display: grid;
+    grid-template-columns: minmax(125px, auto);
+    grid-gap: 10px;
+    text-align: center;
+  }
+
   .grid-container-For-timeout-clients {
     display: grid;
     grid-template-columns: minmax(125px, auto);
@@ -52,7 +67,7 @@
     cursor:pointer;
     color: black;
     font-family:Arial;
-    font-size:14px;
+    font-size:16px;
     text-decoration:none;
     height: 45px;
     text-shadow:0px 0px 0px #810e05;
@@ -68,7 +83,7 @@
     cursor:pointer;
     color: white;
     font-family:Arial;
-    font-size:14px;
+    font-size:16px;
     text-decoration:none;
     height: 45px;
     text-shadow:0px 0px 0px #810e05;

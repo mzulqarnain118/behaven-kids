@@ -33,7 +33,7 @@ interface NonSDPRoomsDTO {
 
 interface ClientInfoResponse {
   abaRoomNames: AbaRoomInfo[];
-  clientInfo: AbaRoomInfo[];
+  abaClientInfo: AbaRoomInfo[];
   // bothProgramClientsWhoAreCurrentlyInABA: SdpRoomInfo[];
   // thrRoomNames: NonSDPRoomsDTO[];
   // gsRoomNames: NonSDPRoomsDTO[];
@@ -69,7 +69,7 @@ const AbaPanel: React.FC = () => {
 
       const data: ClientInfoResponse = JSON.parse(event.data);
 
-      setAllClientsInfo(data.clientInfo);
+      setAllClientsInfo(data.abaClientInfo);
       setAllAbaRoomNames(data.abaRoomNames);
       // setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
 
@@ -124,26 +124,26 @@ const AbaPanel: React.FC = () => {
     <>
       <div style={{ display: "flex" }}>
         <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
-          <div className="card-body grid-container-For-CBS-Rooms">
+          <div className="card-body grid_container_for_ABA_rooms">
             {allAbaRoomNames.map((allRoomName, ) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
                   {/* <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
                   <h5 className="card-title">{allRoomName.abaRoomDetail} </h5>
                 </div>
-                <div className="card grid-container-For-active_clients" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
+                <div className="card grid_Container_For_Active_Clients_In_Aba" style={{ padding: "10px", minHeight: "125px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichRoomClientCurrentlyIn === allRoomName.roomID && clientsInfo.whichRoomClientCurrentlyIn !== null).map((clientsInfo,) => (
                     <button onClick={() =>
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
                       {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}
                     </button>
-                  ))}
-                  {/* {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
+                  ))} 
+                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
                     <button onClick={() =>
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
                       {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}
                     </button>
-                  ))} */}
+                  ))}
                 </div>
               </div>
             ))}
