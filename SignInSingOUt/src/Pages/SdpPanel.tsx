@@ -160,10 +160,10 @@ const SdpPanel: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    realTimeUpdatesForSDPPanel();
+    realTimeUpdatesForSdpPanel();
   }, [startAutomaticUpdates]);
 
-  const realTimeUpdatesForSDPPanel = async () => {
+  const realTimeUpdatesForSdpPanel = async () => {
     if (allClientsInfo === null) {
       return;
     }

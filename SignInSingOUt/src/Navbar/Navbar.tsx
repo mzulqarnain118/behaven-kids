@@ -124,6 +124,10 @@ const Navbar: React.FC = () => {
     navigate("/SdpPanel", { replace: true });
   };
 
+  const goToABAPanel = () => {
+    navigate("/AbaPanel", { replace: true });
+  };
+
   useEffect(() => {
     const exitFullScreenHandler = () => {
       setShowNavbar(true); // Show the navbar when exiting fullscreen
@@ -460,6 +464,18 @@ const Navbar: React.FC = () => {
                         onClick={GoToSDPPanel}
                       >
                         <span style={{ fontSize: "20px" }}>SDP Panel</span>
+                      </a>
+                    </li>
+                  )}
+                  {role === "admin" && (
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={goToABAPanel}
+                      >
+                        <span style={{ fontSize: "20px" }}>ABA Panel</span>
                       </a>
                     </li>
                   )}

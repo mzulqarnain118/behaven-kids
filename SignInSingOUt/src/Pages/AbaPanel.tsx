@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { backEndCodeURLLocation } from "../config";
 import "./CSS/EditChildTime.css";
-import Horse from '../../src/assets/horse.png';
-import Bee from '../../src/assets/bee.png';
-import Apple from '../../src/assets/apple.png';
-import Bird from '../../src/assets/bird.png';
-import Parrot from '../../src/assets/parrot.png';
-import Therapy from '../../src/assets/therapy.png'
 import "./CSS/SdpAttendanceStatusOverview.css";
 import { useNavigate } from "react-router-dom";
 import Health from '../../src/assets/health.png';
+import PopupPcApcChooseWhichRoomForClient from "../Components/PopupPcApcChooseWhichRoomForClient";
+import { jwtDecode } from "jwt-decode";
 
 
 interface AbaRoomInfo {
@@ -25,12 +21,6 @@ interface AbaRoomInfo {
   didClientRecievedHealthCheck: number;
 }
 
-interface NonSDPRoomsDTO {
-  roomID: number
-  thrRoomName: string;
-  thrRoomDetail: string;
-}
-
 interface ClientInfoResponse {
   abaRoomNames: AbaRoomInfo[];
   abaClientInfo: AbaRoomInfo[];
@@ -39,28 +29,90 @@ interface ClientInfoResponse {
   // gsRoomNames: NonSDPRoomsDTO[];
 }
 
-const images: { [key: string]: string } = {
-  Horse: Horse,
-  Bee: Bee,
-  Apple: Apple,
-  Bird: Bird,
-  Parrot: Parrot,
-  Therapy: Therapy,
-};
+interface RoomInfoDTO {
+  roomID: number;
+  roomName: string;
+  staffFirstName: string;
+  staffLastName: string;
+}
+
+interface DecodedToken {
+  StaffID: string;
+  LocationID: string;
+}
 
 const AbaPanel: React.FC = () => {
 
   const [allAbaRoomNames, setAllAbaRoomNames] = useState<AbaRoomInfo[]>([]);
   const [allClientsInfo, setAllClientsInfo] = useState<AbaRoomInfo[]>([]);
+  const [showModel, setShowModel] = useState<boolean>(false);
+  const [roomInfo, setRoomInfo] = useState<RoomInfoDTO[]>([]);
+  const [clientCurrentRoomID, setClientCurrentRoomID] = useState<number>();
+  const [clientID, setClientID] = useState<number | null>(null);
+  const [clientFullName, setClientFullName] = useState<string>("");
+  const [clientProgram, setClientProgram] = useState<string>("");
+  const [startAutomaticUpdates, setStartAutomaticUpdates] = useState<boolean>(false);
+  const [locationID, setLocationID] = useState<string>("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    Testing();
-  }, [allClientsInfo]);
+    if (startAutomaticUpdates === false) {
+      const fetchData = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("Token not found in localStorage");
+          }
 
-  const Testing = async () => {
-    if (allClientsInfo === null) {
+          if (!token) {
+            alert("Please Login");
+            navigate("/", { replace: true });
+            return;
+          }
+          const decoded = jwtDecode(token) as DecodedToken;
+          const getLocationID = decoded.LocationID;
+          setLocationID(getLocationID);
+          
+
+          const url = `${backEndCodeURLLocation}AbaPanel/GetAllAbaClientsRoomInfo?locationID=${getLocationID}`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch data. Response status: ${response.status}`
+            );
+          }
+
+          const data: ClientInfoResponse = await response.json();
+
+          setAllClientsInfo(data.abaClientInfo);
+          setAllAbaRoomNames(data.abaRoomNames);
+          setStartAutomaticUpdates(true);
+
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+
+  }, []);
+
+  useEffect(() => {
+    realTimeUpdatesForAbaPanel();
+  }, [startAutomaticUpdates]);
+
+  const realTimeUpdatesForAbaPanel = async () => {
+    if (allClientsInfo.length === 0) {
       return;
     }
     const eventSource = new EventSource(`${backEndCodeURLLocation}AbaPanel/RealTimeUpdates?locationID=OHCU`);
@@ -86,14 +138,15 @@ const AbaPanel: React.FC = () => {
 
   const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string, roomID: number) => {
     try {
+      
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please Login");
         navigate("/", { replace: true });
         return;
       }
-
-      const response = await fetch(`${backEndCodeURLLocation}Cbs/GetAllRoomsThatAClientCanGoTo?locationID=OHCU&roomID=${roomID}`, {
+      
+      const response = await fetch(`${backEndCodeURLLocation}AbaPanel/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,23 +154,25 @@ const AbaPanel: React.FC = () => {
         },
       });
 
+      
+      
       if (!response.ok) {
         alert("Error getting room names");
         return;
       }
       const data = await response.json();
-      // setRoomInfo(data);
+      
+      setRoomInfo(data);
 
     } catch (error) {
-      console.log("here 2");
       window.location.reload();
     }
 
-    // setClientCurrentRoomID(roomID);
-    // setClientID(clientID);
-    // setClientFullName(clientFullName);
-    // setClientProgram(clientProgram);
-    // setShowModel(true);
+    setClientCurrentRoomID(roomID);
+    setClientID(clientID);
+    setClientFullName(clientFullName);
+    setClientProgram(clientProgram);
+    setShowModel(true);
   };
 
   return (
@@ -150,7 +205,9 @@ const AbaPanel: React.FC = () => {
           </div>
         </div>
       </div>
-
+      {clientID !== null && (
+        <PopupPcApcChooseWhichRoomForClient showModel={showModel} setShowModel={setShowModel} roomInfo={roomInfo} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} previousRoomID={clientCurrentRoomID} />
+      )}
 
     </>
   );

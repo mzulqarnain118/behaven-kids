@@ -263,6 +263,11 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                             </button>
                                         ))}
                                 </div>
+                                <button
+                                    style={{ width: "150px" }}
+                                    className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                    onClick={() => transferToAnotherRoom(34)}> RBT
+                                </button>
                                 <hr />
                                 {setLevelOneTotal !== undefined &&
                                     <div style={{ marginTop: "10px" }} >

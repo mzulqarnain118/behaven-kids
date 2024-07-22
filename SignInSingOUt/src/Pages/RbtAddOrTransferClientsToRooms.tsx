@@ -14,6 +14,7 @@ import Therapy from '../../src/assets/therapy.png';
 import Gs from '../../src/assets/gs.png';
 import { useNavigate } from "react-router-dom";
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom';
+import Health from '../../src/assets/health.png';
 
 interface ChildInfo {
     id: number
@@ -23,6 +24,7 @@ interface ChildInfo {
     signInTime: string;
     signOutTime: string;
     defaultRoomID: number;
+    didClientRecievedHealthCheck: number;
     program: string;
 }
 
@@ -366,7 +368,11 @@ const RbtAddOrTransferClientsToRooms: React.FC = () => {
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreCurrentlyInARoom.map((info) => (
                                         <button key={info.clientID}
-                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977' }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.
+                                            onClick={() => WhichRoomWillClientGoTo(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)} 
+                                            className="round-button-for-class grid-item-container-For-CBS-page" 
+                                            style={{ display: 'flex', alignItems: 'center', width: "250px", background: 'linear-gradient(to bottom, #a3d977 5%, #b7e184 100%)', color: "black", boxShadow: '-3px -3px 6px 1px rgba(57, 97, 45, 0.5)', border: '1px solid #a3d977' }}>
+                                                <p style={{ flex: '3', margin: '0', textAlign: "right" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</p>
+                                                <p style={{ flex: '2', margin: '0', textAlign: "left" }}>{info.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}</p>
                                         </button>
                                     ))}
 
