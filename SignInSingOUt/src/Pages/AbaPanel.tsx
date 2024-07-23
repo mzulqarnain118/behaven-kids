@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Health from '../../src/assets/health.png';
 import PopupPcApcChooseWhichRoomForClient from "../Components/PopupPcApcChooseWhichRoomForClient";
 import { jwtDecode } from "jwt-decode";
+import SDP from '../../src/assets/rbt.png';
 
 
 interface AbaRoomInfo {
@@ -95,6 +96,7 @@ const AbaPanel: React.FC = () => {
 
           setAllClientsInfo(data.abaClientInfo);
           setAllAbaRoomNames(data.abaRoomNames);
+          console.log("data.abaRoomNames", data.abaClientInfo);
           setStartAutomaticUpdates(true);
 
         } catch (error) {
@@ -180,7 +182,7 @@ const AbaPanel: React.FC = () => {
       <div style={{ display: "flex" }}>
         <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
           <div className="card-body grid_container_for_ABA_rooms">
-            {allAbaRoomNames.map((allRoomName, ) => (
+            {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail !== "RBT Default Room").map((allRoomName, ) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
                   {/* <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
@@ -203,6 +205,43 @@ const AbaPanel: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+        <div className="card" style={{ width: "30%", marginLeft: "20px", display: "flex", flexDirection: "row" }}>
+          <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
+            
+              <div>
+                <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
+                  {/* <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
+                  <h5 className="card-title">ABA Default Room</h5>
+                </div>
+                {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail === "RBT Default Room").map(() => (
+                <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 34 && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
+                    <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
+                  ))}
+                </div>
+                ))}
+              </div>
+          </div>
+          <div className="card" style={{ width: "30%", marginLeft: "20px" }}>
+          {/* <div className="card-body ">
+            <div>
+              <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgreen" }}>
+                <img src={SDP} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                <h5 className="card-title">SDP</h5>
+              </div>
+
+              <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2,) => (
+                  <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
+                ))}
+                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2,) => (
+                  <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
+                ))}
+              </div>
+            </div>
+          </div> */}
+        </div>
         </div>
       </div>
       {clientID !== null && (

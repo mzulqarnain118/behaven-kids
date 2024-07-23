@@ -239,7 +239,7 @@ const SdpPanel: React.FC = () => {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
+        <div className="card" style={{ width: "66%", marginLeft: "20px" }}> 
           <div className="card-body grid-container-For-CBS-Rooms">
             {allSdpRoomNames.map((allRoomName,) => (
               <div>

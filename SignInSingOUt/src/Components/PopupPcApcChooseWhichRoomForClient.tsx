@@ -26,7 +26,7 @@ interface RoomInfoDTO {
 const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> = ({ showModel, setShowModel, roomInfo, clientID, clientFullName, clientProgram, previousRoomID }) => {
     if (!open) return null;
     // const navigate = useNavigate();
-
+console.log("roominfo", roomInfo);
     const handleClose = () => {
         // navigate("/CbsAddOrTransferClientsToRooms", { replace: true });
         setShowModel(false)
@@ -101,11 +101,11 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                         {clientProgram === "ABA" && (
                             <div style={{ textAlign: "center" }}>
 
-                                <h4>{clientFullName} - {clientProgram}</h4>
+                                <h4>{clientFullName} - {clientProgram} </h4>
                                 <br />
                                 <div style={{ textAlign: "center" }} className="grid-container-for-room-selection">
                                     {roomInfo
-                                        .filter(info => info.roomName.includes("RBT")) // Filter out items where roomName is "aba"
+                                        .filter(info => info.roomName.includes("RBT") && info.staffFirstName !== null ) 
                                         .map(info => (
                                             <button
                                                 key={info.roomID}
@@ -115,7 +115,13 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                                                 {info.staffFirstName} {info.staffLastName.charAt(0)}.
                                             </button>
                                         ))}
-                                </div>
+                                        
+                                </div> 
+                                <button
+                                    style={{ width: "150px" }}
+                                    className="round-button-for-choose-room grid-item-container-for-room-selection"
+                                    onClick={() => transferToAnotherRoom(34)}> RBT
+                                </button>
                             </div> 
                         )}
                         {clientProgram === "SDP" && (
