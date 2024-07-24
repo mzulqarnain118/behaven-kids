@@ -25,9 +25,8 @@ interface AbaRoomInfo {
 interface ClientInfoResponse {
   abaRoomNames: AbaRoomInfo[];
   abaClientInfo: AbaRoomInfo[];
-  // bothProgramClientsWhoAreCurrentlyInABA: SdpRoomInfo[];
-  // thrRoomNames: NonSDPRoomsDTO[];
-  // gsRoomNames: NonSDPRoomsDTO[];
+  bothProgramClientsWhoAreCurrentlyInSdp: AbaRoomInfo[];
+  bothProgramClientsWhoAreCurrentlyNotInTheClinic: AbaRoomInfo[];
 }
 
 interface RoomInfoDTO {
@@ -54,6 +53,8 @@ const AbaPanel: React.FC = () => {
   const [clientProgram, setClientProgram] = useState<string>("");
   const [startAutomaticUpdates, setStartAutomaticUpdates] = useState<boolean>(false);
   const [locationID, setLocationID] = useState<string>("");
+  const [clientsInBothProgramsCurrentlyInSdp, setClientsInBothProgramsCurrentlyInSdp] = useState<AbaRoomInfo[]>([]);
+  const [clientsInBothProgramsCurrentlyNotInTheClinic, setClientsInBothProgramsCurrentlyNotInTheClinic] = useState<AbaRoomInfo[]>([]);
 
   const navigate = useNavigate();
 
@@ -74,7 +75,7 @@ const AbaPanel: React.FC = () => {
           const decoded = jwtDecode(token) as DecodedToken;
           const getLocationID = decoded.LocationID;
           setLocationID(getLocationID);
-          
+
 
           const url = `${backEndCodeURLLocation}AbaPanel/GetAllAbaClientsRoomInfo?locationID=${getLocationID}`;
 
@@ -96,7 +97,8 @@ const AbaPanel: React.FC = () => {
 
           setAllClientsInfo(data.abaClientInfo);
           setAllAbaRoomNames(data.abaRoomNames);
-          console.log("data.abaRoomNames", data.abaClientInfo);
+          setClientsInBothProgramsCurrentlyInSdp(data.bothProgramClientsWhoAreCurrentlyInSdp);
+          setClientsInBothProgramsCurrentlyNotInTheClinic(data.bothProgramClientsWhoAreCurrentlyNotInTheClinic);
           setStartAutomaticUpdates(true);
 
         } catch (error) {
@@ -140,14 +142,14 @@ const AbaPanel: React.FC = () => {
 
   const WhichRoomWillClientGoTo = async (clientID: number, clientFullName: string, clientProgram: string, roomID: number) => {
     try {
-      
+
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Please Login");
         navigate("/", { replace: true });
         return;
       }
-      
+
       const response = await fetch(`${backEndCodeURLLocation}AbaPanel/GetAllRoomsThatAClientCanGoTo?locationID=${locationID}&roomID=${roomID}`, {
         method: "GET",
         headers: {
@@ -156,14 +158,14 @@ const AbaPanel: React.FC = () => {
         },
       });
 
-      
-      
+
+
       if (!response.ok) {
         alert("Error getting room names");
         return;
       }
       const data = await response.json();
-      
+
       setRoomInfo(data);
 
     } catch (error) {
@@ -182,7 +184,7 @@ const AbaPanel: React.FC = () => {
       <div style={{ display: "flex" }}>
         <div className="card" style={{ width: "66%", marginLeft: "20px" }}>
           <div className="card-body grid_container_for_ABA_rooms">
-            {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail !== "RBT Default Room").map((allRoomName, ) => (
+            {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail !== "RBT Default Room").map((allRoomName,) => (
               <div>
                 <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightblue" }}>
                   {/* <img src={images[allRoomName.sdpRoomName]} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
@@ -194,8 +196,8 @@ const AbaPanel: React.FC = () => {
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-active-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
                       {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}
                     </button>
-                  ))} 
-                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
+                  ))}
+                  {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === allRoomName.roomID && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
                     <button onClick={() =>
                       WhichRoomWillClientGoTo(clientsInfo.clientID, clientsInfo.clientFirstName + " " + clientsInfo.clientLastName.charAt(0), clientsInfo.programType, allRoomName.roomID)} className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.
                       {clientsInfo.didClientRecievedHealthCheck === 1 && <img src={Health} style={{ width: "30px", marginBottom: "5px", marginLeft: "10px" }}></img>}
@@ -206,42 +208,52 @@ const AbaPanel: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="card" style={{ width: "30%", marginLeft: "20px", display: "flex", flexDirection: "row" }}>
-          <div className="card-body grid-container-for-other-rooms" style={{ width: "50%" }}>
-            
-              <div>
-                <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
-                  {/* <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
-                  <h5 className="card-title">ABA Default Room</h5>
-                </div>
-                {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail === "RBT Default Room").map(() => (
+        <div className="card" style={{ width: "30%", marginLeft: "20px", display: "flex", flexDirection: "column" }}>
+          <div className="card-body" >
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightpink" }}>
+                {/* <img src={Therapy} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
+                <h5 className="card-title">ABA Default Room</h5>
+              </div>
+              {allAbaRoomNames.filter(allRoomName => allRoomName.abaRoomDetail === "RBT Default Room").map(() => (
                 <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0", minHeight: "100px" }}>
                   {allClientsInfo.filter(clientsInfo => clientsInfo.whichWaitingRoomIsClientIn === 34 && clientsInfo.whichWaitingRoomIsClientIn !== null).map((clientsInfo,) => (
                     <button className="round-button-for-unassigned-clients">{clientsInfo.clientFirstName} {clientsInfo.clientLastName.charAt(0)}.</button>
                   ))}
                 </div>
-                ))}
-              </div>
+              ))}
+            </div>
           </div>
-          <div className="card" style={{ width: "30%", marginLeft: "20px" }}>
-          {/* <div className="card-body ">
+          <div className="card-body ">
             <div>
               <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgreen" }}>
                 <img src={SDP} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
                 <h5 className="card-title">SDP</h5>
               </div>
-
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2,) => (
+                {clientsInBothProgramsCurrentlyInSdp.filter(clientsInfo2 => clientsInfo2.whichRoomClientCurrentlyIn !== null).map((clientsInfo2,) => (
                   <button className="round-button-for-active-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
                 ))}
-                {clientsInBothProgramsCurrentlyInABA.filter(clientsInfo2 => clientsInfo2.sdpRoomName === "RBT" && clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2,) => (
+                {clientsInBothProgramsCurrentlyInSdp.filter(clientsInfo2 => clientsInfo2.whichWaitingRoomIsClientIn !== null).map((clientsInfo2,) => (
                   <button className="round-button-for-unassigned-clients">{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
                 ))}
               </div>
             </div>
-          </div> */}
-        </div>
+          </div>
+          <div className="card-body ">
+            <div>
+              <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgrey" }}>
+                <img src={SDP} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                <h5 className="card-title">Not In</h5>
+              </div>
+              <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
+                {clientsInBothProgramsCurrentlyNotInTheClinic.map((clientsInfo2,) => (
+                  <button className="round-button-for-active-clients" style={{ background: 'linear-gradient(to bottom, #eaeaea, lightgrey)', color: "black",  boxShadow: '-3px -3px 6px 1px rgba(128, 128, 128, 0.5)', border: '1px solid lightgrey'}} >{clientsInfo2.clientFirstName} {clientsInfo2.clientLastName.charAt(0)}.</button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {clientID !== null && (
