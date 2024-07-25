@@ -127,8 +127,8 @@ const AbaPanel: React.FC = () => {
 
       setAllClientsInfo(data.abaClientInfo);
       setAllAbaRoomNames(data.abaRoomNames);
-      // setClientsInBothProgramsCurrentlyInABA(data.bothProgramClientsWhoAreCurrentlyInABA);
-
+      setClientsInBothProgramsCurrentlyInSdp(data.bothProgramClientsWhoAreCurrentlyInSdp);
+      setClientsInBothProgramsCurrentlyNotInTheClinic(data.bothProgramClientsWhoAreCurrentlyNotInTheClinic);
     };
 
 
@@ -244,7 +244,7 @@ const AbaPanel: React.FC = () => {
           <div className="card-body ">
             <div>
               <div style={{ display: "flex", justifyContent: "center", backgroundColor: "lightgrey" }}>
-                <img src={SDP} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img>
+                {/* <img src={SDP} style={{ width: "22px", height: "22px", marginRight: "10px", marginTop: "3px" }}></img> */}
                 <h5 className="card-title">Not In</h5>
               </div>
               <div className="card grid-container-For-active_clients" style={{ padding: "10px", borderTopLeftRadius: "0", borderTopRightRadius: "0" }}>
