@@ -12,10 +12,33 @@ interface ChildInfo {
   locationID: string;
 }
 
+interface OptionType {
+  label: string;
+  value: string;
+}
+
+const omahaSdpRoomNames: OptionType[] = [
+  { value: '6', label: 'Apple' },
+  { value: '8', label: 'Bee' },
+  { value: '10', label: 'Bird' },
+  { value: '12', label: 'Parrot' },
+  { value: '14', label: 'Horse' },
+];
+
+const lincolnSdpRoomNames: OptionType[] = [
+  { value: '5', label: 'Apple' },
+  { value: '7', label: 'Bee' },
+  { value: '9', label: 'Bird' },
+  { value: '11', label: 'Parrot' },
+  { value: '13', label: 'Horse' },
+];
+
 const MakeClientCurrent: React.FC = () => {
   const [childInfo, setChildInfo] = useState<ChildInfo[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [selectedRoomOption, setSelectedRoomOption] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [roomID, setRoomID] = useState<string>();
 
   const options = childInfo.map((parent) => ({
     value: parent.clientID,
@@ -56,10 +79,11 @@ const MakeClientCurrent: React.FC = () => {
 
     fetchData();
   }, []);
-  // `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail?clientFirstName=${clientFirstName}&clientLastName=${clientLastName}&locationID=${clientLocation}`,
+
   const handleSubmit = async () => {
     // e.preventDefault();
     const token = localStorage.getItem("token");
+    console.log("roomID = " + roomID);
     try {
       const response = await fetch(
         `${backEndCodeURLLocation}SignIn/AddCurrentChildIntoAbaDetail`,
@@ -71,6 +95,7 @@ const MakeClientCurrent: React.FC = () => {
           },
           body: JSON.stringify({
             location: selectedLocation,
+            roomID: roomID,
             childInfo: selectedOptions.map(option => ({
               clientID: option.value,
               firstName: option.label.split(' ')[0], // Assuming first name is before the space
@@ -88,18 +113,23 @@ const MakeClientCurrent: React.FC = () => {
       window.location.reload();
 
     } catch (error) {
-        alert(`Error posting data for client ID:` +  error);
+      alert(`Error posting data for client ID:` + error);
     }
   };
   const animatedComponents = makeAnimated();
 
   const handleSelectChange = (selectedOptions: any) => {
-    setSelectedOptions(selectedOptions); // Update state with selected options
-    console.log(selectedOptions);
+    setSelectedOptions(selectedOptions); 
+  };
+
+  const handleRoomSelectedChange = (selectedOptions: any) => {
+    setSelectedRoomOption(selectedOptions);
+    setRoomID(selectedOptions.value);
   };
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedLocation(event.target.value);
+    setSelectedRoomOption([]);
   };
 
   return (
@@ -124,9 +154,9 @@ const MakeClientCurrent: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <div className="parentInfoGridContainer">
               <div className="form-group parentGridContaineritem">
-              <h5>Make a client current: </h5>
+                <h5>Make a client current: </h5>
                 <Select
-                required
+                  required
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   isMulti
@@ -151,18 +181,52 @@ const MakeClientCurrent: React.FC = () => {
                     }),
                   }}
                 />
-                <div style={{fontSize: "20px"}}>
-                  <br/>
-                <h5>Choose client Location: </h5>
-                <input type="radio" id="omaha" name="age" value="Omaha" onChange={handleLocationChange} required/>
-                <label htmlFor="omaha" style={{marginLeft: "6px"}}>Omaha</label>
-                <br />
-                <input type="radio" id="lincoln" name="age" value="Lincoln" onChange={handleLocationChange} />
-                <label htmlFor="lincoln" style={{marginLeft: "6px"}}> Lincoln</label>
-                <br />
+                <div style={{ fontSize: "20px" }}>
+                  <br />
+                  <h5>Choose client Location: </h5>
+                  <input type="radio" id="omaha" name="age" value="OHCU" onChange={handleLocationChange} required />
+                  <label htmlFor="omaha" style={{ marginLeft: "6px" }}>Omaha - Cuming Street</label>
+                  <br />
+                  <input type="radio" id="lincoln" name="age" value="LIHG" onChange={handleLocationChange} />
+                  <label htmlFor="lincoln" style={{ marginLeft: "6px" }}> Lincoln - Hight</label>
+                  <br />
+                  <input type="radio" id="lincoln" name="age" value="LIET" onChange={handleLocationChange} />
+                  <label htmlFor="lincoln" style={{ marginLeft: "6px" }}> Lincoln - East</label>
+                  <br />
+                  <input type="radio" id="lincoln" name="age" value="LAVI" onChange={handleLocationChange} />
+                  <label htmlFor="lincoln" style={{ marginLeft: "6px" }}> LaVista - WRTS</label>
+                  <br />
                 </div>
-                
+                <div style={{ fontSize: "20px", display: selectedLocation !== "OHCU" && selectedLocation !== "LIHG" ? "none" : "grid"}}>
+                  <br />
+                  <h5>Choose Which Room </h5>
+                  <Select
+                  required={selectedLocation === "OHCU" || selectedLocation === "LIHG" ? true : false}
+                  components={animatedComponents}
+                  options={selectedLocation === "OHCU" ? omahaSdpRoomNames : lincolnSdpRoomNames}
+                  onChange={handleRoomSelectedChange}
+                  value={selectedRoomOption}
+                  styles={{
+                    // Styles for the container of the Select component
+                    control: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                    // Styles for the dropdown menu
+                    menu: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                    // Styles for individual options
+                    option: (provided) => ({
+                      ...provided,
+                      fontSize: '20px', // Adjust the font size here
+                    }),
+                  }}
+                />
+                </div>
               </div>
+              
 
               <button type="submit" className="btn btn-primary btn-lg">
                 Submit
