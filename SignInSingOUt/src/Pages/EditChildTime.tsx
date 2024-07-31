@@ -228,8 +228,6 @@ const EditChildTime: React.FC = () => {
       const currentTimeInMinutes = currentHours * 60 + currentMinutes;
       const newValueInMinutes = newHours * 60 + newMinutes;
 
-      console.log("New value = " + newValue);
-      console.log("Current time = " + newValueInMinutes);
       if (newValueInMinutes > currentTimeInMinutes) {
         alert("Choose a time [not greater] than the current time.");
 
