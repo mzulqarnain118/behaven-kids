@@ -143,40 +143,40 @@ const HealthCheck: React.FC = () => {
     }
   };
 
-  const clientRefusedHealthCheck = async () => {
-    try {
+  // const clientRefusedHealthCheck = async () => {
+  //   try {
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please log In");
-        navigate("/", { replace: true });
-        return;
-      }
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       alert("Please log In");
+  //       navigate("/", { replace: true });
+  //       return;
+  //     }
       
-      const decoded = jwtDecode(token) as DecodedToken;
-      const staffID = decoded.StaffID;
+  //     const decoded = jwtDecode(token) as DecodedToken;
+  //     const staffID = decoded.StaffID;
 
-      const response = await fetch(`${backEndCodeURLLocation}HealthCheck/ClientRefusedHealthCheck?clientID=${clientID}&staffID=${staffID}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+  //     const response = await fetch(`${backEndCodeURLLocation}HealthCheck/ClientRefusedHealthCheck?clientID=${clientID}&staffID=${staffID}`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
+  //     navigate("/cbsAddOrTransferClientsToRooms", { replace: true });
 
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch data. Response status: ${response.status}`
-        );
-      }
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         `Failed to fetch data. Response status: ${response.status}`
+  //       );
+  //     }
 
 
-    } catch (error) {
-      alert("Error fetching data: " + error);
-    }
-  };
+  //   } catch (error) {
+  //     alert("Error fetching data: " + error);
+  //   }
+  // };
 
   const StaffGoesBackToMainPage = async () => {
 
@@ -306,7 +306,7 @@ const HealthCheck: React.FC = () => {
             <div style={{ textAlign: "center", marginTop: "25px", pointerEvents: staffFullName !== null ? "auto" : "none", opacity: staffFullName !== null ? "1" : ".2"}}>
               <button className="add-button-class" style={{ marginRight: "15px" }} onClick={() => AddHealthInfo()}>+ ADD</button>
               <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => clientHasNoHealthIssuesToday()}>No Issues</button>
-              <button className="refuse_health_check_button_class" style={{ marginLeft: "15px" }} onClick={() => clientRefusedHealthCheck()}>Refuse</button>
+              {/* <button className="refuse_health_check_button_class" style={{ marginLeft: "15px" }} onClick={() => clientRefusedHealthCheck()}>Refuse</button> */}
               <button className="add-button-class" style={{ marginLeft: "15px" }} onClick={() => StaffGoesBackToMainPage()}>Cancel</button>
             </div>
 

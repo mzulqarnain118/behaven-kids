@@ -23,6 +23,7 @@ import SsnPin from './Pages/SsnPin'
 import AbaPanel from './Pages/AbaPanel'
 import HealthCheckSelectedRegion from './Pages/HealthCheckSelectedRegion'
 import HealthCheck from './Pages/HealthCheck'
+import TimeoutObservationTesting from './Pages/TimeoutObservationTesting'
 
 const App: React.FC = () => {
   return (
@@ -51,6 +52,7 @@ const App: React.FC = () => {
       <Route path='/AbaPanel' element={<AbaPanel/>}></Route>
       <Route path='/HealthCheckSelectedRegion' element={<HealthCheckSelectedRegion/>}></Route>
       <Route path='/HealthCheck' element={<HealthCheck/>}></Route>
+      <Route path='/TimeoutObservationTesting' element={<TimeoutObservationTesting/>}></Route>
       </Routes>
     </>
   )
