@@ -334,7 +334,7 @@ const CbsAddOrTransferClientsToRooms: React.FC<CbsAddOrTransferClientsToRooms> =
                     </BootstrapModal.Footer>
                 </BootstrapModal>
                 {clientID !== null && clientFullName !== null && staffID !== null && (
-                    <ManuallyAddTimeoutModal showModel={showManualTimeOutModal} setShowModel={setShowManualTimeOutModal} clientID={clientID} clientFullName={clientFullName} clientProgram={clientProgram} locationID={locationID} levelOneTotal={levelOneTotal} staffID={staffID} />
+                    <ManuallyAddTimeoutModal showModel={showManualTimeOutModal} setShowModel={setShowManualTimeOutModal} clientID={clientID} clientFullName={clientFullName} locationID={locationID} staffID={staffID} />
                 )}
             </div>
 

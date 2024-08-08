@@ -20,10 +20,8 @@ import Select, { SingleValue } from 'react-select';
 interface ManuallyAddTimeoutModal {
   showModel: boolean;
   setShowModel: React.Dispatch<React.SetStateAction<any>>;
-  levelOneTotal?: number;
   clientID?: number;
   clientFullName: string;
-  clientProgram: string;
   staffID?: string;
   locationID: string;
 }

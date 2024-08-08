@@ -14,6 +14,7 @@ import Therapy from '../../src/assets/therapy.png';
 import Gs from '../../src/assets/gs.png';
 import { useNavigate } from "react-router-dom";
 import PopupGetClientsWhoAreWaitingToBeAsignToARoom from '../Components/PopupGetClientsWhoAreWaitingToBeAsignToARoom';
+import AddHealthCheckOrManualEnterTimeout from '../Components/AddHealthCheckOrManualEnterTimeout';
 
 import Health from '../../src/assets/health.png';
 
@@ -68,6 +69,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
     const [clientsWhoAreSignedIn, setClientsWhoAreSignedIn] = useState<ChildInfo[]>([]);
     const [clientsWhoAreCurrentlyInARoom, setClientsWhoAreCurrentlyInARoom] = useState<ChildInfo[]>([]);
     const [showModel, setShowModel] = useState<boolean>(false);
+    const [showOptionsForClientsWhoAreNotSignInModel, setShowOptionsForClientsWhoAreNotSignInModel] = useState<boolean>(false);
     const [showGetClientsAreWaitingToBeAsignToARoomModel, setShowGetClientsAreWaitingToBeAsignToARoomModel] = useState<boolean>(false);
     const [roomID, setRoomID] = useState<number | null>(null);
     const [locationID, setLocationID] = useState<string>("");
@@ -282,6 +284,13 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
         setLevelOneTotal(clientLevelOneCurrentTotal);
     };
 
+    const ShowModalForManualTimeoutOrViewHealthCheck = async (clientID: number, clientFullName: string, clientProgram: string) => {
+        setClientID(clientID);
+        setClientFullName(clientFullName);
+        setClientProgram(clientProgram);
+        setShowOptionsForClientsWhoAreNotSignInModel(true);
+    };
+
     const CBSGetClientsWhoAreUnassignedFromAllRoomsAndPutThemInTheirRoom = () => {
         setShowGetClientsAreWaitingToBeAsignToARoomModel(true);
     };
@@ -381,9 +390,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Unassigned</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {clientsWhoAreSignedIn.map((info,) => (
-   
                                         <button onClick={() => PutClientInDeseignatedRoom(info.clientID, info.defaultRoomID)} className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", backgroundColor: "lightpink" }}>{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
-
                                     ))}
                                 </div>
                             </div>
@@ -396,7 +403,7 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
                                 <h2>Not In</h2>
                                 <div className="grid-container-For-CBS-page">
                                     {childInfo.map((info,) => (
-                                        <button className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #eaeaea, lightgrey)', color: "black",  boxShadow: '-3px -3px 6px 1px rgba(128, 128, 128, 0.5)', border: '1px solid lightgrey'}} >{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
+                                        <button onClick={() => ShowModalForManualTimeoutOrViewHealthCheck(info.clientID, info.clientFirstName + " " + info.clientLastName, info.program)}  className="round-button-for-class grid-item-container-For-CBS-page" style={{ width: "250px", background: 'linear-gradient(to bottom, #eaeaea, lightgrey)', color: "black",  boxShadow: '-3px -3px 6px 1px rgba(128, 128, 128, 0.5)', border: '1px solid lightgrey'}} >{info.clientFirstName + " " + info.clientLastName.charAt(0)}.</button>
                                     ))}
                                 </div>
                             </div>
@@ -414,6 +421,9 @@ const CbsAddOrTransferClientsToRooms: React.FC = () => {
             )}
             {roomID !== null && locationID !== null && cbsProgramType !== null && currentStaffID !== null && (
                 <PopupGetClientsWhoAreWaitingToBeAsignToARoom showGetClientsAreWaitingToBeAsignToARoomModel={showGetClientsAreWaitingToBeAsignToARoomModel} setShowGetClientsAreWaitingToBeAsignToARoomModel={setShowGetClientsAreWaitingToBeAsignToARoomModel} roomID={roomID} locationID={locationID} cbsProgramType={cbsProgramType} staffID={currentStaffID}/>
+            )} 
+            {clientID !== null && locationID !== null && currentStaffID !== null && (
+                <AddHealthCheckOrManualEnterTimeout showOptionsForClientsWhoAreNotSignInModel={showOptionsForClientsWhoAreNotSignInModel} setShowOptionsForClientsWhoAreNotSignInModel={setShowOptionsForClientsWhoAreNotSignInModel} clientID={clientID} locationID={locationID} clientFullName={clientFullName}  staffID={currentStaffID}/>
             )} 
         </>
     );
