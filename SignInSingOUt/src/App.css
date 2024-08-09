@@ -1,13 +1,12 @@
 #root {
   width: 100%;
   margin: 0 auto;
-
 }
 
 .ContentComponentBody {
-  width: 100%; 
+  width: 100%;
   margin: 0 auto;
-  background-color: white; 
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -15,7 +14,7 @@
 }
 
 .CommentDropDown_Grid {
-  display:grid;
+  display: grid;
   grid-template-columns: auto;
   padding: 2px;
   text-align: center;
@@ -31,7 +30,7 @@
 
 .grid-item {
   border-radius: 70%;
-  background-color: #FDB813;
+  background-color: #fdb813;
   margin-right: 15px;
   margin-bottom: 15px;
   height: 100px;
@@ -75,3 +74,15 @@
   background-color: green; /* Change to the color you desire */
 }
 
+#nprogress {
+  pointer-events: none;
+  .bar {
+    left: 0px;
+    top: 0px;
+    height: 3px;
+    width: 100%;
+    z-index: 2000;
+    position: fixed;
+    background-color: #2d3840;
+  }
+}

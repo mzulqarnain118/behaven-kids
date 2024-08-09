@@ -80,7 +80,10 @@ const Navbar: React.FC = () => {
   }, [showNavbar]);
 
   useEffect(() => {
-    if (window.location.href === frontEndURLLocation || window.location.href === frontEndURLLocation + "#") {
+    if (
+      window.location.href === frontEndURLLocation ||
+      window.location.href === frontEndURLLocation + "#"
+    ) {
       setShowNavbar(false);
     }
   }, [window.location.href]);
@@ -106,7 +109,6 @@ const Navbar: React.FC = () => {
     closeOffcanvas();
   };
 
-
   const GoToTimeOutSelectAClient = () => {
     navigate("/timeoutselectaclient", { replace: true });
     closeOffcanvas();
@@ -126,6 +128,9 @@ const Navbar: React.FC = () => {
 
   const goToABAPanel = () => {
     navigate("/AbaPanel", { replace: true });
+  };
+  const goToAdminClient = () => {
+    navigate("/cms", { replace: true });
   };
 
   useEffect(() => {
@@ -192,11 +197,26 @@ const Navbar: React.FC = () => {
       {showNavbar === true && role === "parent" && (
         <nav className="navbar bg-white fixed-top">
           <div className="container-fluid">
-          
-
-            {(window.location.href.includes('ParentsPin') || window.location.href.includes('ChooseWhichChildren') || window.location.href.includes('ValidateEmailAddress') || window.location.href.includes('ValidateTemporaryPin') || window.location.href.includes('ResetPin')) ? (
-              <a className="navbar-brand" href="#" onClick={GoToPhoneNumberPage} style={{fontSize: "60px", color: "black"}}>{'\u2190'}</a>
-            ) : (<a className="navbar-brand" href="#" style={{fontSize: "60px"}}></a>)} 
+            {window.location.href.includes("ParentsPin") ||
+            window.location.href.includes("ChooseWhichChildren") ||
+            window.location.href.includes("ValidateEmailAddress") ||
+            window.location.href.includes("ValidateTemporaryPin") ||
+            window.location.href.includes("ResetPin") ? (
+              <a
+                className="navbar-brand"
+                href="#"
+                onClick={GoToPhoneNumberPage}
+                style={{ fontSize: "60px", color: "black" }}
+              >
+                {"\u2190"}
+              </a>
+            ) : (
+              <a
+                className="navbar-brand"
+                href="#"
+                style={{ fontSize: "60px" }}
+              ></a>
+            )}
             <button
               className="navbar-toggler"
               type="button"
@@ -207,11 +227,10 @@ const Navbar: React.FC = () => {
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            
-
             <div
-              className={`offcanvas offcanvas-end ${isOffcanvasOpen ? "show" : ""
-                }`}
+              className={`offcanvas offcanvas-end ${
+                isOffcanvasOpen ? "show" : ""
+              }`}
               id="offcanvasNavbar"
               aria-labelledby="offcanvasNavbarLabel"
               style={{ width: "350px" }}
@@ -240,7 +259,18 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={GoToPhoneNumberPage}
                     >
-                      <span style={{ fontSize: "20px" }}><img src={Refresh} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Refresh </span> 
+                      <span style={{ fontSize: "20px" }}>
+                        <img
+                          src={Refresh}
+                          style={{
+                            width: "22px",
+                            height: "22px",
+                            marginRight: "5px",
+                            marginBottom: "3px",
+                          }}
+                        ></img>{" "}
+                        Refresh{" "}
+                      </span>
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
@@ -250,12 +280,34 @@ const Navbar: React.FC = () => {
                       href="#"
                       onClick={handleGoFullScreen}
                     >
-                      <span style={{ fontSize: "20px" }}><img src={FullScreenLogo} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Full Screen </span> 
+                      <span style={{ fontSize: "20px" }}>
+                        <img
+                          src={FullScreenLogo}
+                          style={{
+                            width: "22px",
+                            height: "22px",
+                            marginRight: "5px",
+                            marginBottom: "3px",
+                          }}
+                        ></img>{" "}
+                        Full Screen{" "}
+                      </span>
                     </a>
                   </li>
                   <li className="nav-item" style={{ height: "65px" }}>
                     <a className="nav-link" href="#" onClick={handleSignOut}>
-                      <span style={{ fontSize: "20px" }}><img src={LogoutLogo} style={{ width: "25px", height: "25px", marginRight: "5px", marginBottom: "3px" }}></img> Sign Out</span> 
+                      <span style={{ fontSize: "20px" }}>
+                        <img
+                          src={LogoutLogo}
+                          style={{
+                            width: "25px",
+                            height: "25px",
+                            marginRight: "5px",
+                            marginBottom: "3px",
+                          }}
+                        ></img>{" "}
+                        Sign Out
+                      </span>
                     </a>
                   </li>
                 </ul>
@@ -264,233 +316,320 @@ const Navbar: React.FC = () => {
           </div>
         </nav>
       )}
-      {showNavbar === true && (role === "floor" || role === "rbt" || role.includes("tor")) && (
-        <nav className="navbar bg-white">
-          <div className="container-fluid">
-          
+      {showNavbar === true &&
+        (role === "floor" || role === "rbt" || role.includes("tor")) && (
+          <nav className="navbar bg-white">
+            <div className="container-fluid">
+              {window.location.href.includes("ssnpin") ? (
+                <a
+                  className="navbar-brand"
+                  href="#"
+                  onClick={GoToTimeOutSelectAClient}
+                  style={{ fontSize: "60px", color: "black" }}
+                >
+                  {"\u2190"}
+                </a>
+              ) : (
+                <a
+                  className="navbar-brand"
+                  href="#"
+                  style={{ fontSize: "60px" }}
+                ></a>
+              )}
+              <button
+                className="navbar-toggler"
+                type="button"
+                onClick={handleToggleOffcanvas}
+                aria-controls="offcanvasNavbar"
+                style={{ marginTop: "15px", marginRight: "15px" }}
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
 
-            {(window.location.href.includes('ssnpin')) ? (
-              <a className="navbar-brand" href="#" onClick={GoToTimeOutSelectAClient} style={{fontSize: "60px", color: "black"}}>{'\u2190'}</a>
-            ) : (<a className="navbar-brand" href="#" style={{fontSize: "60px"}}></a>)} 
-            <button
-              className="navbar-toggler"
-              type="button"
-              onClick={handleToggleOffcanvas}
-              aria-controls="offcanvasNavbar"
-              style={{ marginTop: "15px", marginRight: "15px" }}
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-
-            {!window.location.href.includes('ssnpin') && (
-            <img  src={BehavenLogo} alt="My Image" 
-                style={{ 
-                  height: "75px", 
-                  position: "fixed", 
-                  top: "5%", 
-                  left: "50%", 
-                  transform: "translate(-50%, -50%)" 
-                }} 
-              />
-            )}
-
-            <div className={`offcanvas offcanvas-end ${isOffcanvasOpen ? "show" : ""}`}
-              id="offcanvasNavbar"
-              aria-labelledby="offcanvasNavbarLabel"
-              style={{ width: "350px" }}
-            >
-              <div className="offcanvas-header">
+              {!window.location.href.includes("ssnpin") && (
                 <img
                   src={BehavenLogo}
                   alt="My Image"
-                  style={{ height: "60px" }}
+                  style={{
+                    height: "75px",
+                    position: "fixed",
+                    top: "5%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
                 />
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="offcanvas"
-                  aria-label="Close"
-                  style={{ marginRight: "5px" }}
-                  onClick={closeOffcanvas}
-                ></button>
-              </div>
-              
-              <div className="offcanvas-body">
-                <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={GoToTimeOutSelectAClient}
-                    >
-                      <span style={{ fontSize: "20px" }}><img src={Refresh} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Refresh </span> 
-                    </a>
-                  </li>
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a
-                      className="nav-link active"
-                      aria-current="page"
-                      href="#"
-                      onClick={handleGoFullScreen}
-                    >
-                    <span style={{ fontSize: "20px" }}><img src={FullScreenLogo} style={{ width: "22px", height: "22px", marginRight: "5px", marginBottom: "3px" }}></img> Full Screen </span> 
-                    </a>
-                  </li>
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a className="nav-link" href="#" aria-current="page" onClick={handleSignOut}>
-                    <span style={{ fontSize: "20px" }}><img src={LogoutLogo} style={{ width: "25px", height: "25px", marginRight: "5px", marginBottom: "3px" }}></img> Sign Out</span> 
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </nav>
-      )}
-      {showNavbar === true && role !== "parent" && !role.includes("tor") && role !== "floor" && role !== "rbt"  && (
-        <nav className="navbar bg-white ">
-          <div className="container-fluid">
-            <button
-              className="navbar-toggler"
-              type="button"
-              onClick={handleToggleOffcanvas}
-              aria-controls="offcanvasNavbar"
-              style={{ marginLeft: "25px" }}
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <img src={BehavenLogo} alt="My Image" style={{ height: "75px", marginRight: "45%" }} />
+              )}
 
-            <div
-              className={`offcanvas offcanvas-start ${isOffcanvasOpen ? "show" : ""
+              <div
+                className={`offcanvas offcanvas-end ${
+                  isOffcanvasOpen ? "show" : ""
                 }`}
-              id="offcanvasNavbar"
-              aria-labelledby="offcanvasNavbarLabel"
-              style={{ width: "350px" }}
-            >
-              <div className="offcanvas-header">
+                id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel"
+                style={{ width: "350px" }}
+              >
+                <div className="offcanvas-header">
+                  <img
+                    src={BehavenLogo}
+                    alt="My Image"
+                    style={{ height: "60px" }}
+                  />
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                    style={{ marginRight: "5px" }}
+                    onClick={closeOffcanvas}
+                  ></button>
+                </div>
 
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="offcanvas"
-                  aria-label="Close"
-                  style={{ marginRight: "5px" }}
-                  onClick={closeOffcanvas}
-                ></button>
-              </div>
-              <div className="offcanvas-body">
-                {/* <div style={{backgroundColor: "green", height: "50px"}}></div> */}
-                <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  {role === "admin" && (
+                <div className="offcanvas-body">
+                  <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li className="nav-item" style={{ height: "65px" }}>
                       <a
                         className="nav-link active"
                         aria-current="page"
                         href="#"
-                        onClick={GoToAddNewParent}
+                        onClick={GoToTimeOutSelectAClient}
                       >
-                        <span style={{ fontSize: "20px" }}>Add New Parent</span>
+                        <span style={{ fontSize: "20px" }}>
+                          <img
+                            src={Refresh}
+                            style={{
+                              width: "22px",
+                              height: "22px",
+                              marginRight: "5px",
+                              marginBottom: "3px",
+                            }}
+                          ></img>{" "}
+                          Refresh{" "}
+                        </span>
                       </a>
                     </li>
-                  )}
-                  {role === "admin" && (
                     <li className="nav-item" style={{ height: "65px" }}>
                       <a
                         className="nav-link active"
                         aria-current="page"
                         href="#"
-                        onClick={AddNewClientAsCurrent}
+                        onClick={handleGoFullScreen}
                       >
-                        <span style={{ fontSize: "20px" }}>Make Clients Active</span>
+                        <span style={{ fontSize: "20px" }}>
+                          <img
+                            src={FullScreenLogo}
+                            style={{
+                              width: "22px",
+                              height: "22px",
+                              marginRight: "5px",
+                              marginBottom: "3px",
+                            }}
+                          ></img>{" "}
+                          Full Screen{" "}
+                        </span>
                       </a>
                     </li>
-                  )}
-                  {(role === "admin" || role === "secretary") && (
                     <li className="nav-item" style={{ height: "65px" }}>
                       <a
-                        className="nav-link active"
-                        aria-current="page"
+                        className="nav-link"
                         href="#"
-                        onClick={CheckParentsTemporaryPin}
+                        aria-current="page"
+                        onClick={handleSignOut}
                       >
-                        <span style={{ fontSize: "20px" }}>Check Parents Temporary Pin</span>
+                        <span style={{ fontSize: "20px" }}>
+                          <img
+                            src={LogoutLogo}
+                            style={{
+                              width: "25px",
+                              height: "25px",
+                              marginRight: "5px",
+                              marginBottom: "3px",
+                            }}
+                          ></img>{" "}
+                          Sign Out
+                        </span>
                       </a>
                     </li>
-                  )}
-                  {(role === "admin" || role === "secretary") && (
-                    <li className="nav-item" style={{ height: "65px" }}>
-                      <a
-                        className="nav-link active"
-                        aria-current="page"
-                        href="#"
-                        onClick={EditClientSignInSignOutTime}
-                      >
-                        <span style={{ fontSize: "20px" }}>Sign In/Out Management</span>
-                      </a>
-                    </li>
-                  )}
-                  {role === "admin" && (
-                    <li className="nav-item" style={{ height: "65px" }}>
-                      <a
-                        className="nav-link active"
-                        aria-current="page"
-                        href="#"
-                        onClick={GoToConnectParentWithChild}
-                      >
-                        <span style={{ fontSize: "20px" }}> Connect Parents To Client(s)</span>
-                      </a>
-                    </li>
-                  )}
-                  {role === "admin" && (
-                    <li className="nav-item" style={{ height: "65px" }}>
-                      <a
-                        className="nav-link active"
-                        aria-current="page"
-                        href="#"
-                        onClick={GoToClientInOutNoShow}
-                      >
-                        <span style={{ fontSize: "20px" }}>Client In/Out/No show</span>
-                      </a>
-                    </li>
-                  )}
-                  {role === "admin" && (
-                    <li className="nav-item" style={{ height: "65px" }}>
-                      <a
-                        className="nav-link active"
-                        aria-current="page"
-                        href="#"
-                        onClick={GoToSDPPanel}
-                      >
-                        <span style={{ fontSize: "20px" }}>SDP Panel</span>
-                      </a>
-                    </li>
-                  )}
-                  {role === "admin" && (
-                    <li className="nav-item" style={{ height: "65px" }}>
-                      <a
-                        className="nav-link active"
-                        aria-current="page"
-                        href="#"
-                        onClick={goToABAPanel}
-                      >
-                        <span style={{ fontSize: "20px" }}>ABA Panel</span>
-                      </a>
-                    </li>
-                  )}
-
-                  <li className="nav-item" style={{ height: "65px" }}>
-                    <a className="nav-link" href="#" onClick={handleSignOut}>
-                      <span style={{ fontSize: "20px" }}></span> Sign Out
-                    </a>
-                  </li>
-                </ul>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-        </nav>
-      )}
+          </nav>
+        )}
+      {showNavbar === true &&
+        role !== "parent" &&
+        !role.includes("tor") &&
+        role !== "floor" &&
+        role !== "rbt" && (
+          <nav className="navbar bg-white ">
+            <div className="container-fluid">
+              <button
+                className="navbar-toggler"
+                type="button"
+                onClick={handleToggleOffcanvas}
+                aria-controls="offcanvasNavbar"
+                style={{ marginLeft: "25px" }}
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
+              <img
+                src={BehavenLogo}
+                alt="My Image"
+                style={{ height: "75px", marginRight: "45%" }}
+              />
+
+              <div
+                className={`offcanvas offcanvas-start ${
+                  isOffcanvasOpen ? "show" : ""
+                }`}
+                id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel"
+                style={{ width: "350px" }}
+              >
+                <div className="offcanvas-header">
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                    style={{ marginRight: "5px" }}
+                    onClick={closeOffcanvas}
+                  ></button>
+                </div>
+                <div className="offcanvas-body">
+                  {/* <div style={{backgroundColor: "green", height: "50px"}}></div> */}
+                  <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={GoToAddNewParent}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            Add New Parent
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={AddNewClientAsCurrent}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            Make Clients Active
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {(role === "admin" || role === "secretary") && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={CheckParentsTemporaryPin}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            Check Parents Temporary Pin
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {(role === "admin" || role === "secretary") && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={EditClientSignInSignOutTime}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            Sign In/Out Management
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={GoToConnectParentWithChild}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            {" "}
+                            Connect Parents To Client(s)
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={GoToClientInOutNoShow}
+                        >
+                          <span style={{ fontSize: "20px" }}>
+                            Client In/Out/No show
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={GoToSDPPanel}
+                        >
+                          <span style={{ fontSize: "20px" }}>SDP Panel</span>
+                        </a>
+                      </li>
+                    )}
+                    {role === "admin" && (
+                      <li className="nav-item" style={{ height: "65px" }}>
+                        <a
+                          className="nav-link active"
+                          aria-current="page"
+                          href="#"
+                          onClick={goToABAPanel}
+                        >
+                          <span style={{ fontSize: "20px" }}>ABA Panel</span>
+                        </a>
+                      </li>
+                    )}
+
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a
+                        className="nav-link active"
+                        aria-current="page"
+                        href="#"
+                        onClick={goToAdminClient}
+                      >
+                        <span style={{ fontSize: "20px" }}>CMS</span>
+                      </a>
+                    </li>
+
+                    <li className="nav-item" style={{ height: "65px" }}>
+                      <a className="nav-link" href="#" onClick={handleSignOut}>
+                        <span style={{ fontSize: "20px" }}></span> Sign Out
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+        )}
     </>
   );
 };

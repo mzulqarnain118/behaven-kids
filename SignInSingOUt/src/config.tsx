@@ -1,11 +1,5 @@
-//const backEndWebApi = 'http://192.168.0.9:7012/';
-const backEndWebApi = 'http://localhost:5025/';
-
-const frontEndWebApi = 'http://localhost:5173/';
-//const frontEndWebApi = 'http://daycarelogistics.behavndaycare.local/';
-
-
+const backEndWebApi = import.meta.env.VITE_BACKEND_API_URL;
+const frontEndWebApi = import.meta.env.VITE_FRONTEND_API_URL;
 
 export const backEndCodeURLLocation = `${backEndWebApi}`;
-
 export const frontEndURLLocation = `${frontEndWebApi}`;

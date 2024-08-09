@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { backEndCodeURLLocation } from "../config";
 import personLogInImage from "../assets/personLogIn.svg";
 import lockPassword from "../assets/lockPassword.svg";
 import BehavenLogo from "../assets/BehavenLogo.jpg";
 import { jwtDecode } from "jwt-decode";
+import { ApiCall } from "../utils/ApiCall";
+import { Toast } from "../Components/common/Toast/Toast";
 
 interface DecodedToken {
   role: string;
@@ -14,10 +15,9 @@ interface DecodedToken {
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [didUserClickedOnTheLoginButton, setDidUserClickedOnTheLoginButton] = useState<boolean>(false);
+  const [didUserClickedOnTheLoginButton, setDidUserClickedOnTheLoginButton] =
+    useState<boolean>(false);
   const navigate = useNavigate();
-
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,17 +25,14 @@ const LoginPage: React.FC = () => {
       // Set the state to redirect to dashboard
       const decoded = jwtDecode(token) as DecodedToken;
       const userRole = decoded.role;
-      if (userRole === "parent")
-        navigate("/PhoneNumber");
+      if (userRole === "parent") navigate("/PhoneNumber");
       else if (userRole === "admin" || userRole === "secretary")
         navigate("/EditChildTime");
       else if (userRole === "floor")
         navigate("/CbsAddOrTransferClientsToRooms");
       else if (userRole === "rbt" || userRole === "thr")
         navigate("/rbtaddortransferclientstorooms");
-      else if (userRole.includes("tor"))
-        navigate("/timeoutselectaclient")
-
+      else if (userRole.includes("tor")) navigate("/timeoutselectaclient");
     }
   }, []);
 
@@ -43,43 +40,27 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setDidUserClickedOnTheLoginButton(true);
     try {
-      const response = await fetch(
-        `${backEndCodeURLLocation}UserAuthentication/SignIn?userName=${username}&password=${password}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await ApiCall(
+        "UserAuthentication/SignIn",
+        "POST",
+        null,
+        { username, password }
       );
+      if (response?.token) {
+        Toast("User Logged-In Successfully.");
+        const { token } = response;
+        localStorage.setItem("token", token);
 
-      if (!response.ok) {
-        throw new Error("Login failed");
+        const decoded = jwtDecode(token) as DecodedToken;
+        const userRole = decoded.role;
+
+        if (userRole === "parent") navigate("/PhoneNumber");
+        else if (userRole === "admin" || userRole === "secretary")
+          navigate("/EditChildTime");
+        else if (userRole.includes("tor")) navigate("/timeoutselectaclient");
       }
-
-      const { token } = await response.json();
-
-      localStorage.setItem("token", token);
-
-      const decoded = jwtDecode(token) as DecodedToken;
-      const userRole = decoded.role;
-
-      if (userRole === "parent")
-        navigate("/PhoneNumber");
-      else if (userRole === "admin" || userRole === "secretary")
-        navigate("/EditChildTime");
-      else if (userRole.includes("tor"))
-        navigate("/timeoutselectaclient") 
-
-      window.location.reload();
     } catch (error: any) {
-      if (error.message === "Failed to fetch") {
-        alert("Connection lost. Please check your internet connection.");
-        window.location.reload();
-      } else {
-        alert("Login failed:" + error.message);
-        window.location.reload();
-      }
+      console.log("🚀 ~ handleLogin ~ error:", error);
     }
   };
 
@@ -98,7 +79,6 @@ const LoginPage: React.FC = () => {
           top: "20%",
           left: "49%",
           transform: "translate(-50%, -50%)",
-
         }}
       />
       <div
@@ -111,10 +91,9 @@ const LoginPage: React.FC = () => {
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)"
+          transform: "translate(-50%, -50%)",
         }}
       >
-
         <form onSubmit={handleLogin}>
           <div className="card" style={{ width: "500px", textAlign: "center" }}>
             <div className="card-body">
