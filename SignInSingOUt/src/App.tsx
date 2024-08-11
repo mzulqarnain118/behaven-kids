@@ -24,6 +24,7 @@ import AbaPanel from './Pages/AbaPanel'
 import HealthCheckSelectedRegion from './Pages/HealthCheckSelectedRegion'
 import HealthCheck from './Pages/HealthCheck'
 import TimeoutObservationTesting from './Pages/TimeoutObservationTesting'
+import TimeoutHealthCheckRecords from './Pages/TimeoutHealthCheckRecords'
 
 const App: React.FC = () => {
   return (
@@ -53,6 +54,8 @@ const App: React.FC = () => {
       <Route path='/HealthCheckSelectedRegion' element={<HealthCheckSelectedRegion/>}></Route>
       <Route path='/HealthCheck' element={<HealthCheck/>}></Route>
       <Route path='/TimeoutObservationTesting' element={<TimeoutObservationTesting/>}></Route>
+      <Route path='/TimeoutHealthCheckRecords' element={<TimeoutHealthCheckRecords/>}></Route>
+
       </Routes>
     </>
   )
