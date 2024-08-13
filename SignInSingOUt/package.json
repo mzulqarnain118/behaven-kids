@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start:stg": "env-cmd -f .env.staging vite",
+    "start:prod": "env-cmd -f .env.production vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -12,11 +14,13 @@
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
+    "@hookform/resolvers": "^3.9.0",
     "@mui/material": "^5.16.7",
     "@mui/x-date-pickers": "^7.2.0",
     "@types/react-select": "^5.0.1",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
+    "env-cmd": "^10.1.0",
     "exceljs": "^4.4.0",
     "jspdf": "^2.5.1",
     "jwt-decode": "^4.0.0",
@@ -28,6 +32,7 @@
     "react-bootstrap": "^2.10.2",
     "react-confirm-alert": "^3.0.6",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.52.2",
     "react-international-phone": "^4.2.6",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.22.3",
@@ -37,6 +42,7 @@
     "reactjs-human-body": "^0.0.8",
     "reactjs-popup": "^2.0.6",
     "xlsx": "^0.18.5",
+    "yup": "^1.4.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
