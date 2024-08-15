@@ -1,4 +1,5 @@
 import "./App.css";
+import "./styles/flexboxClasses.css";
 import Navbar from "./Navbar/Navbar";
 import { Routes, Route } from "react-router-dom";
 import PhoneNumber from "./Pages/PhoneNumber";

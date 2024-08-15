@@ -1,0 +1,330 @@
+/*! Override the gap size for a specific element */
+.gap-0 {
+  --flex-gap: 0rem;
+}
+.gap-025 {
+  --flex-gap: 0.25rem;
+}
+
+.gap-025 {
+  --flex-gap: 0.25rem;
+}
+
+.gap-05 {
+  --flex-gap: 0.5rem;
+}
+
+.gap-06 {
+  --flex-gap: 0.6rem;
+}
+
+.gap-075 {
+  --flex-gap: 0.75rem;
+}
+.gap-08 {
+  --flex-gap: 0.8rem;
+}
+.gap-1 {
+  --flex-gap: 1rem;
+}
+
+.gap-2 {
+  --flex-gap: 2rem;
+}
+
+.gap-25 {
+  --flex-gap: 2.5rem;
+}
+
+/*! Flexbox classes for rows */
+.flex {
+  display: flex;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+.child{
+  flex:1;
+  flex-grow: 1;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.row-start {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.row-end {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.row-between {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.align-between {
+    text-align: left;
+    align-self: normal;
+    display: flex;
+    justify-content: space-between;
+}
+
+.row-around {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.row-evenly {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+/*! Flexbox classes for columns */
+.col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-start {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-end {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-between {
+  display: flex;
+  flex-direction: column !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-around {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: space-around;
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+.col-evenly {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: space-evenly;
+
+  gap: var(--flex-gap, 0);
+  /* Default to 0 if not provided */
+}
+
+/*! Margin Classes */
+.m-0 {
+  margin: 0rem;
+}
+
+.m-025 {
+  margin: 0.25rem;
+}
+
+.m-05 {
+  margin: 0.5rem;
+}
+
+.m-1 {
+  margin: 1rem;
+}
+
+.ml-025 {
+  margin-left: 0.25rem;
+}
+
+.mr-025 {
+  margin-right: 0.25rem;
+}
+
+.mt-025 {
+  margin-top: 0.25rem;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+.mb-025 {
+  margin-bottom: 0.25rem;
+}
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.m-tb-025 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.m-tb-09 {
+  margin: "18px 0rem !important";
+}
+
+.m-lr-025 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+/*! Padding Classes */
+.pad-0 {
+  padding: 0rem;
+}
+
+.p-025 {
+  padding: 0.25rem;
+}
+
+.p-05 {
+  padding: 0.5rem;
+}
+
+.p-1 {
+  padding: 1rem;
+}
+
+.p-tb-025 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.p-lr-025 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.p-lr-1 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.pl-025 {
+  padding-left: 0.25rem;
+}
+
+.pr-025 {
+  padding-right: 0.25rem;
+}
+
+.pt-025 {
+  padding-top: 0.25rem;
+}
+
+.pb-025 {
+  padding-bottom: 0.25rem;
+}
+
+/*! COMMON Classes */
+
+.cursor {
+  cursor: pointer;
+}
+
+.relative-full-width {
+  position: relative;
+  width: 100%;
+}
+.roundCorners {
+  border-radius: 0.4rem;
+}
+/* Custom divider style with dynamic color */
+.divider {
+  border-bottom: 1px solid var(--divider-color, #E9EDF0); /* Default color with dynamic value */
+  margin-bottom: 1rem; /* Adjust as needed to control the space between recommendations */
+  margin-top: 1rem; /* Adjust as needed to control the space between recommendations */
+}
+
+.disabled {
+  /* Add your CSS declarations for disabled elements here */
+  opacity: 0.5; /* Example: reduce opacity for disabled elements */
+  pointer-events: none; /* Example: disable pointer events for disabled elements */
+  /* Add any other styles specific to disabled elements */
+}
+.grid-container {
+  display: grid;
+  justify-items: start;
+  justify-content: space-between;
+grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
+/* CK editor CSS*/
+.ck.ck-editor__main > .ck-editor__editable {
+  border-color: rgb(222, 221, 221) !important;
+}
+
+.ck.ck-editor__main > .ck-editor__editable:focus {
+  border-color: black !important;
+}

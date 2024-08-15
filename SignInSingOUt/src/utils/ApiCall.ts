@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import nProgress from "nprogress";
 import { getLocal } from "./index";
-import { ExceptionHandler } from "./ExceptionHandler";
+import ExceptionHandler from "./ExceptionHandler";
 import { backEndCodeURLLocation } from "../config";
 
 // Create an Axios instance with default configuration
