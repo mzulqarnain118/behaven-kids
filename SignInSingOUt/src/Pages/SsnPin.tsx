@@ -88,7 +88,7 @@ const SsnPin: React.FC = () => {
           }
 
 
-          navigate("/timeoutobservation", {
+          navigate("/timeoutobservationtesting", {
             replace: true,
             state: { clientID, clientFullName, roomPositionName, roomID, staffID, staffFullName, clientPreviousRoom},
           });

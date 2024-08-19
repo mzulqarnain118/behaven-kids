@@ -14,7 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import  dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import Select, { SingleValue } from 'react-select';
 
 interface ManuallyAddTimeoutModal {
@@ -59,7 +59,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
   const handleClose = async () => {
     setShowModel(false);
 
-    
+
     navigate("/", {
       replace: true,
     });
@@ -71,7 +71,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
     { id: 1, label: 'Mumbling', counter: 0 },
     { id: 2, label: 'Wiggling', counter: 0 },
     { id: 3, label: 'Talking Loud', counter: 0 },
-    { id: 4, label: 'Walking Around', counter: 0 },
+    { id: 4, label: 'Moving Around', counter: 0 },
     { id: 5, label: 'Crying', counter: 0 },
     { id: 6, label: 'Swearing', counter: 0 },
     { id: 7, label: 'Screaming', counter: 0 },
@@ -80,15 +80,15 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
   ]);
 
   const [behaviorsColumnTwo, setBehaviorsColumnTwo] = useState([
-    { id: 1, label: 'Pushing', counter: 0 },
-    { id: 2, label: 'Disrobing', counter: 0 },
-    { id: 3, label: 'Attempt Escaping', counter: 0 },
-    { id: 4, label: 'Running', counter: 0 },
-    { id: 5, label: 'Body Functions', counter: 0 },
-    { id: 6, label: 'Physical Injury to Child', counter: 0 },
-    { id: 7, label: 'Physical Injury to Staff', counter: 0 },
-    { id: 8, label: 'Property Damage', counter: 0 },
-    { id: 9, label: 'Biting', counter: 0 },
+    { id: 1, label: 'Disrobing', counter: 0 },
+    { id: 2, label: 'Attempt Escaping', counter: 0 },
+    { id: 3, label: 'Running', counter: 0 },
+    { id: 4, label: 'Body Functions', counter: 0 },
+    { id: 5, label: 'Self Harming', counter: 0 },
+    { id: 6, label: 'Biting', counter: 0 },
+    { id: 7, label: 'Injury to Child', counter: 0 },
+    { id: 8, label: 'Injury to Staff', counter: 0 },
+    { id: 9, label: 'Property Damage', counter: 0 },
   ]);
 
   const [showModalForConfirmation, setShowModalForConfirmation] = useState<boolean>(false);
@@ -118,21 +118,21 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
       Mumbling: (behaviorsColumnOne.find(b => b.label === 'Mumbling') || { counter: 0 }).counter,
       Wiggling: (behaviorsColumnOne.find(b => b.label === 'Wiggling') || { counter: 0 }).counter,
       TalkingLoud: (behaviorsColumnOne.find(b => b.label === 'Talking Loud') || { counter: 0 }).counter,
-      WalkingAround: (behaviorsColumnOne.find(b => b.label === 'Walking Around') || { counter: 0 }).counter,
+      MovingAround: (behaviorsColumnOne.find(b => b.label === 'Moving Around') || { counter: 0 }).counter,
       Crying: (behaviorsColumnOne.find(b => b.label === 'Crying') || { counter: 0 }).counter,
       Swearing: (behaviorsColumnOne.find(b => b.label === 'Swearing') || { counter: 0 }).counter,
       Screaming: (behaviorsColumnOne.find(b => b.label === 'Screaming') || { counter: 0 }).counter,
       Aggression: (behaviorsColumnOne.find(b => b.label === 'Aggression') || { counter: 0 }).counter,
       Spitting: (behaviorsColumnOne.find(b => b.label === 'Spitting') || { counter: 0 }).counter,
-      Pushing: (behaviorsColumnTwo.find(b => b.label === 'Pushing') || { counter: 0 }).counter,
       Disrobing: (behaviorsColumnTwo.find(b => b.label === 'Disrobing') || { counter: 0 }).counter,
       AttemptEscaping: (behaviorsColumnTwo.find(b => b.label === 'Attempt Escaping') || { counter: 0 }).counter,
       Running: (behaviorsColumnTwo.find(b => b.label === 'Running') || { counter: 0 }).counter,
       BodyFunctions: (behaviorsColumnTwo.find(b => b.label === 'Body Functions') || { counter: 0 }).counter,
-      PhysicalInjuryToChild: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Child') || { counter: 0 }).counter,
-      PhysicalInjuryToStaff: (behaviorsColumnTwo.find(b => b.label === 'Physical Injury to Staff') || { counter: 0 }).counter,
+      SelfHarm: (behaviorsColumnTwo.find(b => b.label === 'Self Harming') || { counter: 0 }).counter,
+      Biting: (behaviorsColumnTwo.find(b => b.label === 'Biting') || { counter: 0 }).counter,
+      InjuryToChild: (behaviorsColumnTwo.find(b => b.label === 'Injury to Child') || { counter: 0 }).counter,
+      InjuryToStaff: (behaviorsColumnTwo.find(b => b.label === 'Injury to Staff') || { counter: 0 }).counter,
       PropertyDamage: (behaviorsColumnTwo.find(b => b.label === 'Property Damage') || { counter: 0 }).counter,
-      Bitting: (behaviorsColumnTwo.find(b => b.label === 'Biting') || { counter: 0 }).counter,
     };
 
     const manualTimeOutInformationDTO = {
@@ -159,7 +159,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
         });
 
       if (!response.ok) {
-        console.error(response.statusText);
+        alert(response.statusText);
       }
 
       navigate("/", {
@@ -167,7 +167,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
       });
 
     } catch (error) {
-      console.error(error);
+      alert(error);
     }
   }
 
@@ -292,7 +292,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                     <div style={{ display: "flex" }}>
                       <img src={Location} style={{ width: "35px", height: "35px" }} />
                       <Select
-                        
+
                         options={locationID === "OHCU" ? OmahaTimeoutRoomNames : LincolnTimeoutRoomNames}
                         onChange={whichTimeoutLocation}
                         placeholder="Location"
@@ -300,18 +300,18 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                         styles={{
                           container: (provided) => ({
                             ...provided,
-                            width: 150, 
+                            width: 150,
                             marginRight: 20
                           }),
                           control: (provided) => ({
                             ...provided,
-                            width: 150, 
-                            
+                            width: 150,
+
                           }),
                         }}
                       />
                       <Select
-                        isDisabled = {isWhichPostionDropDownActive === false ? true : false}
+                        isDisabled={isWhichPostionDropDownActive === false ? true : false}
                         options={isThereFourPositions === true ? fourPositions : threePositions}
                         onChange={whichTimeoutPosition}
                         placeholder="Position"
@@ -343,7 +343,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                     <div style={{ display: "flex", marginTop: "5px" }}>
                       <img src={Timer} style={{ width: "30px", height: "30px", marginTop: "7px", marginRight: "5px" }} />
                       <input
-                        disabled = {isChooseStartTimeActive === false ? true : false}
+                        disabled={isChooseStartTimeActive === false ? true : false}
                         type="time"
                         placeholder="Start Time"
                         style={{ width: "150px", height: "45px", marginRight: "20px" }}
@@ -355,7 +355,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                       />
 
                       <input
-                        disabled = {isChooseEndTimeActive === false ? true : false}
+                        disabled={isChooseEndTimeActive === false ? true : false}
                         type="time"
                         placeholder="End Time"
                         style={{ width: "150px", height: "45px" }}
@@ -369,12 +369,12 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                   </div>
 
 
-                  <div className="card" style={{opacity: canUserNowSubmit === false   ? "0.5" : "1", pointerEvents: canUserNowSubmit === false ? "none" : "auto"}}>
+                  <div className="card" style={{ opacity: canUserNowSubmit === false ? "0.5" : "1", pointerEvents: canUserNowSubmit === false ? "none" : "auto" }}>
                     <div className="card-body grid-container-For-behaviors" >
                       <div className="card" style={{ border: "none" }}>
                         {behaviorsColumnOne.map((button) => (
                           <div key={button.id} className="grid-container-For-behavior-buttons-modal">
-                            <button className="counter-buttons-modal" onTouchEnd={() => behaviorButtonClickColumnOne(button.id)}>
+                            <button className={button.id <= 2 ? "level_2_counter_button" : (button.id >= 2 && button.id <= 6) ? "level_3_counter_button" : "level_4_counter_button"} onTouchEnd={() => behaviorButtonClickColumnOne(button.id)}>
                               {button.label}
                             </button>
                             <p style={{
@@ -407,7 +407,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                             }}>
                               {button.counter}
                             </p>
-                            <button className="counter-buttons-modal" onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
+                            <button className={button.id <= 6 ? "level_4_counter_button" : "level_5_counter_button"} onTouchEnd={() => behaviorButtonClickColumnTwo(button.id)}>
                               {button.label}
                             </button>
                           </div>
@@ -419,7 +419,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({ showModel,
                   <br />
                   <div style={{ display: "flex", width: "350px", justifyContent: "space-between" }}>
                     <button onClick={handleClose} className="stopButton">Cancel</button>
-                    <button onClick={CheckToSeeIfTimeoutIsFinished} className="submitButton" disabled={canUserNowSubmit === false ? true : false} style={{opacity: canUserNowSubmit === false   ? "0.5" : "1"}}>Submit</button>
+                    <button onClick={CheckToSeeIfTimeoutIsFinished} className="submitButton" disabled={canUserNowSubmit === false ? true : false} style={{ opacity: canUserNowSubmit === false ? "0.5" : "1" }}>Submit</button>
                   </div>
                   <br />
                 </div>
