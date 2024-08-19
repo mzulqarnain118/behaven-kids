@@ -8,13 +8,13 @@ import Calendar from "../../src/assets/calendar.png";
 import PopupTimeOutRoomSession from "../Components/PopupTimeOutRoomSession";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { backEndCodeURLLocation } from "../config";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import dayjs, { Dayjs } from "dayjs";
 import Select, { SingleValue } from "react-select";
-import { ApiCall } from "../utils/ApiCall";
 
 interface ManuallyAddTimeoutModal {
   showModel: boolean;
@@ -76,7 +76,7 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
     { id: 1, label: "Mumbling", counter: 0 },
     { id: 2, label: "Wiggling", counter: 0 },
     { id: 3, label: "Talking Loud", counter: 0 },
-    { id: 4, label: "Walking Around", counter: 0 },
+    { id: 4, label: "Moving Around", counter: 0 },
     { id: 5, label: "Crying", counter: 0 },
     { id: 6, label: "Swearing", counter: 0 },
     { id: 7, label: "Screaming", counter: 0 },
@@ -85,15 +85,15 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
   ]);
 
   const [behaviorsColumnTwo, setBehaviorsColumnTwo] = useState([
-    { id: 1, label: "Pushing", counter: 0 },
-    { id: 2, label: "Disrobing", counter: 0 },
-    { id: 3, label: "Attempt Escaping", counter: 0 },
-    { id: 4, label: "Running", counter: 0 },
-    { id: 5, label: "Body Functions", counter: 0 },
-    { id: 6, label: "Physical Injury to Child", counter: 0 },
-    { id: 7, label: "Physical Injury to Staff", counter: 0 },
-    { id: 8, label: "Property Damage", counter: 0 },
-    { id: 9, label: "Biting", counter: 0 },
+    { id: 1, label: "Disrobing", counter: 0 },
+    { id: 2, label: "Attempt Escaping", counter: 0 },
+    { id: 3, label: "Running", counter: 0 },
+    { id: 4, label: "Body Functions", counter: 0 },
+    { id: 5, label: "Self Harming", counter: 0 },
+    { id: 6, label: "Biting", counter: 0 },
+    { id: 7, label: "Injury to Child", counter: 0 },
+    { id: 8, label: "Injury to Staff", counter: 0 },
+    { id: 9, label: "Property Damage", counter: 0 },
   ]);
 
   const [showModalForConfirmation, setShowModalForConfirmation] =
@@ -137,8 +137,8 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
           counter: 0,
         }
       ).counter,
-      WalkingAround: (
-        behaviorsColumnOne.find((b) => b.label === "Walking Around") || {
+      MovingAround: (
+        behaviorsColumnOne.find((b) => b.label === "Moving Around") || {
           counter: 0,
         }
       ).counter,
@@ -161,9 +161,6 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
       Spitting: (
         behaviorsColumnOne.find((b) => b.label === "Spitting") || { counter: 0 }
       ).counter,
-      Pushing: (
-        behaviorsColumnTwo.find((b) => b.label === "Pushing") || { counter: 0 }
-      ).counter,
       Disrobing: (
         behaviorsColumnTwo.find((b) => b.label === "Disrobing") || {
           counter: 0,
@@ -182,23 +179,28 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
           counter: 0,
         }
       ).counter,
-      PhysicalInjuryToChild: (
-        behaviorsColumnTwo.find(
-          (b) => b.label === "Physical Injury to Child"
-        ) || { counter: 0 }
+      SelfHarm: (
+        behaviorsColumnTwo.find((b) => b.label === "Self Harming") || {
+          counter: 0,
+        }
       ).counter,
-      PhysicalInjuryToStaff: (
-        behaviorsColumnTwo.find(
-          (b) => b.label === "Physical Injury to Staff"
-        ) || { counter: 0 }
+      Biting: (
+        behaviorsColumnTwo.find((b) => b.label === "Biting") || { counter: 0 }
+      ).counter,
+      InjuryToChild: (
+        behaviorsColumnTwo.find((b) => b.label === "Injury to Child") || {
+          counter: 0,
+        }
+      ).counter,
+      InjuryToStaff: (
+        behaviorsColumnTwo.find((b) => b.label === "Injury to Staff") || {
+          counter: 0,
+        }
       ).counter,
       PropertyDamage: (
         behaviorsColumnTwo.find((b) => b.label === "Property Damage") || {
           counter: 0,
         }
-      ).counter,
-      Bitting: (
-        behaviorsColumnTwo.find((b) => b.label === "Biting") || { counter: 0 }
       ).counter,
     };
 
@@ -215,17 +217,27 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
     };
 
     try {
-      await ApiCall(
-        "Cbs/ManuallyAddClientLevelTwoToFive",
-        "POST",
-        manualTimeOutInformationDTO
+      const response = await fetch(
+        `${backEndCodeURLLocation}Cbs/ManuallyAddClientLevelTwoToFive`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(manualTimeOutInformationDTO),
+        }
       );
+
+      if (!response.ok) {
+        alert(response.statusText);
+      }
 
       navigate("/", {
         replace: true,
       });
     } catch (error) {
-      console.error(error);
+      alert(error);
     }
   };
 
@@ -520,7 +532,13 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
                             className="grid-container-For-behavior-buttons-modal"
                           >
                             <button
-                              className="counter-buttons-modal"
+                              className={
+                                button.id <= 2
+                                  ? "level_2_counter_button"
+                                  : button.id >= 2 && button.id <= 6
+                                  ? "level_3_counter_button"
+                                  : "level_4_counter_button"
+                              }
                               onTouchEnd={() =>
                                 behaviorButtonClickColumnOne(button.id)
                               }
@@ -565,7 +583,11 @@ const ManuallyAddTimeoutModal: React.FC<ManuallyAddTimeoutModal> = ({
                               {button.counter}
                             </p>
                             <button
-                              className="counter-buttons-modal"
+                              className={
+                                button.id <= 6
+                                  ? "level_4_counter_button"
+                                  : "level_5_counter_button"
+                              }
                               onTouchEnd={() =>
                                 behaviorButtonClickColumnTwo(button.id)
                               }
