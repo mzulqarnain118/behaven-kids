@@ -28,6 +28,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [didUserCheckAClient, setDidUserCheckAClient] = useState(false);
     const [excelOrPDF, setExcelOrPDF] = useState<string>("");
+    const [sdpAbaorBoth, setSdpAbaorBoth] = useState<string>("");
 
     if (!open) return null;
 
@@ -52,7 +53,7 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
             const decoded = jwtDecode(token) as DecodedToken;
             const getLocationID = decoded.LocationID;
             const response = await axios.get(
-                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}&locationID=${getLocationID}&whichFileType=${excelOrPDF}`,
+                `${backEndCodeURLLocation}SignIn/ConvertExcelToPDF?getDate=${selectManualDate}&locationID=${getLocationID}&whichFileType=${excelOrPDF}&whichProgramType=${sdpAbaorBoth}`,
                 {
                     responseType: "blob", // Specify response type as blob
                     headers: {
@@ -95,19 +96,19 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
     return (
         <>
             <div>
-                <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered>
+                <BootstrapModal dialogClassName="custom-modal" show={showModel} onHide={handleClose} centered size="lg">
                     <BootstrapModal.Header closeButton>
                         <BootstrapModal.Title style={{ fontSize: "30px" }}>Choose A Date </BootstrapModal.Title>
                     </BootstrapModal.Header>
                     <BootstrapModal.Body className="d-flex justify-content-center align-items-center">
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', fontSize: "23px" }}>
                             <form onSubmit={DownloadPDF} style={{ display: 'flex' }}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']} >
-                                        <DatePicker value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{ textField: { required: true } }} />
+                                        <DatePicker value={selectManualDate} onChange={(newValue) => setSelectManualDate(newValue)} slotProps={{ textField: { required: true, size: 'medium' } }} />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <div style={{ marginTop: "10px", marginLeft: "10px" }}>
+                                <div style={{ marginTop: "10px", marginLeft: "40px" }}>
                                     <fieldset >
                                         <div>
                                             <input type="radio" id="PDF" name="format" value="PDF" required onClick={() => setExcelOrPDF(_prev => _prev = "PDF")}/>
@@ -119,7 +120,23 @@ const PopupDatePicker: React.FC<PopupTemporaryPin> = ({ showModel, setShowModel 
                                         </div>
                                     </fieldset>
                                 </div>
-                                <button className="btn btn-primary" type="submit" style={{ marginLeft: "15px", marginTop: "8px", height: "55px", width: "125px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>
+                                <div style={{ marginTop: "10px", marginLeft: "40px" }}>
+                                    <fieldset >
+                                        <div>
+                                            <input type="radio" id="SDP" name="programType" value="SDP" required onClick={() => setSdpAbaorBoth(_prev => _prev = "SDP")}/>
+                                            <label htmlFor="SDP" style={{ marginLeft: "3px" }} >SDP</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" id="ABA" name="programType" value="ABA" required onClick={() => setSdpAbaorBoth(_prev => _prev ="ABA")}/>
+                                            <label htmlFor="ABA" style={{ marginLeft: "3px" }} >ABA</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" id="Both" name="programType" value="Both" required onClick={() => setSdpAbaorBoth(_prev => _prev ="Both")}/>
+                                            <label htmlFor="Both" style={{ marginLeft: "3px" }} >Both</label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <button className="btn btn-primary" type="submit" style={{ marginLeft: "40px", marginTop: "8px", height: "75px", width: "140px", fontSize: "30px" }} disabled={didUserCheckAClient}> {isSubmitting ? "Submitting..." : "Submit"} </button>
                             </form>
                         </div>
                     </BootstrapModal.Body>

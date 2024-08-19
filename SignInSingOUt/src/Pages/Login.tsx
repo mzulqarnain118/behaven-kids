@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import personLogInImage from "../assets/personLogIn.svg";
 import lockPassword from "../assets/lockPassword.svg";
@@ -9,36 +9,38 @@ import { Toast } from "../Components/common/Toast/Toast";
 
 interface DecodedToken {
   role: string;
-  // Add other properties if needed
 }
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [didUserClickedOnTheLoginButton, setDidUserClickedOnTheLoginButton] =
-    useState<boolean>(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // Set the state to redirect to dashboard
-      const decoded = jwtDecode(token) as DecodedToken;
-      const userRole = decoded.role;
-      if (userRole === "parent") navigate("/PhoneNumber");
-      else if (userRole === "admin" || userRole === "secretary")
+  const handleNavigation = (role: string) => {
+    switch (role) {
+      case "parent":
+        navigate("/PhoneNumber");
+        break;
+      case "admin":
+      case "secretary":
         navigate("/EditChildTime");
-      else if (userRole === "floor")
+        break;
+      case "floor":
         navigate("/CbsAddOrTransferClientsToRooms");
-      else if (userRole === "rbt" || userRole === "thr")
+        break;
+      case "rbt":
+      case "thr":
         navigate("/rbtaddortransferclientstorooms");
-      else if (userRole.includes("tor")) navigate("/timeoutselectaclient");
+        break;
+      default:
+        if (role.includes("tor")) navigate("/timeoutselectaclient");
     }
-  }, []);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setDidUserClickedOnTheLoginButton(true);
+    setIsLoggingIn(true);
     try {
       const response = await ApiCall(
         "UserAuthentication/SignIn",
@@ -48,19 +50,14 @@ const LoginPage: React.FC = () => {
       );
       if (response?.token) {
         Toast("User Logged-In Successfully.");
-        const { token } = response;
-        localStorage.setItem("token", token);
-
-        const decoded = jwtDecode(token) as DecodedToken;
-        const userRole = decoded.role;
-
-        if (userRole === "parent") navigate("/PhoneNumber");
-        else if (userRole === "admin" || userRole === "secretary")
-          navigate("/EditChildTime");
-        else if (userRole.includes("tor")) navigate("/timeoutselectaclient");
+        localStorage.setItem("token", response.token);
+        const { role } = jwtDecode(response.token) as DecodedToken;
+        handleNavigation(role);
       }
-    } catch (error: any) {
-      console.log("🚀 ~ handleLogin ~ error:", error);
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -68,13 +65,9 @@ const LoginPage: React.FC = () => {
     <>
       <img
         src={BehavenLogo}
-        alt="My Image"
+        alt="Behaven Logo"
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
           height: "125px",
-          margin: "0 auto",
           position: "absolute",
           top: "20%",
           left: "49%",
@@ -87,7 +80,6 @@ const LoginPage: React.FC = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          margin: "0 auto",
           position: "absolute",
           top: "50%",
           left: "50%",
@@ -98,55 +90,41 @@ const LoginPage: React.FC = () => {
           <div className="card" style={{ width: "500px", textAlign: "center" }}>
             <div className="card-body">
               <h2 style={{ fontWeight: "700", marginBottom: "30px" }}>Login</h2>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="basic-addon1">
-                    <img
-                      src={personLogInImage}
-                      style={{ height: "46px", width: "46px" }}
-                    />
-                  </span>
+              {["username", "password"].map((field) => (
+                <div className="input-group mb-3" key={field}>
+                  <div className="input-group-prepend">
+                    <span className="input-group-text">
+                      <img
+                        src={
+                          field === "username" ? personLogInImage : lockPassword
+                        }
+                        style={{ height: "46px", width: "46px" }}
+                        alt={`${field} icon`}
+                      />
+                    </span>
+                  </div>
+                  <input
+                    style={{ height: "60px", width: "200px", fontSize: "25px" }}
+                    type={field === "username" ? "text" : "password"}
+                    className="form-control"
+                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                    value={field === "username" ? username : password}
+                    onChange={(e) =>
+                      field === "username"
+                        ? setUsername(e.target.value)
+                        : setPassword(e.target.value)
+                    }
+                    required
+                  />
                 </div>
-                <input
-                  style={{ height: "60px", width: "200px", fontSize: "25px" }}
-                  type="text"
-                  className="form-control"
-                  placeholder="Username"
-                  aria-label="Username"
-                  aria-describedby="basic-addon1"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                ></input>
-              </div>
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="basic-addon1">
-                    <img
-                      src={lockPassword}
-                      style={{ height: "46px", width: "46px" }}
-                    />
-                  </span>
-                </div>
-                <input
-                  style={{ height: "60px", width: "200px", fontSize: "25px" }}
-                  type="password"
-                  className="form-control"
-                  placeholder="Password"
-                  aria-label="Password"
-                  aria-describedby="basic-addon1"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                ></input>
-              </div>
+              ))}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
                 style={{ marginTop: "30px", width: "100%" }}
-                disabled={didUserClickedOnTheLoginButton}
+                disabled={isLoggingIn}
               >
-                Login
+                {isLoggingIn ? "Logging in..." : "Login"}
               </button>
             </div>
           </div>

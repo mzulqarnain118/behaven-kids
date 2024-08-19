@@ -42,10 +42,13 @@ const ResponsiveTabs: React.FC<ResponsiveTabsProps> = ({
         },
       }}
     >
-      <Tab label="Dashboard" />
+      <Tab label="Profile" />
+      <Tab label="Locations" />
+      {/* <Tab label="Authorized Party" />
       <Tab label="Insurance" />
       <Tab label="Treatment" />
       <Tab label="Appointments" />
+      <Tab label="PrimaryDoctor"/> */}
     </Tabs>
   );
 };

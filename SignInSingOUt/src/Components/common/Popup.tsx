@@ -11,12 +11,6 @@ import { styled } from "@mui/system";
 import Controls from ".";
 import MuiIcon from "./MuiIcon";
 
-// Using @mui/system's styled API for custom styles
-const DialogWrapper = styled(Dialog)(({ theme }) => ({
-  padding: theme.spacing(2),
-  position: "absolute",
-}));
-
 const RootBox = styled(Box)(({ theme }) => ({
   minWidth: 0,
   margin: theme.spacing(0.5),
@@ -39,14 +33,22 @@ export default function Popup({
 }: any) {
   return (
     <RootBox sx={{ position: "relative" }}>
-      <DialogWrapper fullWidth maxWidth={width ?? "md"} open={openPopup}>
+      <Dialog fullWidth maxWidth={width ?? "md"} open={openPopup}>
         <DialogTitle>
           {submitBtnLabel === "Confirm" ? (
             <Typography variant="h5">{title ?? "Are you sure?"}</Typography>
           ) : (
             <>
               <div className="row-between">
-                <Typography variant="h5" align="left">
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    color: "#1976d2",
+                  }}
+                  align="left"
+                >
                   {title}
                 </Typography>
                 <MuiIcon
@@ -102,7 +104,7 @@ export default function Popup({
             />
           </DialogActions>
         )}
-      </DialogWrapper>
+      </Dialog>
     </RootBox>
   );
 }

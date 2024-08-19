@@ -62,31 +62,19 @@ interface FormData {
   doctors: Doctor[];
 }
 
-interface PopupState {
-  isOpen: boolean;
-  title: string;
-  slug: string;
-}
-
 interface StoreState {
   formData: FormData;
   tabValue: number;
   selectedRowId: number;
-  popupState: PopupState;
   setFormData: (data: Partial<FormData>) => void;
   addResponsibleParty: (data: ResponsibleParty) => void;
   addAuthorizedParty: (data: AuthorizedPartyWithDetails) => void;
-  addSubchildToChild: (child: string, data: AuthorizedPartyWithDetails) => void;
-  addNestedChildToSubChild: (
-    child: string,
-    subChild: string,
-    data: any
-  ) => void;
+  addSubchildToChild: (child:string, data: AuthorizedPartyWithDetails) => void;
+  addNestedChildToSubChild: (child:string,subChild:string, data: AuthorizedPartyWithDetails) => void;
   addDoctor: (data: Doctor) => void;
   setChildObjFormData: (objName: string, data: any) => void;
   setTabValue: (value: number) => void;
   setSelectedRowId: (value: number | null) => void;
-  handlePopup: (isOpen: boolean, title?: string, slug?: string) => void;
 }
 
 const useStore = create<StoreState>()(
@@ -183,32 +171,24 @@ const useStore = create<StoreState>()(
             authorizedParties: [...state.formData.authorizedParties, data],
           },
         })),
-      addSubchildToChild: (child, data) =>
-        set((state) => ({
-          formData: {
+addSubchildToChild: (child, data) =>
+    set((state) => ({
+        formData: {
             ...state.formData,
             [child]: [...state.formData[child], data],
-          },
-        })),
-      addNestedChildToSubChild: (child, subChild, data) =>
-        set((state) => {
-          const selectedRow =
-            state.formData[child]?.[state.selectedRowId] || {};
-          const existingSubChild = selectedRow[subChild] || [];
+        },
+    })),
 
-          return {
-            formData: {
-              ...state.formData,
-              [child]: {
+  addNestedChildToSubChild: (child, subChild, data) =>
+    set((state) => ({
+        formData: {
+            ...state.formData,
+            [child]: {
                 ...state.formData[child],
-                [state.selectedRowId]: {
-                  ...selectedRow,
-                  [subChild]: [...existingSubChild, data],
-                },
-              },
+                [subChild]: [...state.formData[child][subChild], data],
             },
-          };
-        }),
+        },
+    })),
 
       addDoctor: (data: Doctor) =>
         set((state) => ({
@@ -237,15 +217,6 @@ const useStore = create<StoreState>()(
       setSelectedRowId: (value) => set(() => ({ selectedRowId: value })),
       tabValue: 0,
       selectedRowId: 1,
-      popupState: {
-        isOpen: false,
-        title: "",
-        slug: null,
-      },
-      handlePopup: (isOpen, title, slug) =>
-        set(() => ({
-          popupState: { isOpen, title, slug },
-        })),
     }),
     {
       name: "form-data-storage", // name of the item in the storage (can be customized)

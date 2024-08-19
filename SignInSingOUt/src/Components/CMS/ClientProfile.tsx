@@ -12,7 +12,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useStore from "./store/useStore";
 import { clientProfileSchema } from "./validation";
@@ -26,8 +26,16 @@ interface ClientProfileProps {
 }
 
 const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
-  const { formData, setFormData, addAuthorizedParty, addDoctor,addResponsibleParty } = useStore();
-  console.log(formData,"fromDaraaa")
+  const {
+    formData,
+    setFormData,
+    addAuthorizedParty,
+    addDoctor,
+    handlePopup,
+    setSelectedRowId,
+    addResponsibleParty,
+  } = useStore();
+  console.log(formData, "fromDaraaa");
 
   const {
     control,
@@ -35,9 +43,9 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
     formState: { errors },
   } = useForm({
     defaultValues: formData,
+    // @ts-ignore
     resolver: yupResolver(clientProfileSchema),
   });
-
 
   const onSubmit = (data: any) => {
     setFormData(data);
@@ -55,7 +63,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
           onSubmit={handleSubmit(onSubmit)}
           sx={{ p: 2 }}
         >
-           {/* Main Client Information  */}
+          {/* Main Client Information  */}
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Controller
@@ -311,8 +319,203 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
               />
             </Grid>
           </Grid>
+          {/* Program Section  */}
+          <Box sx={{ mt: 4 }}>
+            <Grid
+              container
+              spacing={2}
+              sx={{ mt: 1 }}
+              justifyContent="space-between"
+            >
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h6">Program</Typography>
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() =>
+                    addResponsibleParty({
+                      firstName: "",
+                      lastName: "",
+                      relationship: "",
+                    })
+                  }
+                >
+                  Enroll
+                </Button>
+              </Grid>
+            </Grid>
 
-           {/* Responsible Party Section  */}
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="abaDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="ABA Enorll Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.abaDate}
+                      helperText={errors.abaDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="abaStart"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Aba Start Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.abaStart}
+                      helperText={errors.abaStart?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="dischargeDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Aba Diascharge Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.dischargeDate}
+                      helperText={errors.dischargeDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="spdDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="SPD Enorll Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.spdDate}
+                      helperText={errors.spdDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="spdStart"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="SPD Start Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.spdStart}
+                      helperText={errors.spdStart?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="spddischargeDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="SPD Diascharge Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.spddischargeDate}
+                      helperText={errors.spddischargeDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="theropyDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Theropy Enorll Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.theropyDate}
+                      helperText={errors.theropyDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="theropyStart"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Theropy Start Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.theropyStart}
+                      helperText={errors.theropyStart?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Controller
+                  name="theropydischargeDate"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Theropy Diascharge Date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      {...field}
+                      error={!!errors.theropydischargeDate}
+                      helperText={errors.theropydischargeDate?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+          {/* Responsible Party Section  */}
           <Box sx={{ mt: 4 }}>
             <Grid
               container
@@ -329,7 +532,8 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 <Button
                   variant="contained"
                   fullWidth
-                  onClick={() => addResponsibleParty({
+                  onClick={() =>
+                    addResponsibleParty({
                       firstName: "",
                       lastName: "",
                       relationship: "",
@@ -342,7 +546,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
             </Grid>
 
             {formData?.responsibleParties?.map((item, index) => (
-              <Grid container spacing={2} sx={{ mt: 1 }} key={item.id}>
+              <Grid container spacing={2} sx={{ mt: 1 }} key={index}>
                 <Grid item xs={12} sm={3}>
                   <TextField
                     disabled
@@ -374,7 +578,10 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                     variant="contained"
                     fullWidth
                     sx={{ height: "56px" }}
-                    onClick={(e) => handleTabChange(e, 1, index)}
+                    onClick={() => {
+                      handlePopup(true, "Guardian Information", "responsible");
+                      setSelectedRowId(index);
+                    }}
                   >
                     Profile
                   </Button>
@@ -397,7 +604,8 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 <Button
                   variant="contained"
                   fullWidth
-                  onClick={() =>  addAuthorizedParty({
+                  onClick={() =>
+                    addAuthorizedParty({
                       firstName: "",
                       phone: "",
                       email: "",
@@ -443,7 +651,14 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                     variant="contained"
                     fullWidth
                     sx={{ height: "56px" }}
-                    onClick={(e) => handleTabChange(e, 2, index)}
+                    onClick={() => {
+                      handlePopup(
+                        true,
+                        "Authorized Party Information",
+                        "authorized"
+                      );
+                      setSelectedRowId(index);
+                    }}
                   >
                     Profile
                   </Button>
@@ -475,15 +690,15 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
 
               <Grid item xs={12} sm={4}>
                 <Controller
-                  name="emergencyPhone1"
+                  name="firstName"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       fullWidth
                       label="Phone"
                       {...field}
-                      error={!!errors.emergencyPhone1}
-                      helperText={errors.emergencyPhone1?.message}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName?.message}
                     />
                   )}
                 />
@@ -573,7 +788,8 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 <Button
                   variant="contained"
                   fullWidth
-                  onClick={() => addDoctor({
+                  onClick={() =>
+                    addDoctor({
                       firstName: "",
                       lastName: "",
                       email: "",
@@ -581,7 +797,6 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                       clinicWebsite: "",
                       clinicPhone: "",
                     })
-                  
                   }
                 >
                   Add
@@ -592,7 +807,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
             {formData?.doctors?.map((item, index) => (
               <Grid container spacing={2} sx={{ mt: 1 }} key={index}>
                 <Grid item xs={12} sm={4}>
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="First Name"
@@ -601,7 +816,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="Last Name"
@@ -610,8 +825,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="Email"
@@ -619,10 +833,9 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 </Grid>
 
-                 {/* Additional fields for clinic details  */}
+                {/* Additional fields for clinic details  */}
                 <Grid item xs={12} sm={4}>
-
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="Clinic Name"
@@ -631,7 +844,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="Website"
@@ -640,8 +853,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-
-                <TextField
+                  <TextField
                     disabled
                     fullWidth
                     label="Phone"
@@ -653,7 +865,10 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                     variant="contained"
                     fullWidth
                     sx={{ height: "56px", textAlign: "right" }}
-                    onClick={(e) => handleTabChange(e, 3, index)}
+                    onClick={() => {
+                      handlePopup(true, "Primary Doctor Information", "doctor");
+                      setSelectedRowId(index);
+                    }}
                   >
                     Profile
                   </Button>
@@ -678,4 +893,3 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
 };
 
 export default ClientProfile;
-

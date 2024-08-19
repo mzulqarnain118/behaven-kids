@@ -22,7 +22,12 @@ import Controls from "../common";
 import { Toast } from "../common/Toast/Toast";
 
 function AuthorizedParty() {
-  const { formData, setChildObjFormData,addNestedChildToSubChild, selectedRowId } = useStore();
+  const {
+    formData,
+    setChildObjFormData,
+    addNestedChildToSubChild,
+    selectedRowId,
+  } = useStore();
 
   const {
     control,
@@ -30,6 +35,7 @@ function AuthorizedParty() {
     formState: { errors },
   } = useForm({
     defaultValues: formData.authorizedParties?.[selectedRowId],
+    // @ts-ignore
     resolver: yupResolver(authorizedPartySchema),
   });
 
@@ -142,7 +148,7 @@ function AuthorizedParty() {
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              <Typography variant="h6" sx={{ mt: "0.7rem" }}>
+              <Typography variant="h6" sx={{ mt: "0.7rem", color: "#424242" }}>
                 Authorized By:
               </Typography>
             </Grid>
@@ -213,74 +219,88 @@ function AuthorizedParty() {
                 }}
               >
                 <Grid item xs={6} sm={6}>
-                  <Typography variant="h6">Patients</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{ mt: 2, mb: 1, color: "#424242" }}
+                  >
+                    Patients
+                  </Typography>
                 </Grid>
                 <Grid item xs={6} sm={2}>
                   <Button
                     variant="contained"
                     color="primary"
                     sx={{ float: "right" }}
-                       onClick={() =>  addNestedChildToSubChild('authorizedParties',"patients",{
-                      firstName: "",
-                      lastName: "",
-                      authorized: false,
-                    })
-                  }
+                    onClick={() =>
+                      addNestedChildToSubChild(
+                        "authorizedParties",
+                        "patients",
+                        {
+                          firstName: "",
+                          lastName: "",
+                          authorized: false,
+                        }
+                      )
+                    }
                   >
                     Add
                   </Button>
                 </Grid>
               </Grid>
-{formData?.authorizedParties?.[selectedRowId]?.patients?.map((item, index) => (
-              <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid container spacing={2} direction="row" alignItems="center">
+              {formData?.authorizedParties?.[selectedRowId]?.patients?.map(
+                (item, index) => (
+                  <Grid container spacing={2} sx={{ mt: 1 }}>
+                    <Grid
+                      container
+                      spacing={2}
+                      direction="row"
+                      alignItems="center"
+                    >
+                      <Grid item xs={12} sm={3}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="First Name"
+                          value={item?.firstName}
+                        />
+                      </Grid>
 
-                   <Grid item xs={12} sm={3}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="First Name"
-                    value={item?.firstName}
-                  />
-                </Grid>
+                      <Grid item xs={12} sm={3}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Last Name"
+                          value={item?.lastName}
+                        />
+                      </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="Last Name"
-                    value={item?.lastName}
-                  />
-                </Grid>
-
-                  <Grid item sm={3}>
-        <FormControlLabel
-                              disabled
-
-                          control={<Checkbox  checked={item?.authorized} />}
+                      <Grid item sm={3}>
+                        <FormControlLabel
+                          disabled
+                          control={<Checkbox checked={item?.authorized} />}
                           label="Authorized"
                         />
+                      </Grid>
+                      <Grid item sm={3}>
+                        <Button variant="contained" fullWidth>
+                          Profile
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item sm={3}>
-                    <Button variant="contained" fullWidth>
-                      Profile
-                    </Button>
-                  </Grid>
-                </Grid>
+                )
+              )}
 
-  </Grid>
-))}
-              
-                <Grid item xs={12}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    sx={{ my: '1rem', float: "right" }}
-                  >
-                    Save
-                  </Button>
-                </Grid>
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  sx={{ my: "1rem", float: "right" }}
+                >
+                  Save
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Box>

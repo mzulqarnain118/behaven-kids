@@ -40,7 +40,12 @@ interface FormData {
 }
 
 function GuardianInfo() {
-  const { formData, setChildObjFormData, selectedRowId } = useStore();
+  const {
+    formData,
+    setChildObjFormData,
+    addNestedChildToSubChild,
+    selectedRowId,
+  } = useStore();
 
   const {
     control,
@@ -48,6 +53,7 @@ function GuardianInfo() {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: formData.responsibleParties?.[selectedRowId],
+    // @ts-ignore
     resolver: yupResolver(guardianSchema),
   });
 
@@ -276,72 +282,98 @@ function GuardianInfo() {
 
             {/* Authorized Party Section */}
             <Grid item xs={12} sx={{ mt: 4 }}>
-              <Typography variant="h6">Authorized Party</Typography>
-              <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid container spacing={2} direction="row" alignItems="center">
-                  {/* <Grid item sm={3}>
-                    <Controller
-                      name="authId"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField fullWidth label="Id" {...field} />
-                      )}
-                    />
-                  </Grid> */}
-
-                  <Grid item sm={3}>
-                    <Controls.ControlledInput
-                      name="authFirstName1"
-                      control={control}
-                      errors={errors}
-                      label="First Name"
-                    />
-                  </Grid>
-
-                  <Grid item sm={3}>
-                    <Controls.ControlledInput
-                      name="authLastName"
-                      control={control}
-                      errors={errors}
-                      label="Last Name"
-                    />
-                  </Grid>
-
-                  <Grid item sm={3}>
-                    <Controller
-                      name="authAuthorized"
-                      control={control}
-                      render={({ field }) => (
-                        <FormControlLabel
-                          control={<Checkbox {...field} />}
-                          label="Authorized"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item sm={3}>
-                    <Button variant="contained" fullWidth>
-                      Profile
-                    </Button>
-                  </Grid>
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  mt: 1,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Grid item xs={6} sm={6}>
+                  <Typography
+                    variant="h6"
+                    sx={{ mt: 2, mb: 1, color: "#424242" }}
+                  >
+                    Authorized Party
+                  </Typography>
                 </Grid>
-
-                <Grid item xs={12}>
-                  <Button variant="contained" fullWidth>
-                    Add
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6} sm={2}>
                   <Button
                     variant="contained"
                     color="primary"
-                    type="submit"
-                    style={{ marginTop: 10, float: "right" }}
+                    sx={{ float: "right" }}
+                    onClick={() =>
+                      addNestedChildToSubChild(
+                        "responsibleParties",
+                        "authorizedParties",
+                        {
+                          firstName: "",
+                          lastName: "",
+                          authorized: false,
+                        }
+                      )
+                    }
                   >
-                    Save
+                    Add
                   </Button>
                 </Grid>
               </Grid>
+              {formData?.responsibleParties?.[
+                selectedRowId
+              ]?.authorizedParties?.map((item, index) => (
+                <Grid container spacing={2} sx={{ mt: 1 }}>
+                  <Grid
+                    container
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
+                  >
+                    <Grid item xs={12} sm={3}>
+                      <TextField
+                        disabled
+                        fullWidth
+                        label="First Name"
+                        value={item?.firstName}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={3}>
+                      <TextField
+                        disabled
+                        fullWidth
+                        label="Last Name"
+                        value={item?.lastName}
+                      />
+                    </Grid>
+
+                    <Grid item sm={3}>
+                      <FormControlLabel
+                        disabled
+                        control={<Checkbox checked={item?.authorized} />}
+                        label="Authorized"
+                      />
+                    </Grid>
+                    <Grid item sm={3}>
+                      <Button variant="contained" fullWidth>
+                        Profile
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              ))}
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{ marginTop: 10, float: "right" }}
+              >
+                Save
+              </Button>
             </Grid>
           </Grid>
         </Box>

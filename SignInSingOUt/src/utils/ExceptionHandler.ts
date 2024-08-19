@@ -5,7 +5,7 @@ export default function ExceptionHandler(error: any) {
     Toast("Your session has expired", "success");
     localStorage.removeItem("token");
 
-    window.location = "/auth";
+    window.location = "/";
   };
 
   const handleStatusCodeError = (status: any, msg: any) => {
