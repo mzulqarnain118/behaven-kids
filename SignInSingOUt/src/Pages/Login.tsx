@@ -1,11 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import personLogInImage from "../assets/personLogIn.svg";
-import lockPassword from "../assets/lockPassword.svg";
-import BehavenLogo from "../assets/BehavenLogo.jpg";
 import { jwtDecode } from "jwt-decode";
 import { ApiCall } from "../utils/ApiCall";
 import { Toast } from "../Components/common/Toast/Toast";
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  InputAdornment,
+  Box,
+} from "@mui/material";
+import { Person as PersonIcon, Lock as LockIcon } from "@mui/icons-material";
+import BehavenLogo from "../assets/BehavenLogo.jpg";
 
 interface DecodedToken {
   role: string;
@@ -24,7 +32,7 @@ const LoginPage: React.FC = () => {
         break;
       case "admin":
       case "secretary":
-        navigate("/EditChildTime");
+        navigate("/");
         break;
       case "floor":
         navigate("/CbsAddOrTransferClientsToRooms");
@@ -51,6 +59,7 @@ const LoginPage: React.FC = () => {
       if (response?.token) {
         Toast("User Logged-In Successfully.");
         localStorage.setItem("token", response.token);
+        window.dispatchEvent(new Event("storage"));
         const { role } = jwtDecode(response.token) as DecodedToken;
         handleNavigation(role);
       }
@@ -62,75 +71,87 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <>
-      <img
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <Box
+        component="img"
         src={BehavenLogo}
         alt="Behaven Logo"
-        style={{
-          height: "125px",
+        sx={{
+          height: 125,
           position: "absolute",
           top: "20%",
-          left: "49%",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          position: "absolute",
-          top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
         }}
-      >
-        <form onSubmit={handleLogin}>
-          <div className="card" style={{ width: "500px", textAlign: "center" }}>
-            <div className="card-body">
-              <h2 style={{ fontWeight: "700", marginBottom: "30px" }}>Login</h2>
-              {["username", "password"].map((field) => (
-                <div className="input-group mb-3" key={field}>
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">
-                      <img
-                        src={
-                          field === "username" ? personLogInImage : lockPassword
-                        }
-                        style={{ height: "46px", width: "46px" }}
-                        alt={`${field} icon`}
-                      />
-                    </span>
-                  </div>
-                  <input
-                    style={{ height: "60px", width: "200px", fontSize: "25px" }}
-                    type={field === "username" ? "text" : "password"}
-                    className="form-control"
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    value={field === "username" ? username : password}
-                    onChange={(e) =>
-                      field === "username"
-                        ? setUsername(e.target.value)
-                        : setPassword(e.target.value)
-                    }
-                    required
-                  />
-                </div>
-              ))}
-              <button
-                type="submit"
-                className="btn btn-primary btn-lg"
-                style={{ marginTop: "30px", width: "100%" }}
-                disabled={isLoggingIn}
-              >
-                {isLoggingIn ? "Logging in..." : "Login"}
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </>
+      />
+      <Card sx={{ width: 500, mt: 8 }}>
+        <CardContent>
+          <Typography
+            variant="h4"
+            component="h2"
+            fontWeight={700}
+            mb={3}
+            textAlign="center"
+          >
+            Login
+          </Typography>
+          <form onSubmit={handleLogin}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Username"
+              variant="outlined"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Password"
+              type="password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              disabled={isLoggingIn}
+              sx={{ mt: 3 }}
+            >
+              {isLoggingIn ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 

@@ -17,15 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import useStore from "./store/useStore";
 import { clientProfileSchema } from "./validation";
 
-interface ClientProfileProps {
-  handleTabChange: (
-    event: React.SyntheticEvent,
-    newValue: number,
-    rowId: number
-  ) => void;
-}
-
-const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
+const ClientProfile: React.FC<ClientProfileProps> = () => {
   const {
     formData,
     setFormData,
@@ -37,13 +29,13 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
   } = useStore();
   console.log(formData, "fromDaraaa");
 
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: formData,
-    // @ts-ignore
     resolver: yupResolver(clientProfileSchema),
   });
 

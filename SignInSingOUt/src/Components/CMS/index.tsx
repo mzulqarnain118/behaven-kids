@@ -9,6 +9,11 @@ import AuthorizedParty from "./AuthorizedParty";
 import useStore from "./store/useStore";
 import PrimaryDoctor from "./PrimaryDoctor";
 import Controls from "../common";
+import ABA from "./ABA";
+import SDP from "./SDP";
+import Therapy from "./Therapy";
+import Clinic from "./Clinic";
+import TableData from "./TableData";
 
 function index() {
   const {
@@ -23,6 +28,7 @@ function index() {
     responsible: <GuardianInfo />,
     authorized: <AuthorizedParty />,
     doctor: <PrimaryDoctor />,
+    client: <ClientProfile />,
   };
   console.log("🚀 ~ index ~ formData:", formData, popupState);
 
@@ -39,10 +45,15 @@ function index() {
 
       <ResponsiveTabs value={tabValue} handleChange={handleTabChange} />
 
-      {tabValue === 0 && <ClientProfile handleTabChange={handleTabChange} />}
-      {tabValue === 1 && <Insurance />}
-      {tabValue === 2 && <Treatment />}
-      {tabValue === 3 && <Appointment />}
+      {tabValue === 0 && <ClientProfile />}
+      {tabValue === 1 && <ABA />}
+      {tabValue === 2 && <SDP />}
+      {tabValue === 3 && <Therapy />}
+      {tabValue === 4 && <Clinic />}
+      {tabValue === 5 && <Insurance />}
+      {tabValue === 6 && <Treatment />}
+      {tabValue === 7 && <Appointment />}
+      {tabValue === 8 && <TableData />}
 
       <Grid item xs={12}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -56,7 +67,7 @@ function index() {
           </Button>
           <Button
             variant="contained"
-            disabled={tabValue === 6}
+            disabled={tabValue === 8}
             onClick={() => setTabValue(tabValue + 1)}
             sx={{ marginTop: 5 }}
           >

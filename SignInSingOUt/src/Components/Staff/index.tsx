@@ -1,9 +1,10 @@
-import { useState } from "react";
 import ResponsiveTabs from "./ResponsiveTabs";
 import { Typography, Box, Grid, Button } from "@mui/material";
 import StaffProfile from "./StaffProfile";
 import StaffLocations from "./StaffLoctions";
+import StaffProgram from "./StaffProgram";
 import useStore from "./store/useStore";
+import ClassRooms from "./ClassRoom";
 
 function index() {
   const { tabValue, formData, setTabValue, setSelectedRowId } = useStore();
@@ -17,14 +18,12 @@ function index() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>
-        Client Profile
-      </Typography>
-
       <ResponsiveTabs value={tabValue} handleChange={handleTabChange} />
 
       {tabValue === 0 && <StaffProfile handleTabChange={handleTabChange} />}
       {tabValue === 1 && <StaffLocations />}
+      {tabValue === 2 && <StaffProgram />}
+      {tabValue === 3 && <ClassRooms />}
 
       <Grid item xs={12}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -38,7 +37,7 @@ function index() {
           </Button>
           <Button
             variant="contained"
-            disabled={tabValue === 1}
+            disabled={tabValue === 3}
             onClick={() => setTabValue(tabValue + 1)}
             sx={{ marginTop: 5 }}
           >

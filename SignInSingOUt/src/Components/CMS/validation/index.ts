@@ -156,3 +156,39 @@ export const authorizedPartySchema = Yup.object().shape({
   authByLastName: Yup.string().required("Last Name is required"),
   relationship: Yup.string().required("Relationship is required"),
 });
+
+export const clinicSchema = Yup.object().shape({
+  clinicName: Yup.string()
+    .required("First Name is required")
+    .matches(/^[a-zA-Z]+$/, "First Name should only contain letters"),
+    website: Yup.string()
+    .required("Website is required")
+    .url("Please enter a valid website URL"),
+    phone: Yup.string()
+    .required("Mobile number is required")
+    .matches(phoneRegExp, "Mobile number is not valid"),
+    fax: Yup.string()
+    .required("Fax number is required")
+    .matches(phoneRegExp, "Fax number is not valid"),
+    address1: Yup.string().required("Address 1 is required"),
+    address2: Yup.string().required("Address 2 is required"),
+    city: Yup.string()
+    .matches(/^[A-Za-z\s]+$/, "Only alphabetic characters are allowed")
+    .required("City is required"),
+  state: Yup.string()
+    .matches(/^[A-Za-z\s]+$/, "Only alphabetic characters are allowed")
+    .required("State is required"),
+  zipCode: Yup.string()
+    .matches(/^\d{5}(-\d{4})?$/, "Invalid Zip Code format")
+    .required("Zip Code is required"),
+    doctorId: Yup.number()
+    .required("Doctor id is required")
+    .min(100000, "Invalid Code")
+    .max(999999, "Invalid Code"),
+    firstName: Yup.string()
+    .required("Last Name is required")
+    .matches(/^[a-zA-Z]+$/, "Last Name should only contain letters"),
+    lastName: Yup.string()
+    .required("Last Name is required")
+    .matches(/^[a-zA-Z]+$/, "Last Name should only contain letters"),
+});

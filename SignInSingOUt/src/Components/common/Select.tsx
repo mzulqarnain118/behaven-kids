@@ -47,9 +47,12 @@ export default function Select(
   return (
     <FormControl fullWidth variant="outlined" {...(error && { error: true })}>
       {label && (
-        <InputLabel>{`${label}${props.required ? ` *` : ``}`}</InputLabel>
+        <InputLabel id={`${name}-label`}>{`${label}${
+          props.required ? ` *` : ``
+        }`}</InputLabel>
       )}
       <MuiSelect
+        labelId={`${name}-label`}
         value={value ?? ""}
         label={label && `${label}${props.required ? `*` : ``}`}
         name={name}

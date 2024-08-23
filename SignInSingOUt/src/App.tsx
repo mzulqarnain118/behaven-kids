@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import "./App.css";
 import "./styles/flexboxClasses.css";
 import Navbar from "./Navbar/Navbar";
@@ -6,6 +6,8 @@ import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import { ContainerToast } from "./Components/common/Toast/ContainerToast";
 import Controls from "./Components/common";
+import WelcomePage from "./Components/WelcomePage";
+import PublicRoute from "./PublicRoute";
 
 // Lazy load pages
 const PhoneNumber = lazy(() => import("./Pages/PhoneNumber"));
@@ -47,36 +49,46 @@ const CMS = lazy(() => import("./Components/CMS"));
 const Staff = lazy(() => import("./Components/Staff"));
 
 const App: React.FC = () => {
-  // Get the token from localStorage
-  const token = localStorage.getItem("token");
-  const isAuthenticated = Boolean(token); // Assuming a valid token indicates authenticated state
+  const [isAuthenticated, setIsAuthenticated] = useState<any>();
+  const checkToken = () => {
+    setIsAuthenticated(!!localStorage.getItem("token"));
+  };
+  useEffect(() => {
+    checkToken();
+    window.addEventListener("storage", checkToken);
+    return () => {
+      window.removeEventListener("storage", checkToken);
+    };
+  }, []);
 
   return (
     <>
-      <Navbar />
+      {isAuthenticated && <Navbar />}
       <Suspense fallback={<Controls.Spinner isOverlay={true} />}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Login />} />
-          <Route path="/PhoneNumber" element={<PhoneNumber />} />
-          <Route path="/ParentsPin" element={<ParentsPin />} />
-          <Route
-            path="/ValidateEmailAddress"
-            element={<ValidateEmailAddress />}
-          />
-          <Route
-            path="/ValidateTemporaryPin"
-            element={<ValidateTemporaryPin />}
-          />
-          <Route path="/ResetPin" element={<ResetPin />} />
-          <Route
-            path="/ReceptionistGivesTemporaryPinToParent"
-            element={<ReceptionistGivesTemporaryPinToParent />}
-          />
-
+          <Route element={<PublicRoute isAuthenticated={isAuthenticated} />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/PhoneNumber" element={<PhoneNumber />} />
+            <Route path="/ParentsPin" element={<ParentsPin />} />
+            <Route
+              path="/ValidateEmailAddress"
+              element={<ValidateEmailAddress />}
+            />
+            <Route
+              path="/ValidateTemporaryPin"
+              element={<ValidateTemporaryPin />}
+            />
+            <Route path="/ResetPin" element={<ResetPin />} />
+            <Route
+              path="/ReceptionistGivesTemporaryPinToParent"
+              element={<ReceptionistGivesTemporaryPinToParent />}
+            />
+          </Route>
           {/* Private Routes */}
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/AddParentInfo" element={<AddParentInfo />} />
+            <Route index element={<WelcomePage />} />
             <Route
               path="/ChooseWhichChildren"
               element={<ChooseWhichChildren />}

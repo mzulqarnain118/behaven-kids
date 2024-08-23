@@ -12,12 +12,13 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller} from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useStore from "./store/useStore";
 import { staffProfileSchema } from "./validation";
+import Controls from "../common";
 
-interface ClientProfileProps {
+interface StaffProfileProps {
   handleTabChange: (
     event: React.SyntheticEvent,
     newValue: number,
@@ -25,8 +26,8 @@ interface ClientProfileProps {
   ) => void;
 }
 
-const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
-  const { formData, setFormData, addAuthorizedParty, addDoctor,addResponsibleParty } = useStore();
+const StaffProfile: React.FC<StaffProfileProps> = ({ handleTabChange }) => {
+  const { formData, setFormData} = useStore();
   console.log(formData,"fromDaraaa")
 
   const {
@@ -38,7 +39,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
     resolver: yupResolver(staffProfileSchema),
   });
 
-
+console.log(formData)
   const onSubmit = (data: any) => {
     setFormData(data);
     // You can also handle form submission here, e.g., send data to an API
@@ -56,38 +57,22 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
           sx={{ p: 2 }}
         >
            {/* Main Client Information  */}
-          <Grid container spacing={2}>
+           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Controller
+              <Controls.ControlledInput
                 name="firstName"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    fullWidth
-                    label="First Name"
-                    {...field}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                  />
-                )}
+                errors={errors}
+                label="First Name"
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Controller
+              <Controls.ControlledInput
                 name="lastName"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    type="text"
-                    fullWidth
-                    label="Last Name"
-                    {...field}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                  />
-                )}
+                errors={errors}
+                label="Last Name"
               />
             </Grid>
 
@@ -190,7 +175,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
 
             <Grid item xs={12} sm={6}>
               <Controller
-                name="status"
+                name="activeStatus"
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth>
@@ -200,7 +185,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                       labelId="status-label"
                       fullWidth
                       {...field}
-                      error={!!errors.status}
+                      error={!!errors.activeStatus}
                     >
                       <MenuItem value="" disabled>
                         Select Status
@@ -211,8 +196,8 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   </FormControl>
                 )}
               />
-              {errors.status && (
-                <Typography color="error">{errors.status.message}</Typography>
+              {errors.activeStatus && (
+                <Typography color="error">{errors.activeStatus.message}</Typography>
               )}
             </Grid>
 
@@ -230,6 +215,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.address1 && (
+                    <Typography color="error">
+                      {errors.address1.message}
+                    </Typography>
+                  )}
             </Grid>
 
             <Grid item xs={12}>
@@ -246,6 +236,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.address2 && (
+                    <Typography color="error">
+                      {errors.address2.message}
+                    </Typography>
+                  )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -263,6 +258,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.city && (
+                    <Typography color="error">
+                      {errors.city.message}
+                    </Typography>
+                  )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -279,6 +279,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.state && (
+                    <Typography color="error">
+                      {errors.state.message}
+                    </Typography>
+                  )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -295,6 +300,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.zipCode && (
+                    <Typography color="error">
+                      {errors.zipCode.message}
+                    </Typography>
+                  )}
             </Grid>
           </Grid>
 
@@ -316,17 +326,17 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
             <Grid item xs={12} sm={6}>
               <Grid item xs={12} sm={12}>
                   <Controller
-                    name="deportment"
+                    name="department"
                     control={control}
                     render={({ field }) => (
                       <FormControl fullWidth>
-                        <InputLabel id="status-label">Deportment</InputLabel>
+                        <InputLabel id="status-label">Department</InputLabel>
                         <Select
-                          label="Deportment"
+                          label="Department"
                           labelId="status-label"
                           fullWidth
                           {...field}
-                          error={!!errors.status}
+                          error={!!errors.department}
                         >
                           <MenuItem value="" disabled>
                             Select Status
@@ -337,8 +347,10 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                       </FormControl>
                     )}
                   />
-                  {errors.status && (
-                    <Typography color="error">{errors.deportment.message}</Typography>
+                    {errors.department && (
+                    <Typography color="error">
+                      {errors.department.message}
+                    </Typography>
                   )}
                 </Grid>
              </Grid>
@@ -358,6 +370,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                   />
                 )}
               />
+                {errors.roleDate && (
+                    <Typography color="error">
+                      {errors.roleDate.message}
+                    </Typography>
+                  )}
             </Grid>
              <Grid item xs={12} sm={6}>
                   <Grid item xs={12} sm={12}>
@@ -372,7 +389,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                                 labelId="status-label"
                                 fullWidth
                                 {...field}
-                                error={!!errors.status}
+                                error={!!errors.role}
                               >
                                 <MenuItem value="" disabled>
                                   Select Role
@@ -383,9 +400,11 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
                             </FormControl>
                           )}
                         />
-                        {errors.status && (
-                          <Typography color="error">{errors.role.message}</Typography>
-                        )}
+                        {errors.role && (
+                    <Typography color="error">
+                      {errors.role.message}
+                    </Typography>
+                  )}
                   </Grid>
                   </Grid>
             </Grid>
@@ -409,29 +428,29 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
             <Grid item xs={12} sm={6}>
               <Grid item xs={12} sm={12}>
                   <Controller
-                    name="Event"
+                    name="selectEvent"
                     control={control}
                     render={({ field }) => (
                       <FormControl fullWidth>
-                        <InputLabel id="Event-label">Event</InputLabel>
+                        <InputLabel id="status-label">Event</InputLabel>
                         <Select
-                          label="Event"
-                          labelId="Event-label"
+                          label="Department"
+                          labelId="status-label"
                           fullWidth
                           {...field}
-                          error={!!errors.status}
+                          error={!!errors.selectEvent}
                         >
                           <MenuItem value="" disabled>
-                            Select Event
+                            Select Status
                           </MenuItem>
-                          <MenuItem >Termination</MenuItem>
-                          <MenuItem >Role Change</MenuItem>
+                          <MenuItem value="Active">terminate</MenuItem>
+                          <MenuItem value="Inactive">role</MenuItem>
                         </Select>
                       </FormControl>
                     )}
                   />
-                  {errors.status && (
-                    <Typography color="error">{errors.event.message}</Typography>
+                  {errors.selectEvent && (
+                    <Typography color="error">{errors.selectEvent.message}</Typography>
                   )}
                 </Grid>
              </Grid>
@@ -454,44 +473,36 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
             </Grid>
              <Grid item xs={12} sm={6}>
                   <Grid item xs={12} sm={12}>
-                        <Controller
-                          name="location"
-                          control={control}
-                          render={({ field }) => (
-                            <FormControl fullWidth>
-                              <InputLabel id="status-label">Location</InputLabel>
-                              <Select
-                                label="Location"
-                                labelId="status-label"
-                                fullWidth
-                                {...field}
-                                error={!!errors.status}
-                              >
-                                <MenuItem value="" disabled>
-                                  Select Status
-                                </MenuItem>
-                                <MenuItem >USA</MenuItem>
-                                <MenuItem >London</MenuItem>
-                              </Select>
-                            </FormControl>
-                          )}
-                        />
-                        {errors.status && (
-                          <Typography color="error">{errors.location.message}</Typography>
+                  <Controller
+                    name="eventLocation"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl fullWidth>
+                        <InputLabel id="status-label">Loaction</InputLabel>
+                        <Select
+                          label="Department"
+                          labelId="status-label"
+                          fullWidth
+                          {...field}
+                          error={!!errors.eventLocation}
+                        >
+                          <MenuItem value="" disabled>
+                            Select Status
+                          </MenuItem>
+                          <MenuItem value="Active">London</MenuItem>
+                          <MenuItem value="Inactive">USA</MenuItem>
+                        </Select>
+                      </FormControl>
+                    )}
+                  />
+                        {errors.eventLocation && (
+                          <Typography color="error">{errors.eventLocation.message}</Typography>
                         )}
                   </Grid>
                   </Grid>
             </Grid>
 
           </Box>
-
-          {/* Authorized Party Section  */}
-          
-
-          {/* Emergency Contact Section  */}
-          
-
-          {/* Primary Doctor's Contact Section  */}
          
           <Grid item xs={12}>
             <Button
@@ -509,5 +520,5 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ handleTabChange }) => {
   );
 };
 
-export default ClientProfile;
+export default StaffProfile;
 

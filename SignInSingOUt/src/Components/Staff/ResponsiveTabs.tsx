@@ -44,6 +44,8 @@ const ResponsiveTabs: React.FC<ResponsiveTabsProps> = ({
     >
       <Tab label="Profile" />
       <Tab label="Locations" />
+      <Tab label="Program" />
+      <Tab label="Classrooms" />
       {/* <Tab label="Authorized Party" />
       <Tab label="Insurance" />
       <Tab label="Treatment" />

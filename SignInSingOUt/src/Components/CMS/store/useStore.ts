@@ -42,6 +42,25 @@ interface Doctor {
   clinicPhone: string;
 }
 
+interface ClinicDoctors {
+  doctorId: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface Clinic {
+  clinicName: string;
+  website: string;
+  phone: string;
+  fax: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  doctors: ClinicDoctors[];
+}
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -59,7 +78,23 @@ interface FormData {
   responsibleParties: ResponsibleParty[];
   authorizedParties: AuthorizedPartyWithDetails[];
   emergencyContacts: EmergencyContact[];
-  doctors: Doctor[];
+  clinic: Clinic;
+}
+
+interface TableData {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  ssn: string;
+  code: string;
+  maritalStatus: string;
+  status: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
 }
 
 interface PopupState {
@@ -73,6 +108,7 @@ interface StoreState {
   tabValue: number;
   selectedRowId: number;
   popupState: PopupState;
+  clinic: Clinic;
   setFormData: (data: Partial<FormData>) => void;
   addResponsibleParty: (data: ResponsibleParty) => void;
   addAuthorizedParty: (data: AuthorizedPartyWithDetails) => void;
@@ -87,12 +123,14 @@ interface StoreState {
   setTabValue: (value: number) => void;
   setSelectedRowId: (value: number | null) => void;
   handlePopup: (isOpen: boolean, title?: string, slug?: string) => void;
+  addClinicDoctor: (data: ClinicDoctors) => void;
 }
 
 const useStore = create<StoreState>()(
   persist(
     (set) => ({
       formData: {
+        id: 1,
         firstName: "",
         lastName: "",
         dob: "",
@@ -168,6 +206,29 @@ const useStore = create<StoreState>()(
             clinicPhone: "",
           },
         ],
+        clinic: {
+          clinicName: "",
+          website: "",
+          phone: "",
+          fax: "",
+          address1: "",
+          address2: "",
+          city: "",
+          state: "",
+          zipCode: "",
+          doctors: [
+            {
+              doctorId: "",
+              firstName: "",
+              lastName: "",
+            },
+            {
+              doctorId: "",
+              firstName: "",
+              lastName: "",
+            },
+          ],
+        },
       },
       addResponsibleParty: (data: ResponsibleParty) =>
         set((state) => ({
@@ -234,7 +295,9 @@ const useStore = create<StoreState>()(
           },
         })),
       setTabValue: (value) => set(() => ({ tabValue: value })),
+      setTableData: (value) => set(() => ({ tableData: value })),
       setSelectedRowId: (value) => set(() => ({ selectedRowId: value })),
+      tableData: [],
       tabValue: 0,
       selectedRowId: 1,
       popupState: {

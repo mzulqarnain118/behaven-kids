@@ -53,7 +53,6 @@ function GuardianInfo() {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: formData.responsibleParties?.[selectedRowId],
-    // @ts-ignore
     resolver: yupResolver(guardianSchema),
   });
 
